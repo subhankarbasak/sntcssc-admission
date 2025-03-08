@@ -40,7 +40,7 @@ class StudentProfile extends Model
     ];
 
     protected $casts = [
-        'dob' => 'date',
+        // 'dob' => 'date',
         'is_pwbd' => 'boolean',
         'family_income' => 'decimal:2',
         'activities' => 'json',

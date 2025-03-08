@@ -18,4 +18,9 @@ class ApplicationAddress extends Model
     {
         return $this->belongsTo(Application::class);
     }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
 }

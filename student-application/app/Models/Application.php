@@ -12,7 +12,8 @@ class Application extends Model
     protected $fillable = [
         'student_id',
         'advertisement_id',
-        'batch_program_id',
+        'advertisement_program_id',
+        'student_profile_id',
         'application_number',
         'optional_subject',
         'is_appearing_upsc_cse',
@@ -46,6 +47,11 @@ class Application extends Model
     public function studentProfile()
     {
         return $this->belongsTo(StudentProfile::class);
+    }
+
+    public function profile()
+    {
+        return $this->belongsTo(StudentProfile::class, 'student_profile_id');
     }
 
     public function addresses()
@@ -86,5 +92,12 @@ class Application extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public static function findApplications($studentId, $advertisementId)
+    {
+        return self::where('student_id', $studentId)
+            ->where('advertisement_id', $advertisementId)
+            ->first();
     }
 }

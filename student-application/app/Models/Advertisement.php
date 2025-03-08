@@ -21,6 +21,11 @@ class Advertisement extends Model
         return $this->belongsTo(Batch::class);
     }
 
+    public function programs()
+    {
+        return $this->hasMany(AdvertisementProgram::class);
+    }
+
     public function advertisementPrograms()
     {
         return $this->hasMany(AdvertisementProgram::class);

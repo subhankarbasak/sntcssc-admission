@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('subdistrict')->nullable();
             $table->text('address_line1');
             $table->text('address_line2')->nullable();
-            $table->string('post_office');
-            $table->string('police_station');
+            $table->string('post_office')->nullable();
+            $table->string('police_station')->nullable();
             $table->string('pin_code', 10);
             $table->boolean('is_verified')->default(false);
             $table->timestamps();

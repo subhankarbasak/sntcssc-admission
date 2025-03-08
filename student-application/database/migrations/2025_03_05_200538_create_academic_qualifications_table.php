@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('institute');
             $table->string('board_university');
             $table->text('subjects')->nullable();
-            $table->year('year_passed');
+            $table->year('year_passed')->nullable();
             $table->decimal('total_marks', 5, 2)->nullable();
             $table->decimal('marks_obtained', 5, 2)->nullable();
             $table->decimal('percentage', 5, 2)->nullable();
