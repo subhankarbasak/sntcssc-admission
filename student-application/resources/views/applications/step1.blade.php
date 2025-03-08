@@ -57,10 +57,11 @@
                                 <label class="form-label fw-semibold text-dark">Category <span class="text-danger">*</span></label>
                                 <select name="category" class="form-select" required>
                                     <option value="">Select Category</option>
-                                    <option value="UR" {{ ($profile->category ?? $student->category) == 'UR' ? 'selected' : '' }}>General</option>
-                                    <option value="OBC" {{ ($profile->category ?? $student->category) == 'OBC' ? 'selected' : '' }}>OBC</option>
+                                    <option value="UR" {{ ($profile->category ?? $student->category) == 'UR' ? 'selected' : '' }}>UR</option>
                                     <option value="SC" {{ ($profile->category ?? $student->category) == 'SC' ? 'selected' : '' }}>SC</option>
                                     <option value="ST" {{ ($profile->category ?? $student->category) == 'ST' ? 'selected' : '' }}>ST</option>
+                                    <option value="OBC A" {{ ($profile->category ?? $student->category) == 'OBC A' ? 'selected' : '' }}>OBC A</option>
+                                    <option value="OBC B" {{ ($profile->category ?? $student->category) == 'OBC B' ? 'selected' : '' }}>OBC B</option>
                                 </select>
                                 <div class="invalid-feedback">Please select a category.</div>
                             </div>
@@ -225,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             toastr.error('Please correct the errors in the form.');
         } else {
-            toastr.success('Form submitted successfully!');
+            toastr.success('Form saved successfully!');
         }
     });
 

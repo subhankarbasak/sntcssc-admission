@@ -7,18 +7,27 @@ use App\Domain\Repositories\ApplicationRepositoryInterface;
 use App\Domain\Repositories\StudentProfileRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Domain\Repositories\ApplicationAddressRepositoryInterface;
+use App\Domain\Repositories\ApplicationAcademicQualificationRepositoryInterface;
 
 class ApplicationService
 {
     private $applicationRepository;
     private $profileRepository;
 
+    private $addressRepository;
+    private $academicRepository;
+
     public function __construct(
         ApplicationRepositoryInterface $applicationRepository,
-        StudentProfileRepositoryInterface $profileRepository
+        StudentProfileRepositoryInterface $profileRepository,
+        ApplicationAddressRepositoryInterface $addressRepository,
+        ApplicationAcademicQualificationRepositoryInterface $academicRepository
     ) {
         $this->applicationRepository = $applicationRepository;
         $this->profileRepository = $profileRepository;
+        $this->addressRepository = $addressRepository;
+        $this->academicRepository = $academicRepository;
     }
 
     public function startApplication($studentId, $advertisementId, array $data)
@@ -118,5 +127,82 @@ class ApplicationService
             'valid_from' => now(),
             'is_current' => true
         ]);
+    }
+
+    // public function saveStep2($applicationId, array $data)
+    // {
+    //     // dd($data);
+    //     try {
+    //         \DB::beginTransaction();
+
+    //         // Save Addresses
+    //         foreach ($data['addresses'] as $address) {
+    //             $address['application_id'] = $applicationId;
+    //             $this->addressRepository->createOrUpdate($address, $applicationId);
+    //         }
+
+    //         // Save Academic Qualifications
+    //         foreach ($data['academic_qualifications'] as $academic) {
+    //             $academic['application_id'] = $applicationId;
+    //             $this->academicRepository->createOrUpdate($academic, $applicationId);
+    //         }
+
+    //         \DB::commit();
+    //         return true;
+    //     } catch (\Exception $e) {
+    //         \DB::rollBack();
+    //         \Log::error('Step 2 save failed: ' . $e->getMessage());
+    //         throw $e;
+    //     }
+    // }
+
+    public function saveStep2($applicationId, array $data)
+    {
+        try {
+            DB::beginTransaction();
+    
+            // Fetch existing records
+            $existingAddresses = $this->addressRepository->getByApplicationId($applicationId);
+            $existingAcademics = $this->academicRepository->getByApplicationId($applicationId);
+    
+            // Process Addresses
+            $submittedAddressIds = array_filter(array_column($data['addresses'], 'id')); // Filter out null/empty IDs
+            foreach ($existingAddresses as $existing) {
+                if (!in_array($existing->id, $submittedAddressIds)) {
+                    $this->addressRepository->delete($existing->id); // Delete removed addresses
+                }
+            }
+            foreach ($data['addresses'] as $address) {
+                $address['application_id'] = $applicationId;
+                $this->addressRepository->createOrUpdate($address, $applicationId);
+            }
+    
+            // Process Academic Qualifications
+            $submittedAcademicIds = array_filter(array_column($data['academic_qualifications'], 'id'));
+            foreach ($existingAcademics as $existing) {
+                if (!in_array($existing->id, $submittedAcademicIds)) {
+                    $this->academicRepository->delete($existing->id); // Delete removed academics
+                }
+            }
+            foreach ($data['academic_qualifications'] as $academic) {
+                $academic['application_id'] = $applicationId;
+                $this->academicRepository->createOrUpdate($academic, $applicationId);
+            }
+    
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Step 2 save failed: ' . $e->getMessage());
+            throw new \Exception('Failed to save step 2: ' . $e->getMessage());
+        }
+    }
+
+    public function getAddressByApplicationId($applicationId){
+        return $this->addressRepository->getByApplicationId($applicationId);
+    }
+
+    public function getAcademicByApplicationId($applicationId){
+        return $this->academicRepository->getByApplicationId($applicationId);
     }
 }

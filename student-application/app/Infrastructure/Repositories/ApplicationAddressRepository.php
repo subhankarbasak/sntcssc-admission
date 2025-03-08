@@ -1,6 +1,6 @@
 <?php
 
-// app/Infrastructure/Repositories/ApplicationAddressRepository.php (Update)
+// app/Infrastructure/Repositories/ApplicationAddressRepository.php
 namespace App\Infrastructure\Repositories;
 
 use App\Domain\Repositories\ApplicationAddressRepositoryInterface;
@@ -10,18 +10,27 @@ class ApplicationAddressRepository implements ApplicationAddressRepositoryInterf
 {
     public function createOrUpdate(array $data, $applicationId)
     {
-        $conditions = ['type' => $data['type']];
-        if ($applicationId) {
-            $conditions['application_id'] = $applicationId;
-        } else {
-            $conditions['student_id'] = $data['student_id'];
+        // If an ID is provided, update the specific record
+        if (isset($data['id']) && $data['id']) {
+            $address = ApplicationAddress::findOrFail($data['id']);
+            $address->update($data);
+            return $address;
         }
 
-        return ApplicationAddress::updateOrCreate($conditions, $data);
+        // Otherwise, create a new record
+        $conditions = ['application_id' => $applicationId];
+        $data['application_id'] = $applicationId;
+        return ApplicationAddress::create($data); // No `type` in conditions to allow duplicates
     }
 
     public function getByApplicationId($applicationId)
     {
         return ApplicationAddress::where('application_id', $applicationId)->get();
+    }
+
+    public function delete($id)
+    {
+        $address = ApplicationAddress::findOrFail($id);
+        return $address->delete();
     }
 }

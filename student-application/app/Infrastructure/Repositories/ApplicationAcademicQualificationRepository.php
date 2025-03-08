@@ -1,6 +1,7 @@
 <?php
 
-// app/Infrastructure/Repositories/ApplicationAcademicQualificationRepository.php (Update)
+// app/Infrastructure/Repositories/ApplicationAcademicQualificationRepository.php
+
 namespace App\Infrastructure\Repositories;
 
 use App\Domain\Repositories\ApplicationAcademicQualificationRepositoryInterface;
@@ -10,18 +11,26 @@ class ApplicationAcademicQualificationRepository implements ApplicationAcademicQ
 {
     public function createOrUpdate(array $data, $applicationId)
     {
-        $conditions = ['level' => $data['level']];
-        if ($applicationId) {
-            $conditions['application_id'] = $applicationId;
-        } else {
-            $conditions['student_id'] = $data['student_id'];
+        // If an ID is provided, update the specific record
+        if (isset($data['id']) && $data['id']) {
+            $academic = ApplicationAcademicQualification::findOrFail($data['id']);
+            $academic->update($data);
+            return $academic;
         }
 
-        return ApplicationAcademicQualification::updateOrCreate($conditions, $data);
+        // Otherwise, create a new record
+        $data['application_id'] = $applicationId;
+        return ApplicationAcademicQualification::create($data); // No `level` in conditions to allow duplicates
     }
 
     public function getByApplicationId($applicationId)
     {
         return ApplicationAcademicQualification::where('application_id', $applicationId)->get();
+    }
+
+    public function delete($id)
+    {
+        $academic = ApplicationAcademicQualification::findOrFail($id);
+        return $academic->delete();
     }
 }

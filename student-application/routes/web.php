@@ -37,6 +37,9 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::get('/application/{advertisement}/create', [ApplicationController::class, 'create'])->name('application.create');
     Route::post('/application/{advertisement}/step1', [ApplicationController::class, 'storeStep1'])->name('application.store.step1');
+    Route::get('/application/{application}/step2', [ApplicationController::class, 'step2'])->name('application.step2');
+    Route::post('/application/{application}/step2', [ApplicationController::class, 'storeStep2'])->name('application.store.step2');
+    Route::get('/application/{application}/step3', [ApplicationController::class, 'step3'])->name('application.step3');
 });
 
 Route::post('/validate/secondary_roll', [RegisterController::class, 'validateSecondaryRoll'])->name('validate.secondary_roll');

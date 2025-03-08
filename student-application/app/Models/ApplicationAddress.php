@@ -23,4 +23,9 @@ class ApplicationAddress extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    public static function getByApplicationId($applicationId)
+    {
+        return self::where('application_id', $applicationId)->get();
+    }
 }
