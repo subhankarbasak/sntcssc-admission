@@ -5,10 +5,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationStep1Request;
 use App\Http\Requests\ApplicationStep2Request;
+use App\Http\Requests\ApplicationStep3Request;
 use App\Domain\Services\ApplicationService;
 use App\Models\Advertisement;
 use App\Models\Application;
+use App\Models\CurrentEnrollment;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\UpscAttempt;
+
 
 class ApplicationController extends Controller
 {
@@ -348,4 +353,75 @@ class ApplicationController extends Controller
                 ->with('toastr', ['type' => 'error', 'message' => 'Failed to save step 2']);
         }
     }
+    // Step2 ends.
+
+    public function step3($applicationId)
+    {
+        $application = Application::findOrFail($applicationId);
+        
+        // $employment = $this->applicationService->employmentRepository->getByApplicationId($applicationId);
+        // $enrollment = $this->applicationService->enrollmentRepository->getByApplicationId($applicationId);
+        // $upscAttempts = $this->applicationService->upscRepository->getByApplicationId($applicationId);
+
+        $employment = $this->applicationService->getEmploymentbyApplicationId($applicationId);
+        // $enrollment = $this->applicationService->getEnrollmentbyApplicationId($applicationId);
+        $enrollment = CurrentEnrollment::getEnrollmentbyApplicationId($applicationId);
+        $upscAttempts = $this->applicationService->getUpscbyApplicationId($applicationId);
+
+        // dd($enrollment);
+
+        return view('applications.step3', compact('application', 'employment', 'enrollment', 'upscAttempts'));
+    }
+
+    // public function storeStep3(ApplicationStep3Request $request, $applicationId)
+    // {
+    //     try {
+    //         $this->applicationService->saveStep3($applicationId, $request->validated());
+            
+    //         return redirect()->route('application.step4', $applicationId)
+    //             ->with('toastr', ['type' => 'success', 'message' => 'Step 3 completed!']);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Step 3 save failed - msg from controller: ' . $e->getMessage());
+    //         return back()
+    //             ->withInput()
+    //             ->with('toastr', ['type' => 'error', 'message' => 'Failed to save step 3']);
+    //     }
+    // }
+
+    // 
+
+    public function storeStep3(ApplicationStep3Request $request, $applicationId)
+    {
+        try {
+            $data = $request->validated();
+            
+            $this->applicationService->saveEmploymentHistory($applicationId, $data['employment']);
+            
+            if ($data['enrollment']['course_name'] ?? false) {
+                $this->applicationService->saveCurrentEnrollment($applicationId, $data['enrollment']);
+            }
+            
+            if ($data['upsc_attempts'] ?? false) {
+                $this->applicationService->manageUpscAttempts($applicationId, $data['upsc_attempts']);
+            }
+
+            return redirect()->route('application.step4', $applicationId)
+                ->with('toastr', ['type' => 'success', 'message' => 'Step 3 completed successfully']);
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('toastr', ['type' => 'error', 'message' => 'Failed to save: ' . $e->getMessage()]);
+        }
+    }
+
+    public function getUpscAttemptTemplate(Request $request)
+    {
+        $index = $request->query('index', 0);
+        return view('applications.partials.upsc_attempt', [
+            'index' => $index,
+            'attempt' => new UpscAttempt()
+        ]);
+    }
+    // Step 3 ends
+
 }

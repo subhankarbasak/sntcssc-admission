@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Domain\Repositories\ApplicationAddressRepositoryInterface;
 use App\Domain\Repositories\ApplicationAcademicQualificationRepositoryInterface;
+use App\Domain\Repositories\EmploymentHistoryRepositoryInterface;
+use App\Domain\Repositories\CurrentEnrollmentRepositoryInterface;
+use App\Domain\Repositories\UpscAttemptRepositoryInterface;
+use Exception;
+use App\Models\EmploymentHistory;
+use App\Models\CurrentEnrollment;
+use App\Models\UpscAttempt;
 
 class ApplicationService
 {
@@ -18,16 +25,26 @@ class ApplicationService
     private $addressRepository;
     private $academicRepository;
 
+    private $employmentRepository;
+    private $enrollmentRepository;
+    private $upscRepository;
+
     public function __construct(
         ApplicationRepositoryInterface $applicationRepository,
         StudentProfileRepositoryInterface $profileRepository,
         ApplicationAddressRepositoryInterface $addressRepository,
-        ApplicationAcademicQualificationRepositoryInterface $academicRepository
+        ApplicationAcademicQualificationRepositoryInterface $academicRepository,
+        EmploymentHistoryRepositoryInterface $employmentRepository,
+        CurrentEnrollmentRepositoryInterface $enrollmentRepository,
+        UpscAttemptRepositoryInterface $upscRepository
     ) {
         $this->applicationRepository = $applicationRepository;
         $this->profileRepository = $profileRepository;
         $this->addressRepository = $addressRepository;
         $this->academicRepository = $academicRepository;
+        $this->employmentRepository = $employmentRepository;
+        $this->enrollmentRepository = $enrollmentRepository;
+        $this->upscRepository = $upscRepository;
     }
 
     public function startApplication($studentId, $advertisementId, array $data)
@@ -204,5 +221,169 @@ class ApplicationService
 
     public function getAcademicByApplicationId($applicationId){
         return $this->academicRepository->getByApplicationId($applicationId);
+    }
+
+    // ./Step2 End
+
+    public function saveStep3($applicationId, array $data)
+    {
+        try {
+            \DB::beginTransaction();
+
+            // Save Employment History
+            if (isset($data['employment'])) {
+                $employmentData = array_merge($data['employment'], ['application_id' => $applicationId]);
+                $this->employmentRepository->createOrUpdate($employmentData, $applicationId);
+            }
+
+            // Save Current Enrollment
+            if (isset($data['enrollment'])) {
+                $enrollmentData = array_merge($data['enrollment'], ['application_id' => $applicationId]);
+                $this->enrollmentRepository->createOrUpdate($enrollmentData, $applicationId);
+            }
+
+            // Save UPSC Attempts
+            if (isset($data['upsc_attempts'])) {
+                foreach ($data['upsc_attempts'] as $attempt) {
+                    $attemptData = array_merge($attempt, [
+                        'application_id' => $applicationId,
+                        'student_id' => auth()->id()
+                    ]);
+                    $this->upscRepository->createOrUpdate($attemptData, $applicationId);
+                }
+            }
+
+            \DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Step 3 save failed: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getEmploymentbyApplicationId($applicationId){
+        return $this->employmentRepository->getByApplicationId($applicationId);
+    }
+
+    public function getEnrollmentbyApplicationId($applicationId){
+        $this->enrollmentRepository->getByApplicationId($applicationId);
+    }
+
+    public function getUpscbyApplicationId($applicationId){
+        return $this->upscRepository->getByApplicationId($applicationId);
+    }
+
+// 
+    // public function saveEmploymentHistory(int $applicationId, array $data): EmploymentHistory
+    // {
+    //     try {
+    //         DB::beginTransaction();
+            
+    //         $employmentData = array_merge($data, ['application_id' => $applicationId]);
+    //         $existing = $this->employmentRepository->getByApplicationId($applicationId);
+            
+    //         $employment = $existing 
+    //             ? $this->employmentRepository->update($existing->id, $employmentData)
+    //             : $this->employmentRepository->create($employmentData);
+                
+    //         DB::commit();
+    //         return $employment;
+    //     } catch (Exception $e) {
+    //         DB::rollBack();
+    //         Log::error("Employment save failed: {$e->getMessage()}");
+    //         throw $e;
+    //     }
+    // }
+
+    public function saveEmploymentHistory(int $applicationId, array $data): \App\Models\EmploymentHistory
+    {
+        try {
+            DB::beginTransaction();
+            
+            $employmentData = array_merge($data, ['application_id' => $applicationId]);
+            $existing = $this->employmentRepository->getByApplicationId($applicationId);
+            
+            $employment = $existing 
+                ? $this->employmentRepository->update($existing->id, $employmentData)
+                : $this->employmentRepository->create($employmentData);
+                
+            DB::commit();
+            return $employment;
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error("Employment save failed: {$e->getMessage()}");
+            throw $e;
+        }
+    }
+
+    /**
+     * Save or update the current enrollment for an application.
+     *
+     * @param int $applicationId
+     * @param array $data
+     * @return CurrentEnrollment
+     * @throws Exception
+     */
+    public function saveCurrentEnrollment(int $applicationId, array $data): \App\Models\CurrentEnrollment
+    {
+        try {
+            DB::beginTransaction();
+
+            $enrollmentData = array_merge($data, ['application_id' => $applicationId]);
+            $existing = $this->enrollmentRepository->getByApplicationId($applicationId);
+
+            if ($existing) {
+                // Update existing record
+                $enrollment = $this->enrollmentRepository->update($existing->id, $enrollmentData);
+            } else {
+                // Create new record
+                $enrollment = $this->enrollmentRepository->create($enrollmentData);
+            }
+
+            DB::commit();
+            return $enrollment;
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error("Current enrollment save failed for application ID {$applicationId}: {$e->getMessage()}");
+            throw $e;
+        }
+    }
+
+    public function manageUpscAttempts(int $applicationId, array $attempts): void
+    {
+        try {
+            DB::beginTransaction();
+            
+            $existingAttempts = $this->upscRepository->getByApplicationId($applicationId)
+                ->pluck('id')->toArray();
+                
+            $submittedIds = [];
+            
+            foreach ($attempts as $attemptData) {
+                $attemptData['application_id'] = $applicationId;
+                $attemptData['student_id'] = auth()->id();
+                
+                if (isset($attemptData['id']) && $attemptData['id']) {
+                    $this->upscRepository->update($attemptData['id'], $attemptData);
+                    $submittedIds[] = $attemptData['id'];
+                } else {
+                    $newAttempt = $this->upscRepository->create($attemptData);
+                    $submittedIds[] = $newAttempt->id;
+                }
+            }
+
+            // Delete removed attempts
+            $toDelete = array_diff($existingAttempts, $submittedIds);
+            foreach ($toDelete as $id) {
+                $this->upscRepository->delete($id);
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error("UPSC attempts save failed: {$e->getMessage()}");
+            throw $e;
+        }
     }
 }

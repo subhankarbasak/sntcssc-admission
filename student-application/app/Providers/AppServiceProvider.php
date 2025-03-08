@@ -60,6 +60,21 @@ class AppServiceProvider extends ServiceProvider
                 );
             }
         );
+
+        $this->app->bind(
+            \App\Domain\Repositories\EmploymentHistoryRepositoryInterface::class,
+            \App\Infrastructure\Repositories\EmploymentHistoryRepository::class
+        );
+        
+        $this->app->bind(
+            \App\Domain\Repositories\CurrentEnrollmentRepositoryInterface::class,
+            \App\Infrastructure\Repositories\CurrentEnrollmentRepository::class
+        );
+        
+        $this->app->bind(
+            \App\Domain\Repositories\UpscAttemptRepositoryInterface::class,
+            \App\Infrastructure\Repositories\UpscAttemptRepository::class
+        );
     }
 
     /**

@@ -40,6 +40,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/application/{application}/step2', [ApplicationController::class, 'step2'])->name('application.step2');
     Route::post('/application/{application}/step2', [ApplicationController::class, 'storeStep2'])->name('application.store.step2');
     Route::get('/application/{application}/step3', [ApplicationController::class, 'step3'])->name('application.step3');
+    Route::post('/application/{application}/step3', [ApplicationController::class, 'storeStep3'])->name('application.store.step3');
+    Route::get('/application/{application}/step4', [ApplicationController::class, 'step4'])->name('application.step4');
+
+    // routes/web.php
+    Route::get('/application/upsc-attempt-template', [ApplicationController::class, 'getUpscAttemptTemplate'])
+        ->name('application.upsc-attempt-template');
 });
 
 Route::post('/validate/secondary_roll', [RegisterController::class, 'validateSecondaryRoll'])->name('validate.secondary_roll');
