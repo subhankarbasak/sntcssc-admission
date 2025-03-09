@@ -31,4 +31,9 @@ class Payment extends Model
     {
         return $this->belongsTo(Document::class, 'screenshot_document_id');
     }
+    
+    public function screenshot()
+    {
+        return $this->belongsTo(Document::class, 'screenshot_document_id');
+    }
 }

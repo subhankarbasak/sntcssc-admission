@@ -75,6 +75,16 @@ class AppServiceProvider extends ServiceProvider
             \App\Domain\Repositories\UpscAttemptRepositoryInterface::class,
             \App\Infrastructure\Repositories\UpscAttemptRepository::class
         );
+
+        $this->app->bind(
+            \App\Domain\Repositories\DocumentRepositoryInterface::class,
+            \App\Infrastructure\Repositories\DocumentRepository::class
+        );
+
+        $this->app->bind(
+            \App\Domain\Repositories\PaymentRepositoryInterface::class,
+            \App\Infrastructure\Repositories\PaymentRepository::class
+        );
     }
 
     /**

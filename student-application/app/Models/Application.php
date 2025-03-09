@@ -100,4 +100,9 @@ class Application extends Model
             ->where('advertisement_id', $advertisementId)
             ->first();
     }
+
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class);
+    }
 }

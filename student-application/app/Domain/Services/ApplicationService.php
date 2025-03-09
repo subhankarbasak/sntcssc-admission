@@ -16,6 +16,9 @@ use Exception;
 use App\Models\EmploymentHistory;
 use App\Models\CurrentEnrollment;
 use App\Models\UpscAttempt;
+use App\Domain\Repositories\DocumentRepositoryInterface;
+use Illuminate\Support\Facades\Storage;
+use App\Domain\Repositories\PaymentRepositoryInterface;
 
 class ApplicationService
 {
@@ -28,6 +31,8 @@ class ApplicationService
     private $employmentRepository;
     private $enrollmentRepository;
     private $upscRepository;
+    private $documentRepository;
+    private $paymentRepository;
 
     public function __construct(
         ApplicationRepositoryInterface $applicationRepository,
@@ -36,7 +41,9 @@ class ApplicationService
         ApplicationAcademicQualificationRepositoryInterface $academicRepository,
         EmploymentHistoryRepositoryInterface $employmentRepository,
         CurrentEnrollmentRepositoryInterface $enrollmentRepository,
-        UpscAttemptRepositoryInterface $upscRepository
+        UpscAttemptRepositoryInterface $upscRepository,
+        DocumentRepositoryInterface $documentRepository,
+        PaymentRepositoryInterface $paymentRepository
     ) {
         $this->applicationRepository = $applicationRepository;
         $this->profileRepository = $profileRepository;
@@ -45,6 +52,8 @@ class ApplicationService
         $this->employmentRepository = $employmentRepository;
         $this->enrollmentRepository = $enrollmentRepository;
         $this->upscRepository = $upscRepository;
+        $this->documentRepository = $documentRepository;
+        $this->paymentRepository = $paymentRepository;
     }
 
     public function startApplication($studentId, $advertisementId, array $data)
@@ -385,5 +394,162 @@ class ApplicationService
             Log::error("UPSC attempts save failed: {$e->getMessage()}");
             throw $e;
         }
+    }
+
+    // ./ End Step 3 Here
+
+    public function saveStep4($applicationId, array $files)
+    {
+        try {
+            \DB::beginTransaction();
+
+            foreach ($files as $type => $file) {
+                if ($file) {
+                    $path = $file->store('documents', 'public');
+                    $this->documentRepository->create([
+                        'application_id' => $applicationId,
+                        'type' => $type,
+                        'file_path' => $path,
+                        'verification_status' => 'pending'
+                    ]);
+                }
+            }
+
+            \DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Step 4 save failed: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getDocuments($applicationId)
+    {
+        return $this->documentRepository->getByApplicationId($applicationId);
+    }
+    // ./End Step 4
+
+    // Start Step 5
+    public function submitApplication($applicationId)
+    {
+        // dd($applicationId);
+        try {
+            \DB::beginTransaction();
+
+            $application = $this->applicationRepository->find($applicationId);
+            if (!$application) {
+                throw new \Exception('Application not found');
+            }
+
+            // Validate all required steps are completed
+            $this->validateApplicationCompletion($applicationId);
+
+            // Update application status
+            $application->update([
+                'status' => 'submitted',
+                'applied_at' => now()
+            ]);
+
+            \DB::commit();
+            return $application;
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Application submission failed: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function validateApplicationCompletion($applicationId)
+    {
+        $requiredDocs = ['photo', 'signature'];
+        $documents = $this->documentRepository->getByApplicationId($applicationId);
+        $docTypes = $documents->pluck('type')->toArray();
+
+        foreach ($requiredDocs as $type) {
+            if (!in_array($type, $docTypes)) {
+                throw new \Exception("Missing required document: {$type}");
+            }
+        }
+
+        $addresses = $this->addressRepository->getByApplicationId($applicationId);
+        if ($addresses->count() < 2) {
+            throw new \Exception('Both present and permanent addresses are required');
+        }
+
+        $academics = $this->academicRepository->getByApplicationId($applicationId);
+        $requiredLevels = ['Secondary', 'Higher Secondary'];
+        $levels = $academics->pluck('level')->toArray();
+        foreach ($requiredLevels as $level) {
+            if (!in_array($level, $levels)) {
+                throw new \Exception("Missing required academic qualification: {$level}");
+            }
+        }
+    }
+
+    public function getApplicationDetails($applicationId)
+    {
+        $application = $this->applicationRepository->find($applicationId);
+        return [
+            'profile' => $application->profile,
+            'addresses' => $this->addressRepository->getByApplicationId($applicationId),
+            'academics' => $this->academicRepository->getByApplicationId($applicationId),
+            'employment' => $this->employmentRepository->getByApplicationId($applicationId),
+            'enrollment' => $this->enrollmentRepository->getByApplicationId($applicationId),
+            'upsc_attempts' => $this->upscRepository->getByApplicationId($applicationId),
+            'documents' => $this->documentRepository->getByApplicationId($applicationId),
+            'application' => $application
+        ];
+    }
+
+    // ./ Submit Application End
+
+    // Payment process step starts
+    public function processPayment($applicationId, array $paymentData, $screenshot = null)
+    {
+        try {
+            \DB::beginTransaction();
+
+            $application = $this->applicationRepository->find($applicationId);
+            if (!$application || $application->status !== 'submitted') {
+                throw new \Exception('Application not eligible for payment');
+            }
+
+            $screenshotId = null;
+            if ($screenshot) {
+                $path = $screenshot->store('documents/payments', 'public');
+                $document = $this->documentRepository->create([
+                    'application_id' => $applicationId,
+                    'type' => 'payment_ss',
+                    'file_path' => $path,
+                    'verification_status' => 'pending'
+                ]);
+                $screenshotId = $document->id;
+            }
+
+            $paymentData = array_merge($paymentData, [
+                'application_id' => $applicationId,
+                'screenshot_document_id' => $screenshotId,
+                'status' => 'pending'
+            ]);
+
+            $payment = $this->paymentRepository->create($paymentData);
+
+            // Update application payment status
+            $application->update(['payment_status' => 'pending']);
+
+            \DB::commit();
+            return $payment;
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Payment processing failed: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getPaymentDetails($applicationId)
+    {
+        $payment = $this->paymentRepository->findByApplicationId($applicationId);
+        return $payment;
     }
 }

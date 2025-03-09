@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApplicationStep1Request;
 use App\Http\Requests\ApplicationStep2Request;
 use App\Http\Requests\ApplicationStep3Request;
+use App\Http\Requests\ApplicationStep4Request;
+use App\Http\Requests\PaymentRequest;
 use App\Domain\Services\ApplicationService;
 use App\Models\Advertisement;
 use App\Models\Application;
@@ -423,5 +425,110 @@ class ApplicationController extends Controller
         ]);
     }
     // Step 3 ends
+
+    public function step4($applicationId)
+    {
+        // dd($applicationId);
+        $application = Application::findOrFail($applicationId);
+        $documents = $this->applicationService->getDocuments($applicationId);
+        // dd($documents);
+
+        return view('applications.step4', compact('application', 'documents'));
+    }
+
+    public function storeStep4(ApplicationStep4Request $request, $applicationId)
+    {
+        try {
+            $files = [
+                'photo' => $request->file('photo'),
+                'signature' => $request->file('signature'),
+                'category_cert' => $request->file('category_cert'),
+                'pwbd_cert' => $request->file('pwbd_cert'),
+            ];
+
+            $this->applicationService->saveStep4($applicationId, $files);
+
+            return redirect()->route('application.step5', $applicationId)
+                ->with('toastr', ['type' => 'success', 'message' => 'Documents uploaded successfully!']);
+        } catch (\Exception $e) {
+            return back()
+                ->with('toastr', ['type' => 'error', 'message' => 'Failed to upload documents']);
+        }
+    }
+
+    // End Step 4
+    public function step5($applicationId)
+    {
+        $details = $this->applicationService->getApplicationDetails($applicationId);
+        return view('applications.step5', compact('details'));
+    }
+
+    public function submit(Request $request, $applicationId)
+    {
+        // dd($applicationId);
+        try {
+            $application = $this->applicationService->submitApplication($applicationId);
+            // dd($application);
+
+            return redirect()->route('application.payment', $application->id)
+                ->with('toastr', ['type' => 'success', 'message' => 'Application submitted successfully!']);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            return back()
+                ->with('toastr', ['type' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+    // End Step 5 (Submit Application)
+
+
+    public function payment($applicationId)
+    {
+        $application = Application::findOrFail($applicationId);
+        $payment = $this->applicationService->getPaymentDetails($applicationId);
+        
+        // Assuming a fixed fee from advertisement_programs for simplicity
+        $fee = $application->advertisement->programs->first()->batch_program->fee ?? 1000;
+
+        return view('applications.payment', compact('application', 'payment', 'fee'));
+    }
+
+    public function storePayment(PaymentRequest $request, $applicationId)
+    {
+        try {
+            $paymentData = $request->only(['amount', 'method', 'transaction_date', 'transaction_id']);
+            $screenshot = $request->file('screenshot');
+
+            $this->applicationService->processPayment($applicationId, $paymentData, $screenshot);
+
+            return redirect()->route('application.status', $applicationId)
+                ->with('toastr', ['type' => 'success', 'message' => 'Payment submitted successfully!']);
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('toastr', ['type' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    // ./ End Payment Processing
+
+    public function status($applicationId)
+    {
+        $application = Application::with([
+            'advertisement',
+            'profile',
+            'payment',
+            'payment.screenshot'
+        ])->findOrFail($applicationId);
+
+        if ($application->student_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this application');
+        }
+
+        $details = $this->applicationService->getApplicationDetails($applicationId);
+
+        return view('applications.status', compact('application', 'details'));
+    }
+
+    // ./ End Application Status Checking
 
 }

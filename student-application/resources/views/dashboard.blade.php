@@ -5,7 +5,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm mb-4">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">Dashboard</h4>
                         <button class="btn btn-danger btn-sm logout-btn float-end" onclick="confirmLogout()">
@@ -32,6 +32,51 @@
                             </div>
                         @endforeach
                     </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">My Applications</h4>
+                </div>
+                <div class="card-body">
+                    @if($applications->isEmpty())
+                        <p>No applications submitted yet.</p>
+                    @else
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Application Number</th>
+                                    <th>Advertisement</th>
+                                    <th>Status</th>
+                                    <th>Payment Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($applications as $application)
+                                    <tr>
+                                        <td>{{ $application->application_number }}</td>
+                                        <td>{{ $application->advertisement->title }}</td>
+                                        <td>
+                                            <span class="badge {{ $application->status === 'submitted' ? 'bg-success' : ($application->status === 'draft' ? 'bg-warning' : 'bg-info') }}">
+                                                {{ ucfirst($application->status) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge {{ $application->payment_status === 'paid' ? 'bg-success' : ($application->payment_status === 'pending' ? 'bg-warning' : 'bg-danger') }}">
+                                                {{ ucfirst($application->payment_status) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('application.status', $application->id) }}" 
+                                               class="btn btn-sm btn-info">View</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
                 </div>
             </div>
         </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Advertisement;
 use Illuminate\Http\Request;
+use App\Models\Application;
 
 class DashboardController extends Controller
 {
@@ -15,6 +16,10 @@ class DashboardController extends Controller
             ->with('programs')
             ->get();
 
-        return view('dashboard', compact('advertisements'));
+            $applications = Application::where('student_id', auth()->id())
+            ->with('advertisement')
+            ->get();
+
+        return view('dashboard', compact('advertisements', 'applications'));
     }
 }

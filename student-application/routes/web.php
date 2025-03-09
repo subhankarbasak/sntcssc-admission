@@ -42,6 +42,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/application/{application}/step3', [ApplicationController::class, 'step3'])->name('application.step3');
     Route::post('/application/{application}/step3', [ApplicationController::class, 'storeStep3'])->name('application.store.step3');
     Route::get('/application/{application}/step4', [ApplicationController::class, 'step4'])->name('application.step4');
+    Route::post('/application/{application}/step4', [ApplicationController::class, 'storeStep4'])->name('application.store.step4');
+    Route::get('/application/{application}/step5', [ApplicationController::class, 'step5'])->name('application.step5');
+    Route::post('/application/{application}/submit', [ApplicationController::class, 'submit'])->name('application.submit');
+    Route::get('/application/{application}/payment', [ApplicationController::class, 'payment'])->name('application.payment');
+    Route::post('/application/{application}/payment', [ApplicationController::class, 'storePayment'])->name('application.store.payment');
+    Route::get('/application/{application}/status', [ApplicationController::class, 'status'])->name('application.status');
 
     // routes/web.php
     Route::get('/application/upsc-attempt-template', [ApplicationController::class, 'getUpscAttemptTemplate'])
