@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <style>
     :root {
-        --primary: #2c3e50;
+        --primary: #136ffe;
+        /* --primary: #2c3e50; */
         --primary-light: #34495e;
         --secondary: #7f8c8d;
         --accent: #3498db;
@@ -27,9 +28,9 @@
     }
 
     .container {
-        max-width: 960px;
+        /* max-width: 960px;
         margin: 40px auto;
-        padding: 0 20px;
+        padding: 0 20px; */
     }
 
     .card {
