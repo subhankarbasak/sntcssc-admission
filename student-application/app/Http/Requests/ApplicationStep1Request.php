@@ -24,6 +24,15 @@ class ApplicationStep1Request extends FormRequest
             'optional_subject' => 'required|string|max:255',
             'is_appearing_upsc_cse' => 'required',
             'upsc_attempts_count' => 'required',
+            'is_pwbd' => 'required',
+            'occupation' => 'required|string|max:255',
+            'father_name' => 'required|string|max:255',
+            'father_occupation' => 'required|string|max:255',
+            'mother_name' => 'required|string|max:255',
+            'mother_occupation' => 'required|string|max:255',
+            'whatsapp' => 'required|string|digits:10',
+            'family_income' => 'required|string|max:255',
+            'school_language' => 'required|string|max:30',
         ];
     }
 }

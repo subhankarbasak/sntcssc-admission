@@ -32,9 +32,9 @@ class ApplicationStep3Request extends FormRequest
         return [
             'employment' => 'required|array',
             'employment.is_employed' => 'required|boolean',
-            'employment.designation' => 'string|max:255',
-            'employment.employer' => 'string|max:255',
-            'employment.location' => 'string|max:255',
+            'employment.designation' => 'nullable|string|max:255',
+            'employment.employer' => 'nullable|string|max:255',
+            'employment.location' => 'nullable|string|max:255',
             
             'enrollment' => 'nullable|array',
             'enrollment.course_name' => 'nullable|string|max:255',

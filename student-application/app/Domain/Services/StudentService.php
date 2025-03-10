@@ -77,6 +77,7 @@ class StudentService
                 'category' => $data['category'],
                 'email' => $data['email'],
                 'mobile' => $data['mobile'],
+                'secondary_roll' => $data['secondary_roll'],
                 'valid_from' => now(),
                 'is_current' => true,
             ];

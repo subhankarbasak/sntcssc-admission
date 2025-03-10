@@ -21,7 +21,7 @@
                                     <table class="table table-bordered table-hover bg-white shadow-sm">
                                         <thead class="bg-secondary text-white">
                                             <tr>
-                                                <th colspan="4">
+                                                <th colspan="5">
                                                     {{ $address->type === 'present' ? 'Present Address' : 'Permanent Address' }}
                                                     @if($index > 0)
                                                     <button type="button" class="btn btn-danger btn-sm float-end remove-address">Remove</button>
@@ -57,6 +57,11 @@
                                                            placeholder="Address Line 1" required>
                                                 </td>
                                                 <td>
+                                                    <input type="text" name="addresses[{{$index}}][post_office]" 
+                                                           class="form-control" value="{{ $address->post_office }}" 
+                                                           placeholder="Post Office" required>
+                                                </td>
+                                                <td>
                                                     <input type="text" name="addresses[{{$index}}][pin_code]" 
                                                            class="form-control" value="{{ $address->pin_code }}" 
                                                            placeholder="Pin Code" required>
@@ -81,7 +86,7 @@
                                     <table class="table table-bordered table-hover bg-white shadow-sm">
                                         <thead class="bg-secondary text-white">
                                             <tr>
-                                                <th colspan="4">
+                                                <th colspan="5">
                                                     Qualification Details
                                                     @if($index > 0)
                                                     <button type="button" class="btn btn-danger btn-sm float-end remove-academic">Remove</button>
@@ -162,6 +167,7 @@
                             <th>State</th>
                             <th>District</th>
                             <th>Address Line 1</th>
+                            <th>Post Office</th>
                             <th>Pin Code</th>
                         </tr>
                     </thead>
@@ -232,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <table class="table table-bordered table-hover bg-white shadow-sm">
                     <thead class="bg-secondary text-white">
                         <tr>
-                            <th colspan="4">
+                            <th colspan="5">
                                 ${type === 'present' ? 'Present Address' : 'Permanent Address'}
                                 <button type="button" class="btn btn-danger btn-sm float-end remove-address">Remove</button>
                             </th>
@@ -256,6 +262,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             <td>
                                 <input type="text" name="addresses[${addressIndex}][address_line1]" 
                                        class="form-control" placeholder="Address Line 1" required>
+                            </td>
+                            <td>
+                                <input type="text" name="addresses[${addressIndex}][post_office]" 
+                                       class="form-control" placeholder="Post Office" required>
                             </td>
                             <td>
                                 <input type="text" name="addresses[${addressIndex}][pin_code]" 
@@ -284,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <table class="table table-bordered table-hover bg-white shadow-sm">
                     <thead class="bg-secondary text-white">
                         <tr>
-                            <th colspan="4">
+                            <th colspan="5">
                                 Qualification Details
                                 <button type="button" class="btn btn-danger btn-sm float-end remove-academic">Remove</button>
                             </th>
@@ -360,6 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const state = block.querySelector('.state-select').value;
             const district = block.querySelector('.district-select').value;
             const addressLine1 = block.querySelector('input[name*="[address_line1]"]').value;
+            const postOffice = block.querySelector('input[name*="[post_office]"]').value;
             const pinCode = block.querySelector('input[name*="[pin_code]"]').value;
 
             addressTable.innerHTML += `
@@ -368,6 +379,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${state || '-'}</td>
                     <td>${district || '-'}</td>
                     <td>${addressLine1 || '-'}</td>
+                    <td>${postOffice || '-'}</td>
                     <td>${pinCode || '-'}</td>
                 </tr>`;
         });

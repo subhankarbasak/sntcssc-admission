@@ -28,13 +28,13 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark">First Name <span class="text-danger">*</span></label>
                                 <input type="text" name="first_name" class="form-control" 
-                                       value="{{ $profile->first_name ?? $student->first_name }}" required readonly>
+                                       value="{{ $profile->first_name ?? $student->first_name }}" placeholder="First Name" required readonly>
                                 <div class="invalid-feedback">First name is required.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark">Last Name <span class="text-danger">*</span></label>
                                 <input type="text" name="last_name" class="form-control" 
-                                       value="{{ $profile->last_name ?? $student->last_name }}" required readonly>
+                                       value="{{ $profile->last_name ?? $student->last_name }}" placeholder="Last Name" required readonly>
                                 <div class="invalid-feedback">Last name is required.</div>
                             </div>
                             <div class="col-md-6">
@@ -66,6 +66,45 @@
                                 <div class="invalid-feedback">Please select a category.</div>
                             </div>
                             <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">Are you Person with Benchmark Disability (PwBD)? <span class="text-danger">*</span></label>
+                                <select name="is_pwbd" class="form-select" required>
+                                    <option value="">Select one</option>
+                                    <option value="1" {{ ($profile->is_pwbd ?? $student->is_pwbd) == '1' ? 'selected' : '' }}>Yes</option>
+                                    <option value="0" {{ ($profile->is_pwbd ?? $student->is_pwbd) == '0' ? 'selected' : '' }}>No</option>
+                                </select>
+                                <div class="invalid-feedback">Please select options for Benchmark Disability.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">Occupation <span class="text-danger">*</span></label>
+                                <input type="text" name="occupation" class="form-control" 
+                                       value="{{ $profile->occupation ?? $student->occupation }}" placeholder="Occupation" required>
+                                <div class="invalid-feedback">Occupation is required.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">Father Name <span class="text-danger">*</span></label>
+                                <input type="text" name="father_name" class="form-control" 
+                                       value="{{ $profile->father_name ?? $student->father_name }}" placeholder="Father Name" required>
+                                <div class="invalid-feedback">Father Name is required.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">Father Occupation <span class="text-danger">*</span></label>
+                                <input type="text" name="father_occupation" class="form-control" 
+                                       value="{{ $profile->father_occupation ?? $student->father_occupation }}" placeholder="Father Occupation" required>
+                                <div class="invalid-feedback">Father Occupation is required.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">Mother Name <span class="text-danger">*</span></label>
+                                <input type="text" name="mother_name" class="form-control" 
+                                       value="{{ $profile->mother_name ?? $student->mother_name }}" placeholder="Mother Name" required>
+                                <div class="invalid-feedback">Mother Name is required.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">Mother Occupation <span class="text-danger">*</span></label>
+                                <input type="text" name="mother_occupation" class="form-control" 
+                                       value="{{ $profile->mother_occupation ?? $student->mother_occupation }}" placeholder="Mother Occupation" required>
+                                <div class="invalid-feedback">Mother Occupation is required.</div>
+                            </div>
+                            <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark">Email <span class="text-danger">*</span></label>
                                 <input type="email" name="email" class="form-control" 
                                        value="{{ $profile->email ?? $student->email }}" required readonly>
@@ -78,8 +117,31 @@
                                 <div class="invalid-feedback">Please enter a valid 10-digit mobile number.</div>
                             </div>
                             <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">Whatsapp Number <span class="text-danger">*</span></label>
+                                <input type="tel" name="whatsapp" class="form-control" 
+                                       value="{{ $profile->whatsapp ?? $student->whatsapp }}" required pattern="[0-9]{10}" placeholder="Whatsapp No.">
+                                <div class="invalid-feedback">Please enter a valid 10-digit Whatsapp number.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">Annual Family Income <span class="text-danger">*</span></label>
+                                <input type="text" name="family_income" class="form-control" 
+                                       value="{{ $profile->family_income ?? $student->family_income }}" placeholder="Annual Family Income" required>
+                                <div class="invalid-feedback">Annual Family Income is required.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">Medium in School <span class="text-danger">*</span></label>
+                                <select name="school_language" class="form-select" required>
+                                    <option value="">Select one</option>
+                                    <option value="Bengali" {{ ($profile->school_language ?? $student->school_language) == 'Bengali' ? 'selected' : '' }}>Bengali</option>
+                                    <option value="English" {{ ($profile->school_language ?? $student->school_language) == 'English' ? 'selected' : '' }}>English</option>
+                                    <option value="Hindi" {{ ($profile->school_language ?? $student->school_language) == 'Hindi' ? 'selected' : '' }}>Hindi</option>
+                                    <option value="Others" {{ ($profile->school_language ?? $student->school_language) == 'Others' ? 'selected' : '' }}>Others</option>
+                                </select>
+                                <div class="invalid-feedback">Please select options for Benchmark Disability.</div>
+                            </div>
+                            <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark">Optional Subject</label>
-                                <select name="optional_subject" class="form-select">
+                                <select name="optional_subject" class="form-select" required>
                                     <option value="">Select Optional Subject</option>
                                     @foreach(json_decode('{
                                         "optional_subjects": [
@@ -105,10 +167,10 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold text-dark">Appearing for UPSC CSE?</label>
+                                <label class="form-label fw-semibold text-dark">Appearing for UPSC CSE 2026?</label>
                                 <select name="is_appearing_upsc_cse" class="form-select">
-                                    <option value="0" {{ ($application->is_appearing_upsc_cse ?? 0) == 0 ? 'selected' : '' }}>No</option>
                                     <option value="1" {{ ($application->is_appearing_upsc_cse ?? 0) == 1 ? 'selected' : '' }}>Yes</option>
+                                    <option value="0" {{ ($application->is_appearing_upsc_cse ?? 0) == 0 ? 'selected' : '' }}>No</option>
                                 </select>
                             </div>
                             <div class="col-md-6">

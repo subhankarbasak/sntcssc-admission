@@ -28,6 +28,7 @@ class ApplicationStep2Request extends FormRequest
         'addresses.*.state' => 'required|string',
         'addresses.*.district' => 'required|string',
         'addresses.*.address_line1' => 'required|string|max:255',
+        'addresses.*.post_office' => 'required|string|max:255',
         'addresses.*.pin_code' => 'required|string|max:10',
         'academic_qualifications.*.level' => 'required|in:Secondary,Higher Secondary,Graduation,Post Graduation,Other',
         'academic_qualifications.*.institute' => 'required|string|max:255',
