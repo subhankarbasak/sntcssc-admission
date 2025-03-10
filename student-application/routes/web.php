@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/application/{application}/payment', [ApplicationController::class, 'payment'])->name('application.payment');
     Route::post('/application/{application}/payment', [ApplicationController::class, 'storePayment'])->name('application.store.payment');
     Route::get('/application/{application}/status', [ApplicationController::class, 'status'])->name('application.status');
+    Route::get('/application/{application}/download', [ApplicationController::class, 'download'])->name('application.download');
 
     // routes/web.php
     Route::get('/application/upsc-attempt-template', [ApplicationController::class, 'getUpscAttemptTemplate'])

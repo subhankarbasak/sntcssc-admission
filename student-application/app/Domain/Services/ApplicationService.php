@@ -397,33 +397,91 @@ class ApplicationService
     }
 
     // ./ End Step 3 Here
+    // public function saveStep4($applicationId, array $files)
+    // {
+    //     try {
+    //         DB::beginTransaction();
 
+    //         // Delete existing documents if they are being replaced
+    //         $existingDocs = $this->getDocuments($applicationId);
+    //         foreach ($files as $type => $file) {
+    //             $existing = $existingDocs->where('type', $type)->first();
+    //             if ($existing) {
+    //                 Storage::disk('public')->delete($existing->file_path);
+    //                 $existing->delete();
+    //             }
+
+    //             $path = $file->store('documents/' . $applicationId, 'public');
+    //             $this->documentRepository->create([
+    //                 'application_id' => $applicationId,
+    //                 'type' => $type,
+    //                 'file_path' => $path,
+    //                 'file_size' => $file->getSize(),
+    //                 'file_mime' => $file->getMimeType(),
+    //                 'verification_status' => 'pending',
+    //                 'uploaded_at' => now()
+    //             ]);
+    //         }
+
+    //         DB::commit();
+    //         return true;
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         \Log::error('Step 4 save failed: ' . $e->getMessage());
+    //         throw $e;
+    //     }
+    // }
+
+    // public function getDocuments($applicationId)
+    // {
+    //     return $this->documentRepository->getByApplicationId($applicationId);
+    // }
     public function saveStep4($applicationId, array $files)
     {
         try {
-            \DB::beginTransaction();
-
+            DB::beginTransaction();
+    
+            $existingDocs = $this->getDocuments($applicationId);
+    
             foreach ($files as $type => $file) {
-                if ($file) {
-                    $path = $file->store('documents', 'public');
+                $existing = $existingDocs->where('type', $type)->first();
+    
+                if ($existing) {
+                    // Update existing document
+                    Storage::disk('public')->delete($existing->file_path); // Delete old file
+                    $path = $file->store('documents/' . $applicationId, 'public');
+                    
+                    $this->documentRepository->update($existing->id, [
+                        'file_path' => $path,
+                        'file_size' => $file->getSize(),
+                        'file_mime' => $file->getMimeType(),
+                        'verification_status' => 'pending',
+                        'uploaded_at' => now()
+                    ]);
+                } else {
+                    // Create new document
+                    $path = $file->store('documents/' . $applicationId, 'public');
                     $this->documentRepository->create([
                         'application_id' => $applicationId,
                         'type' => $type,
                         'file_path' => $path,
-                        'verification_status' => 'pending'
+                        'file_size' => $file->getSize(),
+                        'file_mime' => $file->getMimeType(),
+                        'verification_status' => 'pending',
+                        'uploaded_at' => now()
                     ]);
                 }
             }
-
-            \DB::commit();
+    
+            DB::commit();
             return true;
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             \Log::error('Step 4 save failed: ' . $e->getMessage());
             throw $e;
         }
     }
-
+    
     public function getDocuments($applicationId)
     {
         return $this->documentRepository->getByApplicationId($applicationId);

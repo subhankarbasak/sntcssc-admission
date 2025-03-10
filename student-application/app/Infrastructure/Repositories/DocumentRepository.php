@@ -15,7 +15,9 @@ class DocumentRepository implements DocumentRepositoryInterface
 
     public function getByApplicationId($applicationId)
     {
-        return Document::where('application_id', $applicationId)->get();
+        return Document::where('application_id', $applicationId)
+            ->select('id', 'application_id', 'type', 'file_path', 'verification_status', 'uploaded_at')
+            ->get();
     }
 
     public function update($id, array $data)
@@ -23,5 +25,11 @@ class DocumentRepository implements DocumentRepositoryInterface
         $document = Document::findOrFail($id);
         $document->update($data);
         return $document;
+    }
+
+    public function delete($id)
+    {
+        $document = Document::findOrFail($id);
+        return $document->delete();
     }
 }

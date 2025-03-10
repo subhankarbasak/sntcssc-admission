@@ -15,6 +15,10 @@ use App\Models\CurrentEnrollment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\UpscAttempt;
+// use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 
 class ApplicationController extends Controller
@@ -428,31 +432,52 @@ class ApplicationController extends Controller
 
     public function step4($applicationId)
     {
-        // dd($applicationId);
         $application = Application::findOrFail($applicationId);
         $documents = $this->applicationService->getDocuments($applicationId);
-        // dd($documents);
-
-        return view('applications.step4', compact('application', 'documents'));
+        
+        // Add verification status to view
+        $verificationStatus = $documents->pluck('verification_status', 'type')->toArray();
+        
+        return view('applications.step4', compact('application', 'documents', 'verificationStatus'));
     }
 
     public function storeStep4(ApplicationStep4Request $request, $applicationId)
     {
         try {
-            $files = [
+            $files = array_filter([
                 'photo' => $request->file('photo'),
                 'signature' => $request->file('signature'),
                 'category_cert' => $request->file('category_cert'),
                 'pwbd_cert' => $request->file('pwbd_cert'),
+            ]);
+
+            // Validate file sizes server-side
+            $maxSizes = [
+                'photo' => 2 * 1024 * 1024, // 2MB
+                'signature' => 1 * 1024 * 1024, // 1MB
+                'category_cert' => 5 * 1024 * 1024, // 5MB
+                'pwbd_cert' => 5 * 1024 * 1024 // 5MB
             ];
+
+            foreach ($files as $type => $file) {
+                if ($file->getSize() > $maxSizes[$type]) {
+                    return back()->withInput()->with('toastr', [
+                        'type' => 'error',
+                        'message' => "File size exceeds limit for {$type}"
+                    ]);
+                }
+            }
 
             $this->applicationService->saveStep4($applicationId, $files);
 
             return redirect()->route('application.step5', $applicationId)
                 ->with('toastr', ['type' => 'success', 'message' => 'Documents uploaded successfully!']);
         } catch (\Exception $e) {
-            return back()
-                ->with('toastr', ['type' => 'error', 'message' => 'Failed to upload documents']);
+            \Log::error('Document upload failed: ' . $e->getMessage());
+            return back()->withInput()->with('toastr', [
+                'type' => 'error',
+                'message' => 'Failed to upload documents: ' . $e->getMessage()
+            ]);
         }
     }
 
@@ -530,5 +555,126 @@ class ApplicationController extends Controller
     }
 
     // ./ End Application Status Checking
+
+public function download($applicationId)
+    {
+        try {
+            $application = Application::with([
+                'advertisement',
+                'profile',
+                'payment',
+                'payment.screenshot'
+            ])->findOrFail($applicationId);
+
+            if ($application->student_id !== auth()->id()) {
+                abort(403, 'Unauthorized access to this application');
+            }
+
+            $details = $this->applicationService->getApplicationDetails($applicationId);
+            // $logoPath = public_path('images/logo.png');
+            $logoPath = 'images/logo.png';
+            // dd($logoPath);
+
+            // Prepare image data with fallback
+            $photo = $details['documents']->where('type', 'photo')->first();
+            $signature = $details['documents']->where('type', 'signature')->first();
+
+            $photo_base64 = $this->processImage($photo?->file_path, 150, 150);
+            $signature_base64 = $this->processImage($signature?->file_path, 200, 80);
+            // $photo_base64 = $this->processImage($photo?->file_path, 100, 100); // Reduced from 150x150
+            // $signature_base64 = $this->processImage($signature?->file_path, 150, 60); // Reduced from 200x80
+            $logo_base64 = $this->processImage($logoPath, 200, 200, false);
+
+            $data = [
+                'application' => $application,
+                'details' => $details,
+                'photo_base64' => $photo_base64,
+                'signature_base64' => $signature_base64,
+                'logo_base64' => $logo_base64,
+                'institute_name' => 'Your Institute Name',
+                'institute_address' => '123 Institute Road, City, State, PIN - 123456'
+            ];
+
+            $pdf = PDF::loadView('applications.pdf', $data)
+                ->setPaper('a4', 'portrait')
+                ->setOptions([
+                    'defaultFont' => 'DejaVu Sans',
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => true,
+                    'dpi' => 96 // Optimize for faster rendering
+                ]);
+
+            // return $pdf->download('application_' . $application->application_number . '.pdf');
+            return $pdf->stream();
+        } catch (\Exception $e) {
+            Log::error('PDF generation failed: ' . $e->getMessage());
+            abort(500, 'Unable to generate PDF. Please try again later.');
+        }
+    }
+
+    private function processImage(?string $filePath, int $maxWidth, int $maxHeight, bool $useStorage = true): ?string
+    {
+        try {
+            // Resolve full path based on storage type
+            // $fullPath = $useStorage && $filePath 
+            //     ? Storage::path($filePath) 
+            //     : $filePath;
+
+            $fullPath = storage_path('app/public/' . $filePath);
+
+                // \URL::to(Storage::disk()->url($filePath))
+
+            if (!$fullPath || !file_exists($fullPath)) {
+                Log::warning("Image not found at path: {$fullPath}");
+                return null;
+            }
+
+            $image = @imagecreatefromstring(file_get_contents($fullPath));
+            if ($image === false) {
+                Log::warning("Failed to create image from: {$fullPath}");
+                return null;
+            }
+
+            // Get original dimensions
+            $width = imagesx($image);
+            $height = imagesy($image);
+
+            // Calculate new dimensions maintaining aspect ratio
+            $ratio = min($maxWidth / $width, $maxHeight / $height);
+            $newWidth = max(1, (int)($width * $ratio));  // Ensure minimum 1px
+            $newHeight = max(1, (int)($height * $ratio));
+
+            // Create optimized image
+            $optimized = imagecreatetruecolor($newWidth, $newHeight);
+            
+            // Preserve transparency for PNG
+            imagealphablending($optimized, false);
+            imagesavealpha($optimized, true);
+
+            imagecopyresampled(
+                $optimized, 
+                $image, 
+                0, 0, 0, 0, 
+                $newWidth, 
+                $newHeight, 
+                $width, 
+                $height
+            );
+
+            // Output to buffer
+            ob_start();
+            imagejpeg($optimized, null, 75); // 75% quality
+            $data = ob_get_clean();
+
+            // Clean up
+            imagedestroy($image);
+            imagedestroy($optimized);
+
+            return base64_encode($data);
+        } catch (\Exception $e) {
+            Log::error("Image processing failed for {$filePath}: " . $e->getMessage());
+            return null;
+        }
+    }
 
 }

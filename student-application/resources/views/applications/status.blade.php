@@ -129,8 +129,12 @@
                         </div>
                     @endforeach
 
+
                     <div class="text-end mt-4">
-                        <a href="{{ route('dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+                        <a href="{{ route('application.download', $application->id) }}" 
+                        class="btn btn-success me-2">Download PDF</a>
+                        <a href="{{ route('dashboard') }}" 
+                        class="btn btn-primary">Back to Dashboard</a>
                     </div>
                 </div>
             </div>
