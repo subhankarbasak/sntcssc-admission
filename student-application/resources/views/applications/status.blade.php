@@ -13,49 +13,107 @@
                     <!-- Application Overview -->
                     <div class="mb-4">
                         <h5>Application Details</h5>
-                        <p><strong>Application Number:</strong> {{ $application->application_number }}</p>
-                        <p><strong>Advertisement:</strong> {{ $application->advertisement->title }}</p>
-                        <p><strong>Status:</strong> 
-                            <span class="badge {{ $application->status === 'submitted' ? 'bg-success' : ($application->status === 'draft' ? 'bg-warning' : 'bg-info') }}">
-                                {{ ucfirst($application->status) }}
-                            </span>
-                        </p>
-                        <p><strong>Payment Status:</strong> 
-                            <span class="badge {{ $application->payment_status === 'paid' ? 'bg-success' : ($application->payment_status === 'pending' ? 'bg-warning' : 'bg-danger') }}">
-                                {{ ucfirst($application->payment_status) }}
-                            </span>
-                        </p>
-                        @if($application->applied_at)
-                            <p><strong>Submitted On:</strong> {{ \Carbon\Carbon::parse($application->applied_at)->format('d M Y H:i') }}</p>
-                        @endif
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" style="width: 30%">Application Number</th>
+                                    <td>{{ $application->application_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Advertisement</th>
+                                    <td>{{ $application->advertisement->title }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Status</th>
+                                    <td>
+                                        <span class="badge {{ $application->status === 'submitted' ? 'bg-success' : ($application->status === 'draft' ? 'bg-warning' : 'bg-info') }}">
+                                            {{ ucfirst($application->status) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Payment Status</th>
+                                    <td>
+                                        <span class="badge {{ $application->payment_status === 'paid' ? 'bg-success' : ($application->payment_status === 'pending' ? 'bg-warning' : 'bg-danger') }}">
+                                            {{ ucfirst($application->payment_status) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                @if($application->applied_at)
+                                <tr>
+                                    <th scope="row">Submitted On</th>
+                                    <td>{{ \Carbon\Carbon::parse($application->applied_at)->format('d M Y H:i') }}</td>
+                                </tr>
+                                @endif
+                            </tbody>
+                        </table>
                     </div>
 
                     <!-- Payment Details -->
                     @if($application->payment)
                         <div class="mb-4">
                             <h5>Payment Details</h5>
-                            <p><strong>Amount:</strong> ₹{{ number_format($application->payment->amount, 2) }}</p>
-                            <p><strong>Method:</strong> {{ $application->payment->method }}</p>
-                            <p><strong>Transaction Date:</strong> {{ \Carbon\Carbon::parse($application->payment->transaction_date)->format('d M Y') }}</p>
-                            <p><strong>Transaction ID:</strong> {{ $application->payment->transaction_id }}</p>
-                            @if($application->payment->screenshot)
-                                <p><strong>Screenshot:</strong> 
-                                    <a href="{{ Storage::url($application->payment->screenshot->file_path) }}" target="_blank">View</a>
-                                </p>
-                            @endif
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 30%">Amount</th>
+                                        <td>₹{{ number_format($application->payment->amount, 2) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Method</th>
+                                        <td>{{ $application->payment->method }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Transaction Date</th>
+                                        <td>{{ \Carbon\Carbon::parse($application->payment->transaction_date)->format('d M Y') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Transaction ID</th>
+                                        <td>{{ $application->payment->transaction_id }}</td>
+                                    </tr>
+                                    @if($application->payment->screenshot)
+                                    <tr>
+                                        <th scope="row">Screenshot</th>
+                                        <td>
+                                            <a href="{{ Storage::url($application->payment->screenshot->file_path) }}" target="_blank">View</a>
+                                        </td>
+                                    </tr>
+                                    @endif
+                                </tbody>
+                            </table>
                         </div>
                     @endif
 
                     <!-- Personal Details -->
                     <h5 class="mb-3">Personal Details</h5>
-                    <div class="row">
-                        <div class="col-md-4"><strong>Name:</strong> {{ $details['profile']->first_name }} {{ $details['profile']->last_name }}</div>
-                        <div class="col-md-4"><strong>Gender:</strong> {{ $details['profile']->gender }}</div>
-                        <div class="col-md-4"><strong>DOB:</strong> {{ \Carbon\Carbon::parse($details['profile']->dob)->format('d M Y') }}</div>
-                        <div class="col-md-4"><strong>Category:</strong> {{ $details['profile']->category }}</div>
-                        <div class="col-md-4"><strong>Email:</strong> {{ $details['profile']->email }}</div>
-                        <div class="col-md-4"><strong>Mobile:</strong> {{ $details['profile']->mobile }}</div>
-                    </div>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th scope="row" style="width: 30%">Name</th>
+                                <td>{{ $details['profile']->first_name }} {{ $details['profile']->last_name }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Gender</th>
+                                <td>{{ $details['profile']->gender }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">DOB</th>
+                                <td>{{ \Carbon\Carbon::parse($details['profile']->dob)->format('d M Y') }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Category</th>
+                                <td>{{ $details['profile']->category }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Email</th>
+                                <td>{{ $details['profile']->email }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Mobile</th>
+                                <td>{{ $details['profile']->mobile }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
                     <!-- Addresses -->
                     <h5 class="mb-3 mt-4">Addresses</h5>
@@ -63,7 +121,13 @@
                         <div class="card mb-2">
                             <div class="card-body">
                                 <h6>{{ ucfirst($address->type) }} Address</h6>
-                                <p>{{ $address->address_line1 }}, {{ $address->district }}, {{ $address->state }} - {{ $address->pin_code }}</p>
+                                <table class="table table-bordered mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ $address->address_line1 }}, {{ $address->district }}, {{ $address->state }} - {{ $address->pin_code }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     @endforeach
@@ -74,9 +138,22 @@
                         <div class="card mb-2">
                             <div class="card-body">
                                 <h6>{{ $academic->level }}</h6>
-                                <p>Institute: {{ $academic->institute }}<br>
-                                   Board/University: {{ $academic->board_university }}<br>
-                                   Year: {{ $academic->year_passed }}</p>
+                                <table class="table table-bordered mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row" style="width: 30%">Institute</th>
+                                            <td>{{ $academic->institute }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Board/University</th>
+                                            <td>{{ $academic->board_university }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Year</th>
+                                            <td>{{ $academic->year_passed }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     @endforeach
@@ -84,14 +161,28 @@
                     <!-- Employment History -->
                     <h5 class="mb-3 mt-4">Employment History</h5>
                     @if($details['employment'])
-                        <p>
-                            Employed: {{ $details['employment']->is_employed ? 'Yes' : 'No' }}<br>
-                            @if($details['employment']->is_employed)
-                                Designation: {{ $details['employment']->designation }}<br>
-                                Employer: {{ $details['employment']->employer }}<br>
-                                Location: {{ $details['employment']->location }}
-                            @endif
-                        </p>
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" style="width: 30%">Employed</th>
+                                    <td>{{ $details['employment']->is_employed ? 'Yes' : 'No' }}</td>
+                                </tr>
+                                @if($details['employment']->is_employed)
+                                <tr>
+                                    <th scope="row">Designation</th>
+                                    <td>{{ $details['employment']->designation }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Employer</th>
+                                    <td>{{ $details['employment']->employer }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Location</th>
+                                    <td>{{ $details['employment']->location }}</td>
+                                </tr>
+                                @endif
+                            </tbody>
+                        </table>
                     @else
                         <p>No employment details provided.</p>
                     @endif
@@ -99,8 +190,18 @@
                     <!-- Current Enrollment -->
                     <h5 class="mb-3 mt-4">Current Enrollment</h5>
                     @if($details['enrollment'] && ($details['enrollment']->course_name || $details['enrollment']->institute))
-                        <p>Course: {{ $details['enrollment']->course_name }}<br>
-                           Institute: {{ $details['enrollment']->institute }}</p>
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" style="width: 30%">Course</th>
+                                    <td>{{ $details['enrollment']->course_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Institute</th>
+                                    <td>{{ $details['enrollment']->institute }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     @else
                         <p>No current enrollment details provided.</p>
                     @endif
@@ -110,10 +211,26 @@
                     @forelse($details['upsc_attempts'] as $attempt)
                         <div class="card mb-2">
                             <div class="card-body">
-                                <p>Year: {{ $attempt->exam_year }}<br>
-                                   Roll Number: {{ $attempt->roll_number }}<br>
-                                   Prelims Cleared: {{ $attempt->prelims_cleared ? 'Yes' : 'No' }}<br>
-                                   Mains Cleared: {{ $attempt->mains_cleared ? 'Yes' : 'No' }}</p>
+                                <table class="table table-bordered mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row" style="width: 30%">Year</th>
+                                            <td>{{ $attempt->exam_year }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Roll Number</th>
+                                            <td>{{ $attempt->roll_number }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Prelims Cleared</th>
+                                            <td>{{ $attempt->prelims_cleared ? 'Yes' : 'No' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Mains Cleared</th>
+                                            <td>{{ $attempt->mains_cleared ? 'Yes' : 'No' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     @empty
@@ -122,13 +239,18 @@
 
                     <!-- Documents -->
                     <h5 class="mb-3 mt-4">Documents</h5>
-                    @foreach($details['documents'] as $document)
-                        <div class="mb-2">
-                            <strong>{{ ucfirst(str_replace('_', ' ', $document->type)) }}:</strong>
-                            <a href="{{ Storage::url($document->file_path) }}" target="_blank">View</a>
-                        </div>
-                    @endforeach
-
+                    <table class="table table-bordered">
+                        <tbody>
+                            @foreach($details['documents'] as $document)
+                            <tr>
+                                <th scope="row" style="width: 30%">{{ ucfirst(str_replace('_', ' ', $document->type)) }}</th>
+                                <td>
+                                    <a href="{{ Storage::url($document->file_path) }}" target="_blank">View</a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
 
                     <div class="text-end mt-4">
                         <a href="{{ route('application.download', $application->id) }}" 

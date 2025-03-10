@@ -33,6 +33,11 @@ Route::middleware([\App\Http\Middleware\RedirectIfAuthenticated::class])->group(
 });
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+// Password Reset Routes
+Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 Route::middleware('auth')->group(function () {
     Route::get('/application/{advertisement}/create', [ApplicationController::class, 'create'])->name('application.create');

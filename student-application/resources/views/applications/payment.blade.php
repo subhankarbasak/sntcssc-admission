@@ -1,79 +1,162 @@
-<!-- resources/views/applications/payment.blade.php -->
-@extends('layouts.app')
+@extends('layouts.form')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Payment Details</h4>
-                </div>
-                <div class="card-body">
-                    @if($payment)
-                        <div class="alert alert-info">
-                            Payment already submitted. Status: {{ ucfirst($payment->status) }}
-                            @if($payment->screenshot)
-                                <br>Screenshot: <a href="{{ Storage::url($payment->screenshot->file_path) }}" target="_blank">View</a>
-                            @endif
-                        </div>
-                    @else
-                        <form method="POST" action="{{ route('application.store.payment', $application->id) }}" enctype="multipart/form-data">
-                            @csrf
-
-                            <div class="mb-3">
-                                <label for="amount" class="form-label">Amount (₹) <span class="text-danger">*</span></label>
-                                <input type="number" name="amount" class="form-control" id="amount" 
-                                       value="{{ $fee }}" readonly required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="method" class="form-label">Payment Method <span class="text-danger">*</span></label>
-                                <select name="method" class="form-control" id="method" required>
-                                    <option value="UPI">UPI</option>
-                                    <option value="Bank Transfer">Bank Transfer</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="transaction_date" class="form-label">Transaction Date <span class="text-danger">*</span></label>
-                                <input type="date" name="transaction_date" class="form-control" id="transaction_date" 
-                                       max="{{ date('Y-m-d') }}" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="transaction_id" class="form-label">Transaction ID <span class="text-danger">*</span></label>
-                                <input type="text" name="transaction_id" class="form-control" id="transaction_id" required>
-                                @error('transaction_id') <span class="text-danger">{{ $message }}</span> @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="screenshot" class="form-label">Payment Screenshot (Optional)</label>
-                                <input type="file" name="screenshot" class="form-control" id="screenshot" accept=".jpg,.png,.pdf">
-                                @error('screenshot') <span class="text-danger">{{ $message }}</span> @enderror
-                            </div>
-
-                            <div class="text-end">
-                                <button type="submit" class="btn btn-primary">Submit Payment</button>
-                            </div>
-                        </form>
-                    @endif
-                </div>
+    <h4 class="mb-4"><i class="bi bi-wallet2 me-2"></i>Step 6: Payment Details</h4>
+    <div class="card-body p-0">
+        @if($payment)
+            <div class="alert alert-info shadow-sm">
+                Payment already submitted. Status: <strong>{{ ucfirst($payment->status) }}</strong>
+                @if($payment->screenshot)
+                    <br>Screenshot: <a href="{{ Storage::url($payment->screenshot->file_path) }}" target="_blank" class="text-primary">
+                        <i class="bi bi-eye me-1"></i>View
+                    </a>
+                @endif
             </div>
+        @else
+            <form method="POST" action="{{ route('application.store.payment', $application->id) }}" enctype="multipart/form-data" id="paymentForm" class="needs-validation" novalidate>
+                @csrf
+
+                <div class="mb-3">
+                    <label for="amount" class="form-label fw-medium required">Amount (₹)</label>
+                    <input type="number" name="amount" class="form-control" id="amount" 
+                           value="{{ $fee }}" readonly required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="method" class="form-label fw-medium required">Payment Method</label>
+                    <select name="method" class="form-control" id="method" required>
+                        <option value="" disabled selected>Select Payment Method</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a payment method.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="transaction_date" class="form-label fw-medium required">Transaction Date</label>
+                    <input type="date" name="transaction_date" class="form-control" id="transaction_date" 
+                           max="{{ date('Y-m-d') }}" required>
+                    <div class="invalid-feedback">Please select a valid transaction date.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="transaction_id" class="form-label fw-medium required">Transaction ID</label>
+                    <input type="text" name="transaction_id" class="form-control" id="transaction_id" required>
+                    @error('transaction_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                    <div class="invalid-feedback">Please enter a transaction ID.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="screenshot" class="form-label fw-medium">Payment Screenshot <span class="text-muted fw-normal">(Optional)</span></label>
+                    <input type="file" name="screenshot" class="form-control" id="screenshot" accept=".jpg,.png,.pdf">
+                    @error('screenshot') <span class="text-danger small">{{ $message }}</span> @enderror
+                    <small class="text-muted">Max 5MB (JPG/PNG/PDF)</small>
+                    <div class="preview-area mt-2" id="screenshot-preview"></div>
+                </div>
+            </form>
+        @endif
+    </div>
+@endsection
+
+@section('footer')
+    <div class="form-footer">
+        <div class="d-flex justify-content-between flex-wrap gap-2">
+            <a href="{{ route('application.step5', $application->id) }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Previous
+            </a>
+            @if(!$payment)
+                <div>
+                    <button type="submit" form="paymentForm" class="btn btn-primary shadow-sm">
+                        Submit Payment <i class="bi bi-check2 ms-2"></i>
+                    </button>
+                </div>
+            @endif
         </div>
     </div>
-</div>
+@endsection
+
+@push('styles')
+<style>
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    .preview-area img {
+        max-height: 120px;
+        width: auto;
+        border-radius: 0.5rem;
+    }
+    .preview-area .pdf-preview {
+        padding: 0.5rem;
+        background-color: #f8fafc;
+        border-radius: 0.5rem;
+        color: #6b7280;
+    }
+</style>
+@endpush
 
 @push('scripts')
-    <script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
     toastr.options = {
-        "positionClass": "toast-top-right",
-        "progressBar": true
+        positionClass: "toast-top-right",
+        progressBar: true,
+        timeOut: 5000,
+        closeButton: true,
+        preventDuplicates: true
     };
 
     @if(session('toastr'))
         toastr[{{ session('toastr.type') }}]('{{ session('toastr.message') }}');
     @endif
-    </script>
+
+    const form = document.getElementById('paymentForm');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                toastr.error('Please fill in all required fields correctly.');
+            } else {
+                toastr.success('Payment details submitted successfully!');
+            }
+            form.classList.add('was-validated');
+        });
+
+        const screenshotInput = document.getElementById('screenshot');
+        const previewArea = document.getElementById('screenshot-preview');
+        screenshotInput.addEventListener('change', function() {
+            const file = this.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (file && file.size > maxSize) {
+                toastr.error('File size exceeds limit (5MB)');
+                this.value = '';
+                previewArea.innerHTML = '';
+                return;
+            }
+
+            previewArea.innerHTML = '';
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = file.type.includes('image') ?
+                        `<img src="${e.target.result}" class="img-fluid rounded" alt="Payment Screenshot">` :
+                        `<div class="pdf-preview"><i class="bi bi-file-earmark-pdf text-danger me-2"></i>PDF Selected</div>`;
+                    previewArea.innerHTML = `
+                        ${content}
+                        <a href="${e.target.result}" target="_blank" class="text-primary small mt-2 d-block">
+                            <i class="bi bi-eye me-1"></i> Preview
+                        </a>`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
 @endpush
-@endsection
+
+@php
+    $step = 6;
+@endphp

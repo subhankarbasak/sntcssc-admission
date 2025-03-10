@@ -84,18 +84,6 @@
         transform: translateY(-2px);
     }
 
-    .btn-outline-primary {
-        border-color: var(--accent);
-        color: var(--accent);
-        padding: 12px 24px;
-        border-radius: 6px;
-    }
-
-    .btn-outline-primary:hover {
-        background: var(--accent);
-        color: white;
-    }
-
     .footer-links a {
         color: var(--accent);
         text-decoration: none;
@@ -106,16 +94,6 @@
         text-decoration: underline;
         color: var(--primary);
     }
-
-    .toggle-link {
-        color: var(--accent);
-        cursor: pointer;
-        text-decoration: underline;
-    }
-
-    .toggle-link:hover {
-        color: var(--primary);
-    }
 </style>
 @endpush
 
@@ -123,28 +101,29 @@
 <div class="container">
     <div class="card">
         <div class="card-header">
-            <h2 class="mb-0">Login</h2>
-            <small class="text-light">Access your account</small>
+            <h2 class="mb-0">Reset Password</h2>
+            <small class="text-light">Enter your new password</small>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('login') }}" id="loginForm" class="needs-validation" novalidate>
+            <form method="POST" action="{{ route('password.update') }}" id="resetPasswordForm" class="needs-validation" novalidate>
                 @csrf
-                <input type="hidden" name="login_method" id="loginMethod" value="password">
+                <input type="hidden" name="token" value="{{ $token }}">
+
                 <div class="form-section">
                     <div class="mb-3">
                         <div class="form-floating">
                             <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" 
-                                   id="email" value="{{ old('email') }}" required placeholder="Enter your email">
+                                   id="email" value="{{ $email ?? old('email') }}" required placeholder="Enter your email">
                             <label for="email">Email Address</label>
                             @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>
 
-                    <div class="mb-3" id="passwordSection">
+                    <div class="mb-3">
                         <div class="form-floating position-relative">
                             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" 
-                                   id="password" placeholder="Enter your password">
-                            <label for="password">Password</label>
+                                   id="password" required placeholder="Enter new password">
+                            <label for="password">New Password</label>
                             <button type="button" class="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2" 
                                     onclick="togglePassword('password')">
                                 <i class="bi bi-eye"></i>
@@ -153,24 +132,22 @@
                         </div>
                     </div>
 
-                    <div class="mb-3" id="dobSection" style="display: none;">
-                        <div class="form-floating">
-                            <input type="date" name="dob" class="form-control @error('dob') is-invalid @enderror" 
-                                   id="dob" placeholder="Select your date of birth">
-                            <label for="dob">Date of Birth</label>
-                            @error('dob') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    <div class="mb-3">
+                        <div class="form-floating position-relative">
+                            <input type="password" name="password_confirmation" class="form-control" 
+                                   id="password_confirmation" required placeholder="Confirm new password">
+                            <label for="password_confirmation">Confirm Password</label>
+                            <button type="button" class="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2" 
+                                    onclick="togglePassword('password_confirmation')">
+                                <i class="bi bi-eye"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="mb-3 d-flex justify-content-between">
-                        <a href="{{ route('password.request') }}" class="footer-links">Forgot Password?</a>
-                        <span class="toggle-link" id="toggleLoginMethod">Login with DOB</span>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <button type="submit" class="btn btn-primary w-100">Reset Password</button>
 
                     <div class="text-center mt-3 footer-links">
-                        <small>Don't have an account? <a href="{{ route('register') }}">Register</a></small>
+                        <small><a href="{{ route('login') }}">Back to Login</a></small>
                     </div>
                 </div>
             </form>
@@ -194,40 +171,10 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('loginForm');
-        const toggleLink = document.getElementById('toggleLoginMethod');
-        const passwordSection = document.getElementById('passwordSection');
-        const dobSection = document.getElementById('dobSection');
-        const passwordInput = document.getElementById('password');
-        const dobInput = document.getElementById('dob');
-        const loginMethod = document.getElementById('loginMethod');
-
-        // Toggle login method
-        toggleLink.addEventListener('click', () => {
-            if (passwordSection.style.display === 'none') {
-                passwordSection.style.display = 'block';
-                dobSection.style.display = 'none';
-                passwordInput.required = true;
-                dobInput.required = false;
-                loginMethod.value = 'password';
-                toggleLink.textContent = 'Login with DOB';
-            } else {
-                passwordSection.style.display = 'none';
-                dobSection.style.display = 'block';
-                passwordInput.required = false;
-                dobInput.required = true;
-                loginMethod.value = 'dob';
-                toggleLink.textContent = 'Login with Password';
-            }
-            form.classList.remove('was-validated'); // Reset validation state
-        });
-
         // Form validation
+        const form = document.getElementById('resetPasswordForm');
         form.addEventListener('submit', event => {
-            const isDobLogin = loginMethod.value === 'dob';
-            const requiredField = isDobLogin ? dobInput : passwordInput;
-            
-            if (!form.checkValidity() || !requiredField.value) {
+            if (!form.checkValidity()) {
                 event.preventDefault();
                 event.stopPropagation();
                 toastr.error('Please fill all required fields correctly.');

@@ -25,6 +25,7 @@ class RegisterRequest extends FormRequest
             'addresses.*.state' => 'required|string',
             'addresses.*.district' => 'required|string',
             'addresses.*.address_line1' => 'required|string',
+            'addresses.*.post_office' => 'required|string',
             'addresses.*.pin_code' => 'required|digits:6',
             'academic_qualifications' => 'required|array|min:2',
             'academic_qualifications.*.level' => 'required|in:Secondary,Higher Secondary,Graduation,Post Graduation,Other',
