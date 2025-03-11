@@ -38,7 +38,7 @@ class ApplicationStep3Request extends FormRequest
             
             'enrollment' => 'nullable|array',
             'enrollment.course_name' => 'nullable|string|max:255',
-            'enrollment.institute' => 'required_with:enrollment.course_name|string|max:255',
+            'enrollment.institute' => 'nullable|string|max:255',
             
             'upsc_attempts' => 'nullable|array',
             'upsc_attempts.*.id' => 'nullable|exists:upsc_attempts,id',

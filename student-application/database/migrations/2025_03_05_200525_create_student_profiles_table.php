@@ -33,6 +33,7 @@ return new class extends Migration
             $table->decimal('family_income', 10, 2)->nullable();
             $table->string('school_language')->nullable();
             $table->string('secondary_roll')->nullable();
+            $table->string('highest_qualification')->nullable();
             $table->string('upsc_community')->nullable()->comment('UR, SC, ST, OBC');
             $table->json('activities')->nullable();
             $table->json('hobbies')->nullable();

@@ -13,7 +13,7 @@
                 @endif
             </div>
         @else
-            <form method="POST" action="{{ route('application.store.payment', $application->id) }}" enctype="multipart/form-data" id="paymentForm" class="needs-validation" novalidate>
+            <form method="POST" action="{{ route('application.store.payment', $application) }}" enctype="multipart/form-data" id="paymentForm" class="needs-validation" novalidate>
                 @csrf
 
                 <div class="mb-3">
@@ -61,9 +61,14 @@
 @section('footer')
     <div class="form-footer">
         <div class="d-flex justify-content-between flex-wrap gap-2">
-            <a href="{{ route('application.step5', $application->id) }}" class="btn btn-outline-secondary">
+            <a href="{{ route('application.step5', $application) }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Previous
             </a>
+            <div>
+                <a href="{{ route('application.status', $application) }}" class="btn btn-primary shadow-sm position-relative overflow-hidden">
+                    <span class="position-relative z-1">Go to Dashboard <i class="bi bi-arrow-right ms-2"></i></span>
+                </a>
+            </div>
             @if(!$payment)
                 <div>
                     <button type="submit" form="paymentForm" class="btn btn-primary shadow-sm">
@@ -158,5 +163,6 @@ document.addEventListener('DOMContentLoaded', function() {
 @endpush
 
 @php
-    $step = 6;
+    $step = 5;
+    $percentage = 100;
 @endphp

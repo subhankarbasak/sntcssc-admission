@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('mobile')->unique();
             $table->string('password');
+            $table->string('highest_qualification')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

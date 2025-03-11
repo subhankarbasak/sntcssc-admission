@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('batch_id')->constrained();
             $table->string('title');
             $table->string('code')->unique();
+            $table->string('slug')->unique()->nullable();
             $table->dateTime('application_start');
             $table->dateTime('application_end');
             $table->enum('status', ['draft', 'published', 'closed'])->default('draft');

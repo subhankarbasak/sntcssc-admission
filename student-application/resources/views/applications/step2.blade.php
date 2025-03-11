@@ -2,7 +2,7 @@
 
 @section('content')
     <h4 class="mb-4"><i class="bi bi-telephone me-2"></i>Application Step 2: Address & Academic Details</h4>
-    <form method="POST" action="{{ route('application.store.step2', $application->id) }}" id="step2Form" class="needs-validation" novalidate>
+    <form method="POST" action="{{ route('application.store.step2', $application) }}" id="step2Form" class="needs-validation" novalidate>
         @csrf
 
         <!-- Addresses -->
@@ -121,7 +121,7 @@
                                 <td>
                                     <input type="number" name="academic_qualifications[{{$index}}][year_passed]" 
                                            class="form-control" value="{{ old("academic_qualifications.$index.year_passed", $academic->year_passed) }}" 
-                                           placeholder="Year Passed" required min="1900" max="{{ date('Y') }}">
+                                           placeholder="Year Passed" min="1900" max="{{ date('Y') }}">
                                     <div class="invalid-feedback">Please enter a valid year.</div>
                                 </td>
                             </tr>
@@ -140,7 +140,7 @@
 @section('footer')
     <div class="form-footer">
         <div class="d-flex justify-content-between flex-wrap gap-2">
-            <a href="{{ route('application.create', $application->advertisement_id) }}" class="btn btn-outline-secondary">Previous</a>
+            <a href="{{ route('application.create', $advertisement) }}" class="btn btn-outline-secondary">Previous</a>
             <div>
                 <button type="button" class="btn btn-outline-info me-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#previewModal">
                     <i class="bi bi-eye"></i> Preview
@@ -426,18 +426,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Toastr configuration
     toastr.options = {
-        "positionClass": "toast-top-right",
-        "progressBar": true
+        positionClass: 'toast-top-right',
+        progressBar: true,
+        timeOut: 5000,
+        closeButton: true
     };
 
     @if(session('toastr'))
-        toastr[{{ session('toastr.type') }}]('{{ session('toastr.message') }}');
+        toastr['{{ session('toastr.type') }}']('{{ session('toastr.message') }}', 'Notification');
     @endif
 });
 </script>
 @endpush
 
 @php
-    $step = 2;
+    $step = 1;
+    $percentage = 20;
 @endphp

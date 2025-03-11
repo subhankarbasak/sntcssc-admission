@@ -31,7 +31,7 @@ class RegisterRequest extends FormRequest
             'academic_qualifications.*.level' => 'required|in:Secondary,Higher Secondary,Graduation,Post Graduation,Other',
             'academic_qualifications.*.institute' => 'required|string',
             'academic_qualifications.*.board_university' => 'required|string',
-            'academic_qualifications.*.year_passed' => 'required|digits:4|before_or_equal:' . date('Y'),
+            'academic_qualifications.*.year_passed' => 'nullable|digits:4|before_or_equal:' . date('Y'),
         ];
     }
 }

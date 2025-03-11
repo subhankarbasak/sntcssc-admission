@@ -44,7 +44,7 @@
                                             <strong>Ends:</strong> {{ $advertisement->application_end->format('d M Y') }}
                                         </p>
                                         <div class="mt-3">
-                                            <a href="{{ route('application.create', $advertisement->id) }}" 
+                                            <a href="{{ route('application.create', $advertisement) }}" 
                                                class="btn btn-primary w-100">Apply Now</a>
                                         </div>
                                     </div>
@@ -99,7 +99,7 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex gap-2">
-                                                    <a href="{{ route('application.status', $application->id) }}" 
+                                                    <a href="{{ route('application.status', $application) }}" 
                                                        class="btn btn-sm btn-info">View</a>
                                                 </div>
                                             </td>
@@ -115,7 +115,7 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="row">
+    <div class="row d-none">
         <div class="col-md-12">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">

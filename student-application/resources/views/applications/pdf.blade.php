@@ -34,7 +34,7 @@
             border-bottom: 2px solid #003087; 
         }
         .header img { 
-            max-height: 20mm; 
+            max-height: 23mm; 
             margin-right: 10px; 
             vertical-align: middle; 
         }
@@ -44,7 +44,14 @@
         }
         .header .institute h1 { 
             margin: 0; 
-            font-size: 12pt; 
+            font-size: 11pt; 
+            color: #003087; 
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .header .institute h3 { 
+            margin: 0; 
+            font-size: 11pt; 
             color: #003087; 
             font-weight: bold; 
         }
@@ -159,6 +166,7 @@
         @endif
         <div class="institute">
             <h1>{{ $institute_name }}</h1>
+            <h3>{{ $institute_type }}</h3>
             <p>{{ $institute_address }}</p>
         </div>
     </div>
@@ -180,7 +188,7 @@
                     <td><span class="status-badge {{ $application->status === 'submitted' ? 'success' : ($application->status === 'draft' ? 'warning' : 'info') }}">{{ ucfirst($application->status) }}</span></td>
                 </tr>
                 <tr>
-                    <th>Advertisement</th>
+                    <th>Course Applied For</th>
                     <td>{{ $application->advertisement->title }}</td>
                     <th>Payment Status</th>
                     <td><span class="status-badge {{ $application->payment_status === 'paid' ? 'success' : ($application->payment_status === 'pending' ? 'warning' : 'info') }}">{{ ucfirst($application->payment_status) }}</span></td>
@@ -188,7 +196,7 @@
                 @if($application->applied_at)
                 <tr>
                     <th>Submitted On</th>
-                    <td colspan="3">{{ \Carbon\Carbon::parse($application->applied_at)->format('d M Y H:i') }}</td>
+                    <td colspan="3">{{ \Carbon\Carbon::parse($application->applied_at)->format('d/m/Y h:i A') }}</td>
                 </tr>
                 @endif
             </table>
@@ -210,7 +218,7 @@
                             </tr>
                             <tr>
                                 <th>Date of Birth</th>
-                                <td>{{ \Carbon\Carbon::parse($details['profile']->dob)->format('d M Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($details['profile']->dob)->format('d/m/Y') }}</td>
                                 <th>Category</th>
                                 <td>{{ $details['profile']->category }}</td>
                             </tr>
@@ -220,6 +228,34 @@
                                 <th>Mobile</th>
                                 <td>{{ $details['profile']->mobile }}</td>
                             </tr>
+                            <tr>
+                                <th>Whatsapp No.</th>
+                                <td>{{ $details['profile']->whatsapp }}</td>
+                                <th>PwBD status</th>
+                                <td>{{ $details['profile']->is_pwbd ? 'Yes' : 'No' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Occupation</th>
+                                <td>{{ $details['profile']->occupation }}</td>
+                                <th>Father's Name</th>
+                                <td>{{ $details['profile']->father_name ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Father's Occupation</th>
+                                <td>{{ $details['profile']->father_occupation }}</td>
+                                <th>Mother's Name</th>
+                                <td>{{ $details['profile']->mother_name ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Mother's Occupation</th>
+                                <td>{{ $details['profile']->mother_occupation }}</td>
+                                <th>Annual Family Income</th>
+                                <td>{{ $details['profile']->family_income ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <th>School's Medium</th>
+                                <td>{{ $details['profile']->school_language }}</td>
+                            </tr>
                         </table>
                     </td>
 
@@ -228,11 +264,15 @@
                         <div class="photo-signature-box" data-label="Photograph">
                             @if($photo_base64)
                                 <img src="data:image/jpeg;base64,{{ $photo_base64 }}" alt="Applicant Photo">
+                            @else
+                                <p>No photo available</p>
                             @endif
                         </div>
                         <div class="photo-signature-box signature-box" data-label="Signature">
                             @if($signature_base64)
                                 <img src="data:image/jpeg;base64,{{ $signature_base64 }}" alt="Applicant Signature">
+                            @else
+                                <p>No signature available</p>
                             @endif
                         </div>
                     </td>
@@ -393,26 +433,6 @@
                 @endforeach
             </table>
         </div>
-
-        <!-- Photograph and Signature -->
-        <div class="section">
-            <div class="section-title">Photograph and Signature</div>
-            <div class="image-container">
-                @if($photo_base64)
-                    <img src="data:image/jpeg;base64,{{ $photo_base64 }}" alt="Photo">
-                @else
-                    <p>No photo available</p>
-                @endif
-            </div>
-            <div class="image-container">
-                @if($signature_base64)
-                    <img src="data:image/jpeg;base64,{{ $signature_base64 }}" alt="Signature">
-                @else
-                    <p>No signature available</p>
-                @endif
-            </div>
-        </div>
-        <!-- ... -->
         
     </div>
 </body>

@@ -163,7 +163,7 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .progress-bar {
-            height: 8px;
+            height: 25px;
             background: #e9ecef;
             border-radius: 4px 4px 0 0;
             overflow: hidden;
@@ -257,7 +257,7 @@
     <!--  -->
             <div class="form-container">
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: {{ ($step/6)*100 }}%"></div>
+                    <div class="progress-fill" style="color: #fff; width: {{ ($step/5)*100 }}%"> {{ $percentage }}%</div>
                 </div>
                 <div class="step-header">
                     <div class="row row-cols-1 row-cols-md-3 g-3">
@@ -265,10 +265,9 @@
                             $steps = [
                                 ['icon' => 'bi-person', 'title' => 'Personal Details'],
                                 ['icon' => 'bi-telephone', 'title' => 'Communication'],
-                                ['icon' => 'bi-briefcase', 'title' => 'Professional'],
-                                ['icon' => 'bi-shield', 'title' => 'Security'],
-                                ['icon' => 'bi-file-text', 'title' => 'Documents'],
-                                ['icon' => 'bi-check-circle', 'title' => 'Review']
+                                ['icon' => 'bi-briefcase', 'title' => 'Others Detail'],
+                                ['icon' => 'bi-shield', 'title' => 'Documents Uploads'],
+                                ['icon' => 'bi-file-text', 'title' => 'Review']
                             ];
                         @endphp
                         @foreach($steps as $index => $stepInfo)

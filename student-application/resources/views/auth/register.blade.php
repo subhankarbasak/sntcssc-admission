@@ -145,6 +145,51 @@
         vertical-align: middle;
     }
 </style>
+<!--  -->
+<style>
+    .preview-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .preview-table th,
+    .preview-table td {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .preview-table th {
+        background-color: #f5f5f5;
+        color: #333;
+        font-weight: 600;
+        width: 25%;
+    }
+
+    .preview-table td {
+        color: #444;
+    }
+
+    .section-title {
+        background-color: #e9ecef;
+        padding: 8px 15px;
+        margin: 15px 0 5px 0;
+        font-size: 1rem;
+        font-weight: 500;
+        border-left: 4px solid #007bff;
+    }
+
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .modal-content {
+        border-radius: 5px;
+    }
+</style>
 @endpush
 
 @section('content')
@@ -366,8 +411,8 @@
                     <h5 class="section-title"><i class="bi bi-book-fill"></i>Academic Qualifications</h5>
                     <div id="academic-container">
                         <!-- Secondary -->
-                        <div class="mb-3 academic-entry">
-                            <div class="row g-3">
+                        <div class="mb-3 academic-entry" data-required="true">
+                            <div class="row g-3 align-items-center">
                                 <div class="col-md-3">
                                     <div class="form-floating">
                                         <select name="academic_qualifications[0][level]" class="form-select" required>
@@ -388,17 +433,22 @@
                                         <label>Board/University</label>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-floating">
                                         <input name="academic_qualifications[0][year_passed]" class="form-control" value="{{ old('academic_qualifications.0.year_passed') }}" required pattern="[0-9]{4}" placeholder="Enter Year">
                                         <label>Year Passed</label>
                                     </div>
                                 </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-danger btn-sm remove-academic" disabled title="Secondary qualification is required">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <!-- Higher Secondary -->
                         <div class="mb-3 academic-entry">
-                            <div class="row g-3">
+                            <div class="row g-3 align-items-center">
                                 <div class="col-md-3">
                                     <div class="form-floating">
                                         <select name="academic_qualifications[1][level]" class="form-select" required>
@@ -419,17 +469,22 @@
                                         <label>Board/University</label>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-floating">
                                         <input name="academic_qualifications[1][year_passed]" class="form-control" value="{{ old('academic_qualifications.1.year_passed') }}" required pattern="[0-9]{4}" placeholder="Enter Year">
                                         <label>Year Passed</label>
                                     </div>
                                 </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-danger btn-sm remove-academic" onclick="removeAcademic(this)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <!-- Graduation -->
                         <div class="mb-3 academic-entry">
-                            <div class="row g-3">
+                            <div class="row g-3 align-items-center">
                                 <div class="col-md-3">
                                     <div class="form-floating">
                                         <select name="academic_qualifications[2][level]" class="form-select">
@@ -450,11 +505,16 @@
                                         <label>Board/University</label>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-floating">
                                         <input name="academic_qualifications[2][year_passed]" class="form-control" value="{{ old('academic_qualifications.2.year_passed') }}" pattern="[0-9]{4}" placeholder="Enter Year">
                                         <label>Year Passed</label>
                                     </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-danger btn-sm remove-academic" onclick="removeAcademic(this)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -464,10 +524,7 @@
 
                 <!-- Buttons -->
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#previewModal">
-                        <i class="bi bi-eye me-1"></i>Preview
-                    </button>
-                    <button type="submit" class="btn btn-primary">Create Account</button>
+                    <button type="button" class="btn btn-primary" id="createAccountBtn">Create Account</button>
                 </div>
                 <div class="text-center mt-3 footer-links">
                     <small>Already have an account? <a href="{{ route('login') }}">Log in</a> | <a href="#">Terms</a> | <a href="#">Privacy</a></small>
@@ -479,73 +536,24 @@
 
 <!-- Preview Modal -->
 <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="previewModalLabel"><i class="bi bi-eye me-2"></i>Registration Preview</h5>
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="previewModalLabel">Registration Preview</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="table-section">
-                    <h6><i class="bi bi-person-circle"></i>Personal Information</h6>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Field</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody id="personalPreview"></tbody>
-                    </table>
-                </div>
-                <div class="table-section">
-                    <h6><i class="bi bi-telephone-fill"></i>Contact Information</h6>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Field</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody id="contactPreview"></tbody>
-                    </table>
-                </div>
-                <div class="table-section">
-                    <h6><i class="bi bi-geo-alt-fill"></i>Address Details</h6>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Field</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody id="addressPreview"></tbody>
-                    </table>
-                </div>
-                <div class="table-section">
-                    <h6><i class="bi bi-book-fill"></i>Academic Qualifications</h6>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Level</th>
-                                <th>Institute</th>
-                                <th>Board/University</th>
-                                <th>Year Passed</th>
-                            </tr>
-                        </thead>
-                        <tbody id="academicPreview"></tbody>
-                    </table>
-                </div>
-                <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" id="termsAgreement" required>
-                    <label class="form-check-label" for="termsAgreement">
-                        I agree to the <a href="#" class="text-accent">Terms</a> and <a href="#" class="text-accent">Privacy Policy</a>
-                    </label>
-                </div>
+            <div class="modal-body p-3" id="previewContent">
+                <!-- Preview content will be dynamically added here -->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Edit</button>
-                <button type="button" class="btn btn-primary" id="submitFromModal" disabled>Create Account</button>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="declarationCheck" required>
+                    <label class="form-check-label" for="declarationCheck">
+                        I confirm all provided information is accurate
+                    </label>
+                </div>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmCreateBtn" disabled>Confirm & Proceed</button>
             </div>
         </div>
     </div>
@@ -915,7 +923,7 @@
         const index = container.children.length;
         const html = `
             <div class="mb-3 academic-entry">
-                <div class="row g-3">
+                <div class="row g-3 align-items-center">
                     <div class="col-md-3">
                         <div class="form-floating">
                             <select name="academic_qualifications[${index}][level]" class="form-select" required>
@@ -938,16 +946,37 @@
                             <label>Board/University</label>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-floating">
                             <input name="academic_qualifications[${index}][year_passed]" class="form-control" required pattern="[0-9]{4}" placeholder="Enter Year">
                             <label>Year Passed</label>
                         </div>
                     </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-danger btn-sm remove-academic" onclick="removeAcademic(this)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function removeAcademic(button) {
+        const entry = button.closest('.academic-entry');
+        if (!entry.dataset.required) {
+            entry.remove();
+            // Re-index remaining entries
+            const container = document.getElementById('academic-container');
+            Array.from(container.children).forEach((entry, index) => {
+                const inputs = entry.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    const name = input.name.replace(/academic_qualifications\[\d+\]/, `academic_qualifications[${index}]`);
+                    input.name = name;
+                });
+            });
+        }
     }
 
     function updateDistricts(stateSelect, districtSelectId) {
@@ -963,6 +992,151 @@
             });
         }
     }
+</script>
+<script>
+    // ... existing functions ...
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registrationForm');
+        const createBtn = document.getElementById('createAccountBtn');
+        const confirmBtn = document.getElementById('confirmCreateBtn');
+        const declarationCheck = document.getElementById('declarationCheck');
+
+        // Toastr options
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "3000"
+        };
+
+        // Handle Create Account button click
+        createBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Check all required fields
+            const requiredFields = form.querySelectorAll('[required]');
+            let allFilled = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    allFilled = false;
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            if (!allFilled) {
+                toastr.error('Please fill all mandatory fields');
+                return;
+            }
+
+            // If all fields are filled, show preview modal
+            showPreviewModal();
+        });
+
+        // Handle declaration checkbox
+        declarationCheck.addEventListener('change', function() {
+            confirmBtn.disabled = !this.checked;
+        });
+
+        // Handle final submission
+        confirmBtn.addEventListener('click', function() {
+            form.submit();
+        });
+
+
+        function showPreviewModal() {
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = '';
+            
+            const formData = new FormData(form);
+            let previewHTML = '';
+
+            // Personal Information
+            previewHTML += '<div class="section-title">Personal Information</div>';
+            previewHTML += '<table class="preview-table">';
+            previewHTML += createTableRow('Secondary Roll No.', formData.get('secondary_roll'));
+            previewHTML += createTableRow('Full Name', `${formData.get('first_name')} ${formData.get('last_name')}`);
+            previewHTML += createTableRow('Gender', formData.get('gender'));
+            previewHTML += createTableRow('Date of Birth', formData.get('dob'));
+            previewHTML += createTableRow('Category', formData.get('category'));
+            previewHTML += '</table>';
+
+            // Contact Information
+            previewHTML += '<div class="section-title">Contact Information</div>';
+            previewHTML += '<table class="preview-table">';
+            previewHTML += createTableRow('Email Address', formData.get('email'));
+            previewHTML += createTableRow('Mobile Number', formData.get('mobile'));
+            previewHTML += '</table>';
+
+            // Address Information
+            previewHTML += '<div class="section-title">Present Address</div>';
+            previewHTML += '<table class="preview-table">';
+            previewHTML += createTableRow('Address Line', formData.get('addresses[0][address_line1]'));
+            previewHTML += createTableRow('Post Office', formData.get('addresses[0][post_office]'));
+            previewHTML += createTableRow('State', formData.get('addresses[0][state]'));
+            previewHTML += createTableRow('District', formData.get('addresses[0][district]'));
+            previewHTML += createTableRow('Pin Code', formData.get('addresses[0][pin_code]'));
+            previewHTML += '</table>';
+
+            previewHTML += '<div class="section-title">Permanent Address</div>';
+            previewHTML += '<table class="preview-table">';
+            previewHTML += createTableRow('Address Line', formData.get('addresses[1][address_line1]'));
+            previewHTML += createTableRow('Post Office', formData.get('addresses[1][post_office]'));
+            previewHTML += createTableRow('State', formData.get('addresses[1][state]'));
+            previewHTML += createTableRow('District', formData.get('addresses[1][district]'));
+            previewHTML += createTableRow('Pin Code', formData.get('addresses[1][pin_code]'));
+            previewHTML += '</table>';
+
+            // Academic Qualifications
+            // previewHTML += '<div class="section-title">Academic Qualifications</div>';
+            // const academicEntries = document.querySelectorAll('.academic-entry');
+            // academicEntries.forEach((entry, index) => {
+            //     previewHTML += '<table class="preview-table">';
+            //     previewHTML += `<tr><th colspan="2">Qualification ${index + 1}</th></tr>`;
+            //     previewHTML += createTableRow('Level', formData.get(`academic_qualifications[${index}][level]`));
+            //     previewHTML += createTableRow('Institute', formData.get(`academic_qualifications[${index}][institute]`));
+            //     previewHTML += createTableRow('Board/University', formData.get(`academic_qualifications[${index}][board_university]`));
+            //     previewHTML += createTableRow('Year Passed', formData.get(`academic_qualifications[${index}][year_passed]`));
+            //     previewHTML += '</table>';
+            // });
+
+            // Academic Qualifications
+            previewHTML += '<div class="section-title">Academic Qualifications</div>';
+            previewHTML += '<table class="preview-table">';
+            previewHTML += '<tr><th>Level</th><th>Institute</th><th>Board/University</th><th>Year Passed</th></tr>';
+
+            const academicEntries = document.querySelectorAll('.academic-entry');
+            academicEntries.forEach((entry, index) => {
+                previewHTML += '<tr>';
+                previewHTML += `<td>${formData.get(`academic_qualifications[${index}][level]`) || ''}</td>`;
+                previewHTML += `<td>${formData.get(`academic_qualifications[${index}][institute]`) || ''}</td>`;
+                previewHTML += `<td>${formData.get(`academic_qualifications[${index}][board_university]`) || ''}</td>`;
+                previewHTML += `<td>${formData.get(`academic_qualifications[${index}][year_passed]`) || ''}</td>`;
+                previewHTML += '</tr>';
+            });
+
+
+            previewContent.innerHTML = previewHTML;
+
+            const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+            modal.show();
+        }
+
+        function createTableRow(label, value) {
+            if (value) {
+                return `
+                    <tr>
+                        <th scope="row">${label}</th>
+                        <td>${value}</td>
+                    </tr>
+                `;
+            }
+            return '';
+        }
+    });
 </script>
 @endpush
 @endsection

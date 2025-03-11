@@ -33,7 +33,7 @@ class ApplicationStep2Request extends FormRequest
         'academic_qualifications.*.level' => 'required|in:Secondary,Higher Secondary,Graduation,Post Graduation,Other',
         'academic_qualifications.*.institute' => 'required|string|max:255',
         'academic_qualifications.*.board_university' => 'required|string|max:255',
-        'academic_qualifications.*.year_passed' => 'required|integer|min:1900|max:' . date('Y'),
+        'academic_qualifications.*.year_passed' => 'nullable|integer|min:1900|max:' . date('Y'),
         ];
     }
 }

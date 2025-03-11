@@ -30,12 +30,14 @@ class ApplicationController extends Controller
         $this->applicationService = $applicationService;
     }
 
-    public function create($advertisementId)
+    public function create(Advertisement $advertisement)
     {
+        // dd($advertisement->id);
+        $advertisementId = $advertisement->id;
         // Enable query logging
         \DB::enableQueryLog();
 
-        $advertisement = Advertisement::with('programs')->findOrFail($advertisementId);
+        // $advertisement = Advertisement::with('programs')->findOrFail($advertisementId);
         $student = Auth::user();
         // $profile = $student->profiles()->where('is_current', true)->first();
         // 
@@ -66,16 +68,19 @@ class ApplicationController extends Controller
         return view('applications.step1', compact('advertisement', 'student', 'profile', 'application'));
     }
 
-    public function storeStep1(ApplicationStep1Request $request, $advertisementId)
+    public function storeStep1(ApplicationStep1Request $request, Advertisement $advertisement)
     {
+        $advertisementId = $advertisement->id;
+        $advertisement = Advertisement::findOrFail($advertisementId);
         try {
             $application = $this->applicationService->startApplication(
                 Auth::id(),
                 $advertisementId,
                 $request->validated()
             );
+            // dd($application);
 
-            return redirect()->route('application.step2', $application->id)
+            return redirect()->route('application.step2', $application)
                 ->with('toastr', ['type' => 'success', 'message' => 'Step 1 completed!']);
         } catch (\Exception $e) {
             return back()
@@ -105,10 +110,13 @@ class ApplicationController extends Controller
     //     return view('applications.step2', compact('application', 'addresses', 'academics'));
     // }
 
-    public function step2($applicationId)
+    public function step2(Application $application)
     {
+        $applicationId = $application->id;
         $application = Application::findOrFail($applicationId);
         $student = Auth::user();
+        
+        $advertisement = Advertisement::with('programs')->findOrFail($application->advertisement_id);
         
         $addresses = $this->applicationService->getAddressByApplicationId($applicationId);
         if ($addresses->isEmpty()) {
@@ -343,15 +351,19 @@ class ApplicationController extends Controller
             ]
         ];
     
-        return view('applications.step2', compact('application', 'addresses', 'academics', 'stateDistrictData'));
+        return view('applications.step2', compact('application', 'addresses', 'academics', 'stateDistrictData', 'advertisement'));
     }
 
-    public function storeStep2(ApplicationStep2Request $request, $applicationId)
+    public function storeStep2(ApplicationStep2Request $request, Application $application)
     {
+        $applicationId = $application->id;
+        $application = Application::findOrFail($applicationId);
+        // dd($application);
+
         try {
             $this->applicationService->saveStep2($applicationId, $request->validated());
             
-            return redirect()->route('application.step3', $applicationId)
+            return redirect()->route('application.step3', $application)
                 ->with('toastr', ['type' => 'success', 'message' => 'Step 2 completed!']);
         } catch (\Exception $e) {
             return back()
@@ -361,8 +373,9 @@ class ApplicationController extends Controller
     }
     // Step2 ends.
 
-    public function step3($applicationId)
+    public function step3(Application $application)
     {
+        $applicationId = $application->id;
         $application = Application::findOrFail($applicationId);
         
         // $employment = $this->applicationService->employmentRepository->getByApplicationId($applicationId);
@@ -396,8 +409,11 @@ class ApplicationController extends Controller
 
     // 
 
-    public function storeStep3(ApplicationStep3Request $request, $applicationId)
+    public function storeStep3(ApplicationStep3Request $request, Application $application)
     {
+        $applicationId = $application->id;
+        $application = Application::findOrFail($applicationId);
+
         try {
             $data = $request->validated();
             
@@ -411,7 +427,7 @@ class ApplicationController extends Controller
                 $this->applicationService->manageUpscAttempts($applicationId, $data['upsc_attempts']);
             }
 
-            return redirect()->route('application.step4', $applicationId)
+            return redirect()->route('application.step4', $application)
                 ->with('toastr', ['type' => 'success', 'message' => 'Step 3 completed successfully']);
         } catch (\Exception $e) {
             return back()
@@ -430,8 +446,11 @@ class ApplicationController extends Controller
     }
     // Step 3 ends
 
-    public function step4($applicationId)
+    public function step4(Application $application)
     {
+        $applicationId = $application->id;
+        $application = Application::findOrFail($applicationId);
+
         $application = Application::findOrFail($applicationId);
         $documents = $this->applicationService->getDocuments($applicationId);
         
@@ -441,8 +460,10 @@ class ApplicationController extends Controller
         return view('applications.step4', compact('application', 'documents', 'verificationStatus'));
     }
 
-    public function storeStep4(ApplicationStep4Request $request, $applicationId)
+    public function storeStep4(ApplicationStep4Request $request, Application $application)
     {
+        $applicationId = $application->id;
+        $application = Application::findOrFail($applicationId);
         try {
             $files = array_filter([
                 'photo' => $request->file('photo'),
@@ -470,7 +491,7 @@ class ApplicationController extends Controller
 
             $this->applicationService->saveStep4($applicationId, $files);
 
-            return redirect()->route('application.step5', $applicationId)
+            return redirect()->route('application.step5', $application)
                 ->with('toastr', ['type' => 'success', 'message' => 'Documents uploaded successfully!']);
         } catch (\Exception $e) {
             \Log::error('Document upload failed: ' . $e->getMessage());
@@ -482,20 +503,26 @@ class ApplicationController extends Controller
     }
 
     // End Step 4
-    public function step5($applicationId)
+    public function step5(Application $application)
     {
+        $applicationId = $application->id;
+        $application = Application::findOrFail($applicationId);
+
         $details = $this->applicationService->getApplicationDetails($applicationId);
         return view('applications.step5', compact('details'));
     }
 
-    public function submit(Request $request, $applicationId)
+    public function submit(Request $request, Application $application)
     {
+        $applicationId = $application->id;
+        $application = Application::findOrFail($applicationId);
+
         // dd($applicationId);
         try {
             $application = $this->applicationService->submitApplication($applicationId);
             // dd($application);
 
-            return redirect()->route('application.payment', $application->id)
+            return redirect()->route('application.payment', $application)
                 ->with('toastr', ['type' => 'success', 'message' => 'Application submitted successfully!']);
         } catch (\Exception $e) {
             dd($e->getMessage());
@@ -506,8 +533,10 @@ class ApplicationController extends Controller
     // End Step 5 (Submit Application)
 
 
-    public function payment($applicationId)
+    public function payment(Application $application)
     {
+        $applicationId = $application->id;
+
         $application = Application::findOrFail($applicationId);
         $payment = $this->applicationService->getPaymentDetails($applicationId);
         
@@ -517,15 +546,18 @@ class ApplicationController extends Controller
         return view('applications.payment', compact('application', 'payment', 'fee'));
     }
 
-    public function storePayment(PaymentRequest $request, $applicationId)
+    public function storePayment(PaymentRequest $request, Application $application)
     {
+        $applicationId = $application->id;
+        $application = Application::findOrFail($applicationId);
+
         try {
             $paymentData = $request->only(['amount', 'method', 'transaction_date', 'transaction_id']);
             $screenshot = $request->file('screenshot');
 
             $this->applicationService->processPayment($applicationId, $paymentData, $screenshot);
 
-            return redirect()->route('application.status', $applicationId)
+            return redirect()->route('application.status', $application)
                 ->with('toastr', ['type' => 'success', 'message' => 'Payment submitted successfully!']);
         } catch (\Exception $e) {
             return back()
@@ -536,8 +568,11 @@ class ApplicationController extends Controller
 
     // ./ End Payment Processing
 
-    public function status($applicationId)
+    public function status(Application $application)
     {
+        $applicationId = $application->id;
+        $application = Application::findOrFail($applicationId);
+
         $application = Application::with([
             'advertisement',
             'profile',
@@ -556,8 +591,11 @@ class ApplicationController extends Controller
 
     // ./ End Application Status Checking
 
-public function download($applicationId)
+public function download(Application $application)
     {
+        $applicationId = $application->id;
+        $application = Application::findOrFail($applicationId);
+        
         try {
             $application = Application::with([
                 'advertisement',
@@ -591,8 +629,9 @@ public function download($applicationId)
                 'photo_base64' => $photo_base64,
                 'signature_base64' => $signature_base64,
                 'logo_base64' => $logo_base64,
-                'institute_name' => 'Your Institute Name',
-                'institute_address' => '123 Institute Road, City, State, PIN - 123456'
+                'institute_name' => 'Satyendra Nath Tagore Civil Services Study Centre',
+                'institute_type' => 'Government of West Bengal',
+                'institute_address' => 'NSATI Campus,Block FC, Sector - III, Salt Lake, Kolkata-700106'
             ];
 
             $pdf = PDF::loadView('applications.pdf', $data)

@@ -2,7 +2,7 @@
 
 @section('content')
     <h4 class="mb-4"><i class="bi bi-check2-circle me-2"></i>Step 5: Final Preview & Submission</h4>
-    <form method="POST" action="{{ route('application.submit', $details['application']->id) }}" enctype="multipart/form-data" id="applicationForm">
+    <form method="POST" action="{{ route('application.submit', $details['application']) }}" enctype="multipart/form-data" id="applicationForm">
         @csrf
 
         <!-- Personal Details -->
@@ -216,7 +216,7 @@
 @section('footer')
     <div class="form-footer">
         <div class="d-flex justify-content-between flex-wrap gap-2">
-            <a href="{{ route('application.step4', $details['application']->id) }}" class="btn btn-outline-secondary">
+            <a href="{{ route('application.step4', $details['application']) }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Previous
             </a>
             <div>
@@ -318,8 +318,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toastr configuration
+        toastr.options = {
+            positionClass: 'toast-top-right',
+            progressBar: true,
+            timeOut: 5000,
+            closeButton: true
+        };
+
+        @if(session('toastr'))
+            toastr['{{ session('toastr.type') }}']('{{ session('toastr.message') }}', 'Notification');
+        @endif
+    });
+</script>
 @endpush
 
 @php
-    $step = 5;
+    $step = 4;
+    $percentage = 80;
 @endphp

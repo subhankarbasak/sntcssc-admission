@@ -2,7 +2,7 @@
 
 @section('content')
     <h4 class="mb-4"><i class="bi bi-briefcase me-2"></i>Step 3: Professional & Examination Details</h4>
-    <form method="POST" action="{{ route('application.store.step3', $application->id) }}" id="step3Form" class="needs-validation" novalidate>
+    <form method="POST" action="{{ route('application.store.step3', $application) }}" id="step3Form" class="needs-validation" novalidate>
         @csrf
 
         <!-- Employment History -->
@@ -114,7 +114,7 @@
 @section('footer')
     <div class="form-footer">
         <div class="d-flex justify-content-between flex-wrap gap-2">
-            <a href="{{ route('application.step2', $application->id) }}" class="btn btn-outline-secondary">
+            <a href="{{ route('application.step2', $application) }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Previous
             </a>
             <div>
@@ -358,5 +358,6 @@ function removeUpscAttempt(element) {
 @endpush
 
 @php
-    $step = 3;
+    $step = 2;
+    $percentage = 40;
 @endphp

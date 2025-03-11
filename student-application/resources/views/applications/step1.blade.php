@@ -2,7 +2,7 @@
 
 @section('content')
     <h4 class="mb-4"><i class="bi bi-person me-2"></i>Application Step 1: Personal Details</h4>
-    <form id="applicationForm" method="POST" action="{{ route('application.store.step1', $advertisement->id) }}" class="needs-validation" novalidate>
+    <form id="applicationForm" method="POST" action="{{ route('application.store.step1', $advertisement) }}" class="needs-validation" novalidate>
         @csrf
         <!-- Advertisement Selection -->
         <div class="mb-4">
@@ -319,5 +319,6 @@ document.addEventListener('DOMContentLoaded', function() {
 @endpush
 
 @php
-    $step = 1;
+    $step = 0;
+    $percentage = 0;
 @endphp

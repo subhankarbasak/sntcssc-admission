@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Auth\Middleware\Authenticate;
 use App\Http\Controllers\ApplicationController;
+use App\Models\Advertisement;
+use App\Models\Application;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,20 +42,20 @@ Route::get('password/reset/{token}', [ResetPasswordController::class, 'showReset
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/application/{advertisement}/create', [ApplicationController::class, 'create'])->name('application.create');
-    Route::post('/application/{advertisement}/step1', [ApplicationController::class, 'storeStep1'])->name('application.store.step1');
-    Route::get('/application/{application}/step2', [ApplicationController::class, 'step2'])->name('application.step2');
-    Route::post('/application/{application}/step2', [ApplicationController::class, 'storeStep2'])->name('application.store.step2');
-    Route::get('/application/{application}/step3', [ApplicationController::class, 'step3'])->name('application.step3');
-    Route::post('/application/{application}/step3', [ApplicationController::class, 'storeStep3'])->name('application.store.step3');
-    Route::get('/application/{application}/step4', [ApplicationController::class, 'step4'])->name('application.step4');
-    Route::post('/application/{application}/step4', [ApplicationController::class, 'storeStep4'])->name('application.store.step4');
-    Route::get('/application/{application}/step5', [ApplicationController::class, 'step5'])->name('application.step5');
-    Route::post('/application/{application}/submit', [ApplicationController::class, 'submit'])->name('application.submit');
-    Route::get('/application/{application}/payment', [ApplicationController::class, 'payment'])->name('application.payment');
-    Route::post('/application/{application}/payment', [ApplicationController::class, 'storePayment'])->name('application.store.payment');
-    Route::get('/application/{application}/status', [ApplicationController::class, 'status'])->name('application.status');
-    Route::get('/application/{application}/download', [ApplicationController::class, 'download'])->name('application.download');
+    Route::get('/application/{advertisement:code}/apply', [ApplicationController::class, 'create'])->name('application.create');
+    Route::post('/application/{advertisement:code}/step1', [ApplicationController::class, 'storeStep1'])->name('application.store.step1');
+    Route::get('/application/{application:application_number}/communication', [ApplicationController::class, 'step2'])->name('application.step2');
+    Route::post('/application/{application:application_number}/step2', [ApplicationController::class, 'storeStep2'])->name('application.store.step2');
+    Route::get('/application/{application:application_number}/other-details', [ApplicationController::class, 'step3'])->name('application.step3');
+    Route::post('/application/{application:application_number}/step3', [ApplicationController::class, 'storeStep3'])->name('application.store.step3');
+    Route::get('/application/{application:application_number}/document-upload', [ApplicationController::class, 'step4'])->name('application.step4');
+    Route::post('/application/{application:application_number}/step4', [ApplicationController::class, 'storeStep4'])->name('application.store.step4');
+    Route::get('/application/{application:application_number}/review', [ApplicationController::class, 'step5'])->name('application.step5');
+    Route::post('/application/{application:application_number}/submit', [ApplicationController::class, 'submit'])->name('application.submit');
+    Route::get('/application/{application:application_number}/payment', [ApplicationController::class, 'payment'])->name('application.payment');
+    Route::post('/application/{application:application_number}/payment', [ApplicationController::class, 'storePayment'])->name('application.store.payment');
+    Route::get('/application/{application:application_number}/status', [ApplicationController::class, 'status'])->name('application.status');
+    Route::get('/application/{application:application_number}/download', [ApplicationController::class, 'download'])->name('application.download');
 
     // routes/web.php
     Route::get('/application/upsc-attempt-template', [ApplicationController::class, 'getUpscAttemptTemplate'])
@@ -66,4 +68,8 @@ Route::post('/validate/mobile', [RegisterController::class, 'validateMobile'])->
 
 Route::get('/test-auth', function () {
     return auth()->check() ? 'Logged in' : 'Not logged in';
+});
+
+Route::get('/test-error', function () {
+    throw new \Exception('Test 500 error');
 });

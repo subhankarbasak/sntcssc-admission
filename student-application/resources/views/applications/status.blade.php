@@ -20,7 +20,11 @@
                                     <td>{{ $application->application_number }}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Advertisement</th>
+                                    <th scope="row" style="width: 30%">Name</th>
+                                    <td>{{ $details['profile']->first_name }} {{ $details['profile']->last_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Course Applied For</th>
                                     <td>{{ $application->advertisement->title }}</td>
                                 </tr>
                                 <tr>
@@ -42,7 +46,7 @@
                                 @if($application->applied_at)
                                 <tr>
                                     <th scope="row">Submitted On</th>
-                                    <td>{{ \Carbon\Carbon::parse($application->applied_at)->format('d M Y H:i') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($application->applied_at)->format('d/M/Y h:i A') }}</td>
                                 </tr>
                                 @endif
                             </tbody>
@@ -51,7 +55,7 @@
 
                     <!-- Payment Details -->
                     @if($application->payment)
-                        <div class="mb-4">
+                        <div class="mb-4 d-none">
                             <h5>Payment Details</h5>
                             <table class="table table-bordered">
                                 <tbody>
@@ -85,8 +89,8 @@
                     @endif
 
                     <!-- Personal Details -->
-                    <h5 class="mb-3">Personal Details</h5>
-                    <table class="table table-bordered">
+                    <h5 class="mb-3 d-none">Personal Details</h5>
+                    <table class="table table-bordered d-none">
                         <tbody>
                             <tr>
                                 <th scope="row" style="width: 30%">Name</th>
@@ -116,9 +120,9 @@
                     </table>
 
                     <!-- Addresses -->
-                    <h5 class="mb-3 mt-4">Addresses</h5>
+                    <h5 class="mb-3 mt-4 d-none">Addresses</h5>
                     @foreach($details['addresses'] as $address)
-                        <div class="card mb-2">
+                        <div class="card mb-2 d-none">
                             <div class="card-body">
                                 <h6>{{ ucfirst($address->type) }} Address</h6>
                                 <table class="table table-bordered mb-0">
@@ -133,9 +137,9 @@
                     @endforeach
 
                     <!-- Academic Qualifications -->
-                    <h5 class="mb-3 mt-4">Academic Qualifications</h5>
+                    <h5 class="mb-3 mt-4 d-none">Academic Qualifications</h5>
                     @foreach($details['academics'] as $academic)
-                        <div class="card mb-2">
+                        <div class="card mb-2 d-none">
                             <div class="card-body">
                                 <h6>{{ $academic->level }}</h6>
                                 <table class="table table-bordered mb-0">
@@ -159,9 +163,9 @@
                     @endforeach
 
                     <!-- Employment History -->
-                    <h5 class="mb-3 mt-4">Employment History</h5>
+                    <h5 class="mb-3 mt-4 d-none">Employment History</h5>
                     @if($details['employment'])
-                        <table class="table table-bordered">
+                        <table class="table table-bordered d-none">
                             <tbody>
                                 <tr>
                                     <th scope="row" style="width: 30%">Employed</th>
@@ -184,13 +188,13 @@
                             </tbody>
                         </table>
                     @else
-                        <p>No employment details provided.</p>
+                        <p class="d-none">No employment details provided.</p>
                     @endif
 
                     <!-- Current Enrollment -->
-                    <h5 class="mb-3 mt-4">Current Enrollment</h5>
+                    <h5 class="mb-3 mt-4 d-none">Current Enrollment</h5>
                     @if($details['enrollment'] && ($details['enrollment']->course_name || $details['enrollment']->institute))
-                        <table class="table table-bordered">
+                        <table class="table table-bordered d-none">
                             <tbody>
                                 <tr>
                                     <th scope="row" style="width: 30%">Course</th>
@@ -203,13 +207,13 @@
                             </tbody>
                         </table>
                     @else
-                        <p>No current enrollment details provided.</p>
+                        <p class="d-none">No current enrollment details provided.</p>
                     @endif
 
                     <!-- UPSC Attempts -->
-                    <h5 class="mb-3 mt-4">UPSC Attempts</h5>
+                    <h5 class="mb-3 mt-4 d-none">UPSC Attempts</h5>
                     @forelse($details['upsc_attempts'] as $attempt)
-                        <div class="card mb-2">
+                        <div class="card mb-2 d-none">
                             <div class="card-body">
                                 <table class="table table-bordered mb-0">
                                     <tbody>
@@ -234,12 +238,12 @@
                             </div>
                         </div>
                     @empty
-                        <p>No UPSC attempts recorded.</p>
+                        <p class="d-none">No UPSC attempts recorded.</p>
                     @endforelse
 
                     <!-- Documents -->
-                    <h5 class="mb-3 mt-4">Documents</h5>
-                    <table class="table table-bordered">
+                    <h5 class="mb-3 mt-4 d-none">Documents</h5>
+                    <table class="table table-bordered d-none">
                         <tbody>
                             @foreach($details['documents'] as $document)
                             <tr>
@@ -253,7 +257,7 @@
                     </table>
 
                     <div class="text-end mt-4">
-                        <a href="{{ route('application.download', $application->id) }}" 
+                        <a href="{{ route('application.download', $application) }}" 
                         class="btn btn-success me-2">Download PDF</a>
                         <a href="{{ route('dashboard') }}" 
                         class="btn btn-primary">Back to Dashboard</a>
