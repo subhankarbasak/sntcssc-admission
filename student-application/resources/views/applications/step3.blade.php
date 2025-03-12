@@ -117,15 +117,9 @@
             <a href="{{ route('application.step2', $application) }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Previous
             </a>
-            <div>
-                <button type="button" class="btn btn-outline-info me-2 shadow-sm" 
-                        data-bs-toggle="modal" data-bs-target="#previewModal">
-                    <i class="bi bi-eye me-2"></i>Preview
-                </button>
-                <button type="submit" form="step3Form" class="btn btn-primary shadow-sm">
-                    Save and Next<i class="bi bi-arrow-right ms-2"></i>
-                </button>
-            </div>
+            <button type="button" class="btn btn-primary shadow-sm" id="previewAndNextBtn">
+                <i class="bi bi-eye me-2"></i>Preview and Next
+            </button>
         </div>
     </div>
 @endsection
@@ -195,6 +189,16 @@
                 </div>
             </div>
         </div>
+
+        <!-- Declaration -->
+        <div class="mt-4">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="declarationCheck" required>
+                <label class="form-check-label" for="declarationCheck">
+                    I hereby declare that all the information provided is true and correct to the best of my knowledge.
+                </label>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -202,7 +206,7 @@
     <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">
         <i class="bi bi-pencil me-2"></i>Edit
     </button>
-    <button type="button" class="btn btn-primary shadow-sm" onclick="$('#step3Form').submit()">
+    <button type="button" class="btn btn-primary shadow-sm" id="saveAndNextBtn" disabled>
         Save and Next<i class="bi bi-arrow-right ms-2"></i>
     </button>
 @endsection
@@ -229,19 +233,6 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Form validation
-    const form = document.getElementById('step3Form');
-    form.addEventListener('submit', function(event) {
-        if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-            toastr.error('Please correct the errors in the form.');
-        } else {
-            toastr.success('Form saved successfully!');
-        }
-        form.classList.add('was-validated');
-    }, false);
-
     // Employment details toggle
     const employmentRadios = document.querySelectorAll('input[name="employment[is_employed]"]');
     const employmentDetails = document.getElementById('employmentDetails');
@@ -251,9 +242,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Preview modal population
-    const previewModal = document.getElementById('previewModal');
-    previewModal.addEventListener('show.bs.modal', function() {
+    // Preview and Next button handler
+    document.getElementById('previewAndNextBtn').addEventListener('click', function() {
+        const form = document.getElementById('step3Form');
+        let isValid = true;
+
+        // Check required fields
+        form.querySelectorAll('[required]').forEach(input => {
+            if (!input.value) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+        if (!isValid) {
+            toastr.error('Please fill all required fields.');
+            form.classList.add('was-validated');
+            return;
+        }
+
+        // Populate preview modal
         const formData = new FormData(form);
 
         // Employment Section
@@ -319,6 +329,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
             });
         }
+
+        // Show preview modal
+        const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+        previewModal.show();
+    });
+
+    // Declaration checkbox handler
+    const declarationCheck = document.getElementById('declarationCheck');
+    const saveAndNextBtn = document.getElementById('saveAndNextBtn');
+    
+    declarationCheck.addEventListener('change', function() {
+        saveAndNextBtn.disabled = !this.checked;
+    });
+
+    // Save and Next button handler
+    saveAndNextBtn.addEventListener('click', function() {
+        if (declarationCheck.checked) {
+            document.getElementById('step3Form').submit();
+        }
     });
 
     // Toastr configuration
@@ -358,6 +387,6 @@ function removeUpscAttempt(element) {
 @endpush
 
 @php
-    $step = 2;
+    $step = 3;
     $percentage = 40;
 @endphp

@@ -59,8 +59,16 @@
             <!-- Category Certificate -->
             <div class="col-md-6">
                 <div class="card shadow-sm p-4 h-100">
-                    <label for="category_cert" class="form-label fw-semibold text-dark">Category Certificate <span class="text-muted fw-normal">(Optional)</span></label>
-                    <input type="file" name="category_cert" class="form-control" id="category_cert" accept=".pdf,.jpg,.png">
+                    <label for="category_cert" class="form-label fw-semibold text-dark">
+                        Category Certificate 
+                        @if($profile && $profile->category !== 'UR')
+                            <span class="text-danger">*</span>
+                        @else
+                            <span class="text-muted fw-normal">(Optional)</span>
+                        @endif
+                    </label>
+                    <input type="file" name="category_cert" class="form-control" id="category_cert" accept=".pdf,.jpg,.png"
+                           {{ $profile && $profile->category !== 'UR' && !$documents->where('type', 'category_cert')->first() ? 'required' : '' }}>
                     <small class="text-muted">Max 5MB (PDF/JPG/PNG)</small>
                     <div class="preview-area mt-2" id="category_cert-preview">
                         @if($documents->where('type', 'category_cert')->first())
@@ -80,14 +88,23 @@
                         @endif
                         <div class="new-preview" id="category_cert-new-preview"></div>
                     </div>
+                    <div class="invalid-feedback">Please upload a category certificate.</div>
                 </div>
             </div>
 
             <!-- PwBD Certificate -->
             <div class="col-md-6">
                 <div class="card shadow-sm p-4 h-100">
-                    <label for="pwbd_cert" class="form-label fw-semibold text-dark">PwBD Certificate <span class="text-muted fw-normal">(Optional)</span></label>
-                    <input type="file" name="pwbd_cert" class="form-control" id="pwbd_cert" accept=".pdf,.jpg,.png">
+                    <label for="pwbd_cert" class="form-label fw-semibold text-dark">
+                        PwBD Certificate 
+                        @if($profile && $profile->is_pwbd == 1)
+                            <span class="text-danger">*</span>
+                        @else
+                            <span class="text-muted fw-normal">(Optional)</span>
+                        @endif
+                    </label>
+                    <input type="file" name="pwbd_cert" class="form-control" id="pwbd_cert" accept=".pdf,.jpg,.png"
+                           {{ $profile && $profile->is_pwbd == 1 && !$documents->where('type', 'pwbd_cert')->first() ? 'required' : '' }}>
                     <small class="text-muted">Max 5MB (PDF/JPG/PNG)</small>
                     <div class="preview-area mt-2" id="pwbd_cert-preview">
                         @if($documents->where('type', 'pwbd_cert')->first())
@@ -107,6 +124,7 @@
                         @endif
                         <div class="new-preview" id="pwbd_cert-new-preview"></div>
                     </div>
+                    <div class="invalid-feedback">Please upload a PwBD certificate.</div>
                 </div>
             </div>
         </div>
@@ -119,13 +137,9 @@
             <a href="{{ route('application.step3', $application) }}" class="btn btn-outline-secondary shadow-sm">
                 Previous
             </a>
-            <div>
-                <button type="button" class="btn btn-outline-secondary me-2 shadow-sm" 
-                        data-bs-toggle="modal" data-bs-target="#previewModal">Preview</button>
-                <button type="submit" form="applicationForm" class="btn btn-primary px-4 shadow-sm" id="submitBtn">
-                    Save and Next
-                </button>
-            </div>
+            <button type="button" class="btn btn-primary shadow-sm" id="previewAndNextBtn">
+                <i class="bi bi-eye me-2"></i>Preview and Next
+            </button>
         </div>
     </div>
 @endsection
@@ -150,11 +164,19 @@
             <div id="pwbd_cert-preview-modal"></div>
         </div>
     </div>
+    <div class="mt-4">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="declarationCheck" required>
+            <label class="form-check-label" for="declarationCheck">
+                I hereby declare that all the information provided is true and correct to the best of my knowledge.
+            </label>
+        </div>
+    </div>
 @endsection
 
 @section('preview-footer')
     <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Edit</button>
-    <button type="button" class="btn btn-primary shadow-sm" onclick="$('#applicationForm').submit()">Save and Next</button>
+    <button type="button" class="btn btn-primary shadow-sm" id="saveAndNextBtn" disabled>Save and Next</button>
 @endsection
 
 @push('styles')
@@ -200,7 +222,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('applicationForm');
-    const previewModal = document.getElementById('previewModal');
+    const isCategoryRequired = {{ $profile && $profile->category !== 'UR' ? 'true' : 'false' }};
+    const isPwbdRequired = {{ $profile && $profile->is_pwbd == 1 ? 'true' : 'false' }};
 
     // Toastr options
     toastr.options = {
@@ -247,11 +270,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Form validation
-    form.addEventListener('submit', function(e) {
+    // Preview and Next button handler
+    document.getElementById('previewAndNextBtn').addEventListener('click', function() {
         let isValid = true;
-        form.querySelectorAll('[required]').forEach(input => {
-            if (!input.files.length && !document.querySelector(`#${input.id}-preview .existing-preview`)) {
+        
+        // Check photo and signature (always required if no existing file)
+        ['photo', 'signature'].forEach(id => {
+            const input = document.getElementById(id);
+            const existingFile = document.querySelector(`#${id}-preview .existing-preview`);
+            if (!input.files.length && !existingFile) {
                 input.classList.add('is-invalid');
                 isValid = false;
             } else {
@@ -259,16 +286,37 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        if (!isValid) {
-            e.preventDefault();
-            toastr.error('Please upload all required documents.');
-        } else {
-            toastr.success('Documents saved successfully!');
+        // Check category certificate if category is not UR
+        if (isCategoryRequired) {
+            const input = document.getElementById('category_cert');
+            const existingFile = document.querySelector('#category_cert-preview .existing-preview');
+            if (!input.files.length && !existingFile) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
         }
-    });
 
-    // Preview modal population
-    previewModal.addEventListener('show.bs.modal', function() {
+        // Check PwBD certificate if is_pwbd is 1
+        if (isPwbdRequired) {
+            const input = document.getElementById('pwbd_cert');
+            const existingFile = document.querySelector('#pwbd_cert-preview .existing-preview');
+            if (!input.files.length && !existingFile) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        }
+
+        if (!isValid) {
+            toastr.error('Please upload all required documents.');
+            form.classList.add('was-validated');
+            return;
+        }
+
+        // Populate preview modal
         const inputs = ['photo', 'signature', 'category_cert', 'pwbd_cert'];
         inputs.forEach(id => {
             const modalPreview = document.getElementById(`${id}-preview-modal`);
@@ -283,28 +331,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 modalPreview.innerHTML = '<span class="text-muted">Not uploaded</span>';
             }
         });
+
+        // Show preview modal
+        const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+        previewModal.show();
     });
+
+    // Declaration checkbox handler
+    const declarationCheck = document.getElementById('declarationCheck');
+    const saveAndNextBtn = document.getElementById('saveAndNextBtn');
+    
+    declarationCheck.addEventListener('change', function() {
+        saveAndNextBtn.disabled = !this.checked;
+    });
+
+    // Save and Next button handler
+    saveAndNextBtn.addEventListener('click', function() {
+        if (declarationCheck.checked) {
+            document.getElementById('applicationForm').submit();
+        }
+    });
+
+    // Form submission feedback
+    form.addEventListener('submit', function(e) {
+        if (!form.checkValidity()) {
+            e.preventDefault();
+            toastr.error('Please upload all required documents.');
+        } else {
+            toastr.success('Documents saved successfully!');
+        }
+    });
+
+    @if(session('toastr'))
+        toastr['{{ session('toastr.type') }}']('{{ session('toastr.message') }}', 'Notification');
+    @endif
 });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Toastr configuration
-        toastr.options = {
-            positionClass: 'toast-top-right',
-            progressBar: true,
-            timeOut: 5000,
-            closeButton: true
-        };
-
-        @if(session('toastr'))
-            toastr['{{ session('toastr.type') }}']('{{ session('toastr.message') }}', 'Notification');
-        @endif
-    });
 </script>
 @endpush
 
 @php
-    $step = 3;
+    $step = 4;
     $percentage = 60;
 @endphp

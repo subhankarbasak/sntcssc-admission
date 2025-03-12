@@ -58,6 +58,7 @@ class ApplicationService
 
     public function startApplication($studentId, $advertisementId, array $data)
     {
+        // dd($data);
         try {
             DB::beginTransaction();
 
@@ -79,6 +80,12 @@ class ApplicationService
                     'student_id' => $studentId,
                     'advertisement_id' => $advertisementId,
                     'advertisement_program_id' => $data['advertisement_program_id'],
+
+                    'cat_cert_no' => $data['cat_cert_no'],
+                    'cat_issue_date' => $data['cat_issue_date'],
+                    'cat_issue_by' => $data['cat_issue_by'],
+                    'highest_qualification' => $data['highest_qualification'],
+
                     'student_profile_id' => $profileId,
                     'application_number' => 'APP' . time(),
                     'status' => 'draft'
@@ -101,6 +108,10 @@ class ApplicationService
                     'optional_subject' => $profileData['optional_subject'],
                     'is_appearing_upsc_cse' => $profileData['is_appearing_upsc_cse'],
                     'upsc_attempts_count' => $profileData['upsc_attempts_count'],
+                    'cat_cert_no' => $profileData['cat_cert_no'],
+                    'cat_issue_date' => $profileData['cat_issue_date'],
+                    'cat_issue_by' => $profileData['cat_issue_by'],
+                    'highest_qualification' => $profileData['highest_qualification'],
                     'status' => 'draft'
                 ]);
             }

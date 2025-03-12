@@ -78,6 +78,10 @@ class StudentService
                 'email' => $data['email'],
                 'mobile' => $data['mobile'],
                 'secondary_roll' => $data['secondary_roll'],
+                'cat_cert_no' => $data['cat_cert_no'],
+                'cat_issue_date' => $data['cat_issue_date'],
+                'cat_issue_by' => $data['cat_issue_by'],
+                'highest_qualification' => $data['highest_qualification'],
                 'valid_from' => now(),
                 'is_current' => true,
             ];

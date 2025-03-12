@@ -20,6 +20,9 @@ return new class extends Migration
             $table->date('dob');
             $table->string('gender')->comment('Male, Female, Others');
             $table->string('category')->nullable()->comment('UR, SC, ST, OBC A, OBC B');
+            $table->string('cat_cert_no')->nullable();
+            $table->date('cat_issue_date')->nullable();
+            $table->string('cat_issue_by')->nullable();
             $table->string('email')->unique();
             $table->string('mobile')->unique();
             $table->string('password');

@@ -249,7 +249,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-floating">
-                                <select name="category" class="form-select @error('category') is-invalid @enderror" id="category" required>
+                                <select name="category" class="form-select @error('category') is-invalid @enderror" id="category" onchange="toggleCategory()" required>
                                     <option value="">Select Category</option>
                                     <option value="UR" {{ old('category') == 'UR' ? 'selected' : '' }}>UR</option>
                                     <option value="SC" {{ old('category') == 'SC' ? 'selected' : '' }}>SC</option>
@@ -259,6 +259,46 @@
                                 </select>
                                 <label for="category">Category</label>
                                 @error('category') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+                        <!-- If Category selected as other than UR -->
+
+                        <div id="categoryDetails" class="">
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <div class="form-floating">
+                                        <input type="text" name="cat_cert_no" class="form-control @error('cat_cert_no') is-invalid @enderror" id="cat_cert_no" value="{{ old('cat_cert_no') }}" required placeholder="Enter Last Name">
+                                        <label for="cat_cert_no">Certificate No.</label>
+                                        @error('cat_cert_no') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-floating">
+                                        <input type="date" name="cat_issue_date" class="form-control @error('cat_issue_date') is-invalid @enderror" id="cat_issue_date" value="{{ old('cat_issue_date') }}" required placeholder="Enter Last Name">
+                                        <label for="cat_issue_date">Certificate Issue Date.</label>
+                                        @error('cat_issue_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-floating">
+                                        <input type="text" name="cat_issue_by" class="form-control @error('cat_issue_by') is-invalid @enderror" id="cat_issue_by" value="{{ old('cat_issue_by') }}" required placeholder="Enter Last Name">
+                                        <label for="cat_issue_by">Issuing Authority</label>
+                                        @error('cat_issue_by') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Highest Qualifcation -->
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <select name="highest_qualification" class="form-select @error('highest_qualification') is-invalid @enderror" required>
+                                    <option value="">Select Highest Qualification</option>
+                                    <option value="Graduate" {{ old('highest_qualification') == 'Graduate' ? 'selected' : '' }}>Graduation Completed</option>
+                                    <option value="Post Graduate" {{ old('highest_qualification') == 'Post Graduate' ? 'selected' : '' }}>Post Graduate</option>
+                                    <option value="Final Undergraduate Semester" {{ old('highest_qualification') == 'Final Undergraduate Semester' ? 'selected' : '' }}>Final Undergraduate Semester</option>
+                                </select>
+                                <label for="Highest Qualification">Highest Qualification</label>
+                                @error('highest_qualification') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                         </div>
                     </div>
@@ -495,13 +535,13 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[2][institute]" class="form-control" value="{{ old('academic_qualifications.2.institute') }}" placeholder="Enter Institute">
+                                        <input name="academic_qualifications[2][institute]" class="form-control" value="{{ old('academic_qualifications.2.institute') }}" placeholder="Enter Institute" required>
                                         <label>Institute</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[2][board_university]" class="form-control" value="{{ old('academic_qualifications.2.board_university') }}" placeholder="Enter Board/University">
+                                        <input name="academic_qualifications[2][board_university]" class="form-control" value="{{ old('academic_qualifications.2.board_university') }}" placeholder="Enter Board/University" required>
                                         <label>Board/University</label>
                                     </div>
                                 </div>
@@ -519,7 +559,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-outline-primary mt-2" onclick="addAcademic()">Add Qualification</button>
+                    <button type="button" class="btn btn-outline-primary mt-2" onclick="addAcademic()">Add Other Qualifications</button>
                 </div>
 
                 <!-- Buttons -->
@@ -800,95 +840,6 @@
             }
             form.classList.add('was-validated');
         });
-
-        // Preview Modal
-        const previewModal = document.getElementById('previewModal');
-        previewModal.addEventListener('show.bs.modal', () => {
-            const formData = new FormData(form);
-
-            // Personal Information
-            const personalPreview = document.getElementById('personalPreview');
-            personalPreview.innerHTML = '';
-            const personalFields = [
-                { label: 'Secondary Roll No.', key: 'secondary_roll' },
-                { label: 'First Name', key: 'first_name' },
-                { label: 'Last Name', key: 'last_name' },
-                { label: 'Gender', key: 'gender' },
-                { label: 'Date of Birth', key: 'dob' },
-                { label: 'Category', key: 'category' },
-            ];
-            personalFields.forEach(field => {
-                const value = formData.get(field.key) || 'Not Provided';
-                personalPreview.innerHTML += `<tr><td>${field.label}</td><td>${value}</td></tr>`;
-            });
-
-            // Contact Information
-            const contactPreview = document.getElementById('contactPreview');
-            contactPreview.innerHTML = '';
-            const contactFields = [
-                { label: 'Email', key: 'email' },
-                { label: 'Mobile', key: 'mobile' },
-            ];
-            contactFields.forEach(field => {
-                const value = formData.get(field.key) || 'Not Provided';
-                contactPreview.innerHTML += `<tr><td>${field.label}</td><td>${value}</td></tr>`;
-            });
-
-            // Address Details
-            const addressPreview = document.getElementById('addressPreview');
-            addressPreview.innerHTML = '';
-            const addressFields = [
-                { label: 'Present Address Line 1', key: 'addresses[0][address_line1]' },
-                { label: 'Present Post Office', key: 'addresses[0][post_office]' },
-                { label: 'Present State', key: 'addresses[0][state]' },
-                { label: 'Present District', key: 'addresses[0][district]' },
-                { label: 'Present Pin Code', key: 'addresses[0][pin_code]' },
-                { label: 'Permanent Address Line 1', key: 'addresses[1][address_line1]' },
-                { label: 'Permanent Post Office', key: 'addresses[1][post_office]' },
-                { label: 'Permanent State', key: 'addresses[1][state]' },
-                { label: 'Permanent District', key: 'addresses[1][district]' },
-                { label: 'Permanent Pin Code', key: 'addresses[1][pin_code]' },
-            ];
-            addressFields.forEach(field => {
-                const value = formData.get(field.key) || 'Not Provided';
-                addressPreview.innerHTML += `<tr><td>${field.label}</td><td>${value}</td></tr>`;
-            });
-
-            // Academic Qualifications
-            const academicPreview = document.getElementById('academicPreview');
-            academicPreview.innerHTML = '';
-            document.querySelectorAll('.academic-entry').forEach((entry, index) => {
-                const level = formData.get(`academic_qualifications[${index}][level]`) || 'Not Provided';
-                const institute = formData.get(`academic_qualifications[${index}][institute]`) || 'Not Provided';
-                const board = formData.get(`academic_qualifications[${index}][board_university]`) || 'Not Provided';
-                const year = formData.get(`academic_qualifications[${index}][year_passed]`) || 'Not Provided';
-                academicPreview.innerHTML += `
-                    <tr>
-                        <td>${level}</td>
-                        <td>${institute}</td>
-                        <td>${board}</td>
-                        <td>${year}</td>
-                    </tr>
-                `;
-            });
-        });
-
-        // Terms Agreement
-        const termsCheckbox = document.getElementById('termsAgreement');
-        const submitButton = document.getElementById('submitFromModal');
-        termsCheckbox.addEventListener('change', () => {
-            submitButton.disabled = !termsCheckbox.checked;
-        });
-
-        // Submit from Modal
-        submitButton.addEventListener('click', () => {
-            if (form.checkValidity()) {
-                form.submit();
-            }else{
-                alert('Please fill up all the fields properly');
-                // form.submit();
-            }
-        });
     });
 
     function togglePassword(fieldId) {
@@ -1062,6 +1013,10 @@
             previewHTML += createTableRow('Gender', formData.get('gender'));
             previewHTML += createTableRow('Date of Birth', formData.get('dob'));
             previewHTML += createTableRow('Category', formData.get('category'));
+            previewHTML += createTableRow('Certificate No.', formData.get('cat_cert_no'));
+            previewHTML += createTableRow('Issue Date', formData.get('cat_issue_date'));
+            previewHTML += createTableRow('Issued By', formData.get('cat_issue_by'));
+            previewHTML += createTableRow('Highest Qualification', formData.get('highest_qualification'));
             previewHTML += '</table>';
 
             // Contact Information
@@ -1136,6 +1091,39 @@
             }
             return '';
         }
+    });
+</script>
+
+<script>
+    // Toggle button for Certificate details
+
+    function toggleCategory() {
+        const caste = document.getElementById('category').value;
+        const certificateDetails = document.getElementById('categoryDetails');
+        const requiredCastes = ['SC', 'ST', 'OBC A', 'OBC B', 'EWS'];
+        const caste_no = document.getElementById('cat_cert_no');
+        const caste_doi = document.getElementById('cat_issue_date');
+        const caste_isby = document.getElementById('cat_issue_by');
+
+        if (requiredCastes.includes(caste)) {
+            certificateDetails.style.display = '';
+            caste_no.required = true;
+            caste_doi.required = true;
+            caste_isby.required = true;
+        } else {
+            certificateDetails.style.display = 'none';
+            caste_no.value = '';
+            caste_doi.value = '';
+            caste_isby.value = '';
+            caste_no.required = false;
+            caste_doi.required = false;
+            caste_isby.required = false;
+        }
+    }
+
+    // Ensure the correct state is set on page load if a caste is already selected
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleCategory();
     });
 </script>
 @endpush

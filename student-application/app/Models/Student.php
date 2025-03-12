@@ -13,7 +13,7 @@ class Student extends Authenticatable
     
     protected $fillable = [
         'uuid', 'secondary_roll', 'first_name', 'last_name', 'dob', 'gender',
-        'category', 'email', 'mobile', 'password'
+        'category', 'cat_cert_no', 'cat_issue_date', 'cat_issue_by', 'highest_qualification', 'email', 'mobile', 'password'
     ];
 
     protected $hidden = ['password'];

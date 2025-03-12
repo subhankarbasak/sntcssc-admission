@@ -456,8 +456,11 @@ class ApplicationController extends Controller
         
         // Add verification status to view
         $verificationStatus = $documents->pluck('verification_status', 'type')->toArray();
+
+        $profile = $application->profile()->where('id', $application->student_profile_id)->first();
+        // dd($profile);
         
-        return view('applications.step4', compact('application', 'documents', 'verificationStatus'));
+        return view('applications.step4', compact('application', 'documents', 'verificationStatus', 'profile'));
     }
 
     public function storeStep4(ApplicationStep4Request $request, Application $application)
@@ -539,9 +542,17 @@ class ApplicationController extends Controller
 
         $application = Application::findOrFail($applicationId);
         $payment = $this->applicationService->getPaymentDetails($applicationId);
+
+        $profile = $application->profile()->where('id', $application->student_profile_id)->first();
         
         // Assuming a fixed fee from advertisement_programs for simplicity
-        $fee = $application->advertisement->programs->first()->batch_program->fee ?? 1000;
+        // $fee = $application->advertisement->programs->first()->batch_program->fee ?? 1000;
+
+        if($profile->category === 'SC' || $profile->category === 'ST' || $profile->category === 'OBC A' || $profile->category === 'OBC B' ){
+            $fee = 50;
+        }else{
+            $fee = 100;
+        }
 
         return view('applications.payment', compact('application', 'payment', 'fee'));
     }

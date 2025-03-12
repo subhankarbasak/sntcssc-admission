@@ -1,5 +1,122 @@
 @extends('layouts.form')
 
+@push('styles')
+<style>
+    .preview-addresses, .preview-academics {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Desktop view - Table layout */
+    @media (min-width: 768px) {
+        .preview-addresses, .preview-academics {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .preview-row {
+            display: table-row;
+        }
+
+        .preview-cell {
+            display: table-cell;
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+
+        .preview-header {
+            display: table-row;
+            background-color: #6c757d;
+            color: white;
+            font-weight: bold;
+        }
+    }
+
+    /* Mobile view - Card layout */
+    @media (max-width: 767.98px) {
+        .preview-addresses, .preview-academics {
+            display: block;
+        }
+
+        .preview-row {
+            display: block;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .preview-header {
+            display: none; /* Hide headers on mobile */
+        }
+
+        .preview-cell {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .preview-cell:last-child {
+            border-bottom: none;
+        }
+
+        .preview-cell::before {
+            content: attr(data-label);
+            font-weight: bold;
+            color: #495057;
+            margin-right: 0.5rem;
+            flex: 0 0 40%;
+        }
+
+        .preview-cell span {
+            flex: 1;
+            text-align: right;
+            word-break: break-word;
+        }
+    }
+
+    /* Modal adjustments */
+    .modal-dialog {
+        max-width: 100%;
+        margin: 1rem;
+    }
+
+    @media (max-width: 575.98px) {
+        .modal-dialog {
+            margin: 0.5rem;
+        }
+
+        .modal-content {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .modal-body {
+            padding: 0.5rem;
+        }
+
+        .declaration-section {
+            font-size: 0.85rem;
+        }
+
+        .btn {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Typography scaling */
+    h6 {
+        font-size: clamp(1rem, 2.5vw, 1.25rem);
+    }
+</style>
+@endpush
+
 @section('content')
     <h4 class="mb-4"><i class="bi bi-telephone me-2"></i>Application Step 2: Address & Academic Details</h4>
     <form method="POST" action="{{ route('application.store.step2', $application) }}" id="step2Form" class="needs-validation" novalidate>
@@ -7,132 +124,153 @@
 
         <!-- Addresses -->
         <div class="mb-4">
-            <h5 class="text-primary mb-3 fw-bold">Addresses</h5>
-            <div id="address-container" class="border rounded p-3 bg-light">
+            <h5 class="text-primary mb-3 fw-bold"><i class="bi bi-geo-alt-fill"></i>Addresses</h5>
+            <div id="address-container" class="row g-3">
                 @foreach($addresses as $index => $address)
-                <div class="address-block mb-3" data-index="{{ $index }}">
-                    <table class="table table-bordered table-hover bg-white shadow-sm">
-                        <thead class="bg-secondary text-white">
-                            <tr>
-                                <th colspan="5">
-                                    {{ $address->type === 'present' ? 'Present Address' : 'Permanent Address' }}
-                                    @if($index > 0)
-                                    <button type="button" class="btn btn-danger btn-sm float-end remove-address">Remove</button>
-                                    @endif
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input type="hidden" name="addresses[{{$index}}][id]" value="{{ $address->id ?? '' }}">
-                                    <input type="hidden" name="addresses[{{$index}}][type]" value="{{ $address->type }}">
-                                    <select name="addresses[{{$index}}][state]" class="form-control state-select" required>
-                                        <option value="">Select State</option>
-                                        @foreach(array_keys($stateDistrictData) as $state)
-                                            <option value="{{ $state }}" {{ old("addresses.$index.state", $address->state) === $state ? 'selected' : '' }}>{{ $state }}</option>
+                <div class="col-md-6 address-block" data-index="{{ $index }}">
+                    <div class="border rounded p-3 bg-light shadow-sm">
+                        <h6 class="mb-3 fw-bold">
+                            {{ $address->type === 'present' ? 'Present Address' : 'Permanent Address' }}
+                            @if($index > 0)
+                            <button type="button" class="btn btn-danger btn-sm float-end remove-address">Remove</button>
+                            @endif
+                        </h6>
+                        <input type="hidden" name="addresses[{{$index}}][id]" value="{{ $address->id ?? '' }}">
+                        <input type="hidden" name="addresses[{{$index}}][type]" value="{{ $address->type }}">
+                        
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <select name="addresses[{{$index}}][state]" 
+                                        class="form-select state-select @error("addresses.$index.state") is-invalid @enderror" 
+                                        required>
+                                    <option value="">Select State</option>
+                                    @foreach(array_keys($stateDistrictData) as $state)
+                                        <option value="{{ $state }}" {{ old("addresses.$index.state", $address->state) === $state ? 'selected' : '' }}>
+                                            {{ $state }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <label>State</label>
+                                <div class="invalid-feedback">Please select a state.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <select name="addresses[{{$index}}][district]" 
+                                        class="form-select district-select @error("addresses.$index.district") is-invalid @enderror" 
+                                        required 
+                                        data-selected="{{ $address->district }}">
+                                    <option value="">Select District</option>
+                                    @if($address->state && isset($stateDistrictData[$address->state]))
+                                        @foreach($stateDistrictData[$address->state] as $district)
+                                            <option value="{{ $district }}" {{ old("addresses.$index.district", $address->district) === $district ? 'selected' : '' }}>
+                                                {{ $district }}
+                                            </option>
                                         @endforeach
-                                    </select>
-                                    <div class="invalid-feedback">Please select a state.</div>
-                                </td>
-                                <td>
-                                    <select name="addresses[{{$index}}][district]" class="form-control district-select" required data-selected="{{ $address->district }}">
-                                        <option value="">Select District</option>
-                                        @if($address->state && isset($stateDistrictData[$address->state]))
-                                            @foreach($stateDistrictData[$address->state] as $district)
-                                                <option value="{{ $district }}" {{ old("addresses.$index.district", $address->district) === $district ? 'selected' : '' }}>{{ $district }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                    <div class="invalid-feedback">Please select a district.</div>
-                                </td>
-                                <td>
-                                    <input type="text" name="addresses[{{$index}}][address_line1]" 
-                                           class="form-control" value="{{ old("addresses.$index.address_line1", $address->address_line1) }}" 
-                                           placeholder="Address Line 1" required>
-                                    <div class="invalid-feedback">Address Line 1 is required.</div>
-                                </td>
-                                <td>
-                                    <input type="text" name="addresses[{{$index}}][post_office]" 
-                                           class="form-control" value="{{ old("addresses.$index.post_office", $address->post_office) }}" 
-                                           placeholder="Post Office" required>
-                                    <div class="invalid-feedback">Post Office is required.</div>
-                                </td>
-                                <td>
-                                    <input type="text" name="addresses[{{$index}}][pin_code]" 
-                                           class="form-control" value="{{ old("addresses.$index.pin_code", $address->pin_code) }}" 
-                                           placeholder="Pin Code" required pattern="[0-9]{6}">
-                                    <div class="invalid-feedback">Please enter a valid 6-digit PIN code.</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    @endif
+                                </select>
+                                <label>District</label>
+                                <div class="invalid-feedback">Please select a district.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <input name="addresses[{{$index}}][address_line1]" 
+                                    class="form-control @error("addresses.$index.address_line1") is-invalid @enderror" 
+                                    value="{{ old("addresses.$index.address_line1", $address->address_line1) }}" 
+                                    required 
+                                    placeholder="Address Line 1">
+                                <label>Address Line 1</label>
+                                <div class="invalid-feedback">Address Line 1 is required.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <input name="addresses[{{$index}}][post_office]" 
+                                    class="form-control @error("addresses.$index.post_office") is-invalid @enderror" 
+                                    value="{{ old("addresses.$index.post_office", $address->post_office) }}" 
+                                    required 
+                                    placeholder="Post Office">
+                                <label>Post Office</label>
+                                <div class="invalid-feedback">Post Office is required.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-0">
+                            <div class="form-floating">
+                                <input name="addresses[{{$index}}][pin_code]" 
+                                    class="form-control @error("addresses.$index.pin_code") is-invalid @enderror" 
+                                    value="{{ old("addresses.$index.pin_code", $address->pin_code) }}" 
+                                    required 
+                                    pattern="[0-9]{6}" 
+                                    placeholder="Pin Code">
+                                <label>Pin Code</label>
+                                <div class="invalid-feedback">Please enter a valid 6-digit PIN code.</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 @endforeach
             </div>
-            <button type="button" class="btn btn-outline-success mt-2" id="add-address">
+            <button type="button" class="btn btn-outline-success mt-3" id="add-address">
                 <i class="bi bi-plus"></i> Add Address
             </button>
         </div>
 
         <!-- Academic Qualifications -->
-        <div class="mb-4">
-            <h5 class="text-primary mb-3 fw-bold">Academic Qualifications</h5>
-            <div id="academic-container" class="border rounded p-3 bg-light">
+        <div class="form-section">
+            <h5 class="section-title"><i class="bi bi-book-fill"></i>Academic Qualifications</h5>
+            <div id="academic-container">
                 @foreach($academics as $index => $academic)
-                <div class="academic-block mb-3" data-index="{{ $index }}">
-                    <table class="table table-bordered table-hover bg-white shadow-sm">
-                        <thead class="bg-secondary text-white">
-                            <tr>
-                                <th colspan="4">
-                                    Qualification Details
-                                    @if($index > 0)
-                                    <button type="button" class="btn btn-danger btn-sm float-end remove-academic">Remove</button>
-                                    @endif
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input type="hidden" name="academic_qualifications[{{$index}}][id]" value="{{ $academic->id ?? '' }}">
-                                    <select name="academic_qualifications[{{$index}}][level]" class="form-control" required>
-                                        <option value="">Select Level</option>
-                                        <option value="Secondary" {{ old("academic_qualifications.$index.level", $academic->level) === 'Secondary' ? 'selected' : '' }}>Secondary</option>
-                                        <option value="Higher Secondary" {{ old("academic_qualifications.$index.level", $academic->level) === 'Higher Secondary' ? 'selected' : '' }}>Higher Secondary</option>
-                                        <option value="Graduation" {{ old("academic_qualifications.$index.level", $academic->level) === 'Graduation' ? 'selected' : '' }}>Graduation</option>
-                                        <option value="Post Graduation" {{ old("academic_qualifications.$index.level", $academic->level) === 'Post Graduation' ? 'selected' : '' }}>Post Graduation</option>
-                                        <option value="Other" {{ old("academic_qualifications.$index.level", $academic->level) === 'Other' ? 'selected' : '' }}>Other</option>
-                                    </select>
-                                    <div class="invalid-feedback">Please select a level.</div>
-                                </td>
-                                <td>
-                                    <input type="text" name="academic_qualifications[{{$index}}][institute]" 
-                                           class="form-control" value="{{ old("academic_qualifications.$index.institute", $academic->institute) }}" 
-                                           placeholder="Institute" required>
-                                    <div class="invalid-feedback">Institute is required.</div>
-                                </td>
-                                <td>
-                                    <input type="text" name="academic_qualifications[{{$index}}][board_university]" 
-                                           class="form-control" value="{{ old("academic_qualifications.$index.board_university", $academic->board_university) }}" 
-                                           placeholder="Board/University" required>
-                                    <div class="invalid-feedback">Board/University is required.</div>
-                                </td>
-                                <td>
-                                    <input type="number" name="academic_qualifications[{{$index}}][year_passed]" 
-                                           class="form-control" value="{{ old("academic_qualifications.$index.year_passed", $academic->year_passed) }}" 
-                                           placeholder="Year Passed" min="1900" max="{{ date('Y') }}">
-                                    <div class="invalid-feedback">Please enter a valid year.</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Secondary -->
+                <div class="mb-3 academic-entry" @if($index < 2) data-required="true" @endif data-index="{{ $index }}">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                <input type="hidden" name="academic_qualifications[{{$index}}][id]" value="{{ $academic->id ?? '' }}">
+                                <select name="academic_qualifications[{{$index}}][level]" class="form-select" required>
+                                    <option value="Secondary" {{ old("academic_qualifications.$index.level", $academic->level) === 'Secondary' ? 'selected' : '' }}>Secondary</option>
+                                    <option value="Higher Secondary" {{ old("academic_qualifications.$index.level", $academic->level) === 'Higher Secondary' ? 'selected' : '' }}>Higher Secondary</option>
+                                    <option value="Graduation" {{ old("academic_qualifications.$index.level", $academic->level) === 'Graduation' ? 'selected' : '' }}>Graduation</option>
+                                    <option value="Post Graduation" {{ old("academic_qualifications.$index.level", $academic->level) === 'Post Graduation' ? 'selected' : '' }}>Post Graduation</option>
+                                    <option value="Other" {{ old("academic_qualifications.$index.level", $academic->level) === 'Other' ? 'selected' : '' }}>Other</option>
+                                </select>
+                                <label>Level</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                <input name="academic_qualifications[{{$index}}][institute]" class="form-control" value="{{ old("academic_qualifications.$index.institute", $academic->institute) }}" required placeholder="Enter Institute">
+                                <label>Institute</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                <input name="academic_qualifications[{{$index}}][board_university]" class="form-control" value="{{ old("academic_qualifications.$index.board_university", $academic->board_university) }}" required placeholder="Enter Board/University">
+                                <label>Board/University</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating">
+                                <input name="academic_qualifications[{{$index}}][year_passed]" class="form-control" value="{{ old("academic_qualifications.$index.year_passed", $academic->year_passed) }}" pattern="[0-9]{4}" placeholder="Enter Year">
+                                <label>Year Passed</label>
+                            </div>
+                        </div>
+                        @if($index > 1)
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-danger btn-sm remove-academic" onclick="removeAcademic(this)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        @endif
+                    </div>
                 </div>
                 @endforeach
             </div>
-            <button type="button" class="btn btn-outline-success mt-2" id="add-academic">
-                <i class="bi bi-plus"></i> Add Qualification
-            </button>
+            <button type="button" class="btn btn-outline-primary mt-2" onclick="addAcademic()">Add Other Qualifications</button>
         </div>
     </form>
 @endsection
@@ -141,49 +279,42 @@
     <div class="form-footer">
         <div class="d-flex justify-content-between flex-wrap gap-2">
             <a href="{{ route('application.create', $advertisement) }}" class="btn btn-outline-secondary">Previous</a>
-            <div>
-                <button type="button" class="btn btn-outline-info me-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#previewModal">
-                    <i class="bi bi-eye"></i> Preview
-                </button>
-                <button type="submit" form="step2Form" class="btn btn-primary shadow-sm">Save and Next</button>
-            </div>
+            <button type="button" class="btn btn-primary shadow-sm" id="previewAndNextBtn">
+                <i class="bi bi-eye"></i> Preview and Next
+            </button>
         </div>
     </div>
 @endsection
 
 @section('preview')
-    <h6 class="text-primary fw-bold">Addresses</h6>
-    <table class="table table-bordered table-striped" id="preview-addresses">
-        <thead class="bg-secondary text-white">
-            <tr>
-                <th>Type</th>
-                <th>State</th>
-                <th>District</th>
-                <th>Address Line 1</th>
-                <th>Post Office</th>
-                <th>Pin Code</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <div class="container-fluid p-0">
+        <!-- Addresses Section -->
+        <h6 class="text-primary fw-bold mb-3">Addresses</h6>
+        <div class="preview-addresses mb-4" id="preview-addresses">
+            <!-- Content will be dynamically populated -->
+        </div>
 
-    <h6 class="text-primary fw-bold mt-4">Academic Qualifications</h6>
-    <table class="table table-bordered table-striped" id="preview-academics">
-        <thead class="bg-secondary text-white">
-            <tr>
-                <th>Level</th>
-                <th>Institute</th>
-                <th>Board/University</th>
-                <th>Year Passed</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+        <!-- Academic Qualifications Section -->
+        <h6 class="text-primary fw-bold mb-3">Academic Qualifications</h6>
+        <div class="preview-academics mb-4" id="preview-academics">
+            <!-- Content will be dynamically populated -->
+        </div>
+
+        <!-- Declaration -->
+        <div class="mt-4 declaration-section">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="declarationCheck" required>
+                <label class="form-check-label" for="declarationCheck">
+                    I hereby declare that all the information provided is true and correct to the best of my knowledge.
+                </label>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('preview-footer')
     <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Edit</button>
-    <button type="button" class="btn btn-primary shadow-sm" onclick="$('#step2Form').submit()">Save and Next</button>
+    <button type="button" class="btn btn-primary shadow-sm" id="saveAndNextBtn" disabled>Save and Next</button>
 @endsection
 
 @push('styles')
@@ -193,6 +324,8 @@
     .form-control.is-invalid, .form-select.is-invalid { border-color: #dc3545; }
 </style>
 @endpush
+
+
 
 @push('scripts')
 <script>
@@ -204,7 +337,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize state/district dropdowns
     document.querySelectorAll('.state-select').forEach(select => {
-        const districtSelect = select.closest('tr').querySelector('.district-select');
+        const container = select.closest('.address-block');
+        const districtSelect = container.querySelector('.district-select');
         const selectedDistrict = districtSelect.getAttribute('data-selected');
 
         if (select.value) {
@@ -226,119 +360,82 @@ document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('address-container');
         const type = addressIndex === 0 ? 'present' : 'permanent';
         const html = `
-            <div class="address-block mb-3" data-index="${addressIndex}">
-                <table class="table table-bordered table-hover bg-white shadow-sm">
-                    <thead class="bg-secondary text-white">
-                        <tr>
-                            <th colspan="5">
-                                ${type === 'present' ? 'Present Address' : 'Permanent Address'}
-                                <button type="button" class="btn btn-danger btn-sm float-end remove-address">Remove</button>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input type="hidden" name="addresses[${addressIndex}][type]" value="${type}">
-                                <select name="addresses[${addressIndex}][state]" class="form-control state-select" required>
-                                    <option value="">Select State</option>
-                                    ${Object.keys(stateDistrictData).map(state => 
-                                        `<option value="${state}">${state}</option>`).join('')}
-                                </select>
-                                <div class="invalid-feedback">Please select a state.</div>
-                            </td>
-                            <td>
-                                <select name="addresses[${addressIndex}][district]" class="form-control district-select" required>
-                                    <option value="">Select District</option>
-                                </select>
-                                <div class="invalid-feedback">Please select a district.</div>
-                            </td>
-                            <td>
-                                <input type="text" name="addresses[${addressIndex}][address_line1]" 
-                                       class="form-control" placeholder="Address Line 1" required>
-                                <div class="invalid-feedback">Address Line 1 is required.</div>
-                            </td>
-                            <td>
-                                <input type="text" name="addresses[${addressIndex}][post_office]" 
-                                       class="form-control" placeholder="Post Office" required>
-                                <div class="invalid-feedback">Post Office is required.</div>
-                            </td>
-                            <td>
-                                <input type="text" name="addresses[${addressIndex}][pin_code]" 
-                                       class="form-control" placeholder="Pin Code" required pattern="[0-9]{6}">
-                                <div class="invalid-feedback">Please enter a valid 6-digit PIN code.</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="col-md-6 address-block" data-index="${addressIndex}">
+                <div class="border rounded p-3 bg-light shadow-sm">
+                    <h6 class="mb-3 fw-bold">
+                        ${type === 'present' ? 'Present Address' : 'Permanent Address'}
+                        <button type="button" class="btn btn-danger btn-sm float-end remove-address">Remove</button>
+                    </h6>
+                    <input type="hidden" name="addresses[${addressIndex}][id]" value="">
+                    <input type="hidden" name="addresses[${addressIndex}][type]" value="${type}">
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <select name="addresses[${addressIndex}][state]" class="form-select state-select" required>
+                                <option value="">Select State</option>
+                                ${Object.keys(stateDistrictData).map(state => 
+                                    `<option value="${state}">${state}</option>`).join('')}
+                            </select>
+                            <label>State</label>
+                            <div class="invalid-feedback">Please select a state.</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <select name="addresses[${addressIndex}][district]" class="form-select district-select" required>
+                                <option value="">Select District</option>
+                            </select>
+                            <label>District</label>
+                            <div class="invalid-feedback">Please select a district.</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input name="addresses[${addressIndex}][address_line1]" 
+                                   class="form-control" 
+                                   required 
+                                   placeholder="Address Line 1">
+                            <label>Address Line 1</label>
+                            <div class="invalid-feedback">Address Line 1 is required.</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input name="addresses[${addressIndex}][post_office]" 
+                                   class="form-control" 
+                                   required 
+                                   placeholder="Post Office">
+                            <label>Post Office</label>
+                            <div class="invalid-feedback">Post Office is required.</div>
+                        </div>
+                    </div>
+                    <div class="mb-0">
+                        <div class="form-floating">
+                            <input name="addresses[${addressIndex}][pin_code]" 
+                                   class="form-control" 
+                                   required 
+                                   pattern="[0-9]{6}" 
+                                   placeholder="Pin Code">
+                            <label>Pin Code</label>
+                            <div class="invalid-feedback">Please enter a valid 6-digit PIN code.</div>
+                        </div>
+                    </div>
+                </div>
             </div>`;
         container.insertAdjacentHTML('beforeend', html);
         
-        const newStateSelect = container.querySelector(`[data-index="${addressIndex}"] .state-select`);
+        const newBlock = container.querySelector(`[data-index="${addressIndex}"]`);
+        const newStateSelect = newBlock.querySelector('.state-select');
         newStateSelect.addEventListener('change', function() {
-            const districtSelect = this.closest('tr').querySelector('.district-select');
+            const districtSelect = this.closest('.address-block').querySelector('.district-select');
             populateDistricts(districtSelect, this.value);
         });
         addressIndex++;
-    });
-
-    // Add Academic Qualification
-    document.getElementById('add-academic').addEventListener('click', function() {
-        const container = document.getElementById('academic-container');
-        const html = `
-            <div class="academic-block mb-3" data-index="${academicIndex}">
-                <table class="table table-bordered table-hover bg-white shadow-sm">
-                    <thead class="bg-secondary text-white">
-                        <tr>
-                            <th colspan="4">
-                                Qualification Details
-                                <button type="button" class="btn btn-danger btn-sm float-end remove-academic">Remove</button>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <select name="academic_qualifications[${academicIndex}][level]" class="form-control" required>
-                                    <option value="">Select Level</option>
-                                    <option value="Secondary">Secondary</option>
-                                    <option value="Higher Secondary">Higher Secondary</option>
-                                    <option value="Graduation">Graduation</option>
-                                    <option value="Post Graduation">Post Graduation</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                                <div class="invalid-feedback">Please select a level.</div>
-                            </td>
-                            <td>
-                                <input type="text" name="academic_qualifications[${academicIndex}][institute]" 
-                                       class="form-control" placeholder="Institute" required>
-                                <div class="invalid-feedback">Institute is required.</div>
-                            </td>
-                            <td>
-                                <input type="text" name="academic_qualifications[${academicIndex}][board_university]" 
-                                       class="form-control" placeholder="Board/University" required>
-                                <div class="invalid-feedback">Board/University is required.</div>
-                            </td>
-                            <td>
-                                <input type="number" name="academic_qualifications[${academicIndex}][year_passed]" 
-                                       class="form-control" placeholder="Year Passed" required min="1900" max="${new Date().getFullYear()}">
-                                <div class="invalid-feedback">Please enter a valid year.</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>`;
-        container.insertAdjacentHTML('beforeend', html);
-        academicIndex++;
     });
 
     // Remove handlers
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('remove-address')) {
             e.target.closest('.address-block').remove();
-        }
-        if (e.target.classList.contains('remove-academic')) {
-            e.target.closest('.academic-block').remove();
         }
     });
 
@@ -355,10 +452,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Form validation
-    const form = document.getElementById('step2Form');
-    form.addEventListener('submit', function(e) {
+    // Preview and Next button handler
+    document.getElementById('previewAndNextBtn').addEventListener('click', function() {
         let isValid = true;
+        const form = document.getElementById('step2Form');
+        
+        // Check all required fields
         form.querySelectorAll('[required]').forEach(input => {
             if (!input.value) {
                 input.classList.add('is-invalid');
@@ -368,6 +467,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Check PIN code format
         form.querySelectorAll('input[name$="[pin_code]"]').forEach(pin => {
             if (pin.value && !/^[0-9]{6}$/.test(pin.value)) {
                 pin.classList.add('is-invalid');
@@ -376,21 +476,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (!isValid) {
-            e.preventDefault();
-            toastr.error('Please correct the errors in the form.');
-        } else {
-            toastr.success('Form saved successfully!');
+            toastr.error('Please fill all required fields correctly.');
+            return;
         }
-    });
 
-    // Preview Modal
-    document.querySelector('[data-bs-target="#previewModal"]').addEventListener('click', function() {
-        const addressTable = document.getElementById('preview-addresses').querySelector('tbody');
-        const academicTable = document.getElementById('preview-academics').querySelector('tbody');
-        
-        addressTable.innerHTML = '';
-        academicTable.innerHTML = '';
+        // Populate preview modal
+        const addressContainer = document.getElementById('preview-addresses');
+        const academicContainer = document.getElementById('preview-academics');
+        addressContainer.innerHTML = '';
+        academicContainer.innerHTML = '';
 
+        // Address preview - Header (only for desktop)
+        addressContainer.innerHTML = `
+            <div class="preview-header">
+                <div class="preview-cell">Type</div>
+                <div class="preview-cell">State</div>
+                <div class="preview-cell">District</div>
+                <div class="preview-cell">Address Line 1</div>
+                <div class="preview-cell">Post Office</div>
+                <div class="preview-cell">Pin Code</div>
+            </div>`;
+
+        // Address preview - Data
         document.querySelectorAll('.address-block').forEach(block => {
             const type = block.querySelector('input[name*="[type]"]').value;
             const state = block.querySelector('.state-select').value;
@@ -399,36 +506,62 @@ document.addEventListener('DOMContentLoaded', function() {
             const postOffice = block.querySelector('input[name*="[post_office]"]').value;
             const pinCode = block.querySelector('input[name*="[pin_code]"]').value;
 
-            addressTable.innerHTML += `
-                <tr>
-                    <td>${type.charAt(0).toUpperCase() + type.slice(1)}</td>
-                    <td>${state || '-'}</td>
-                    <td>${district || '-'}</td>
-                    <td>${addressLine1 || '-'}</td>
-                    <td>${postOffice || '-'}</td>
-                    <td>${pinCode || '-'}</td>
-                </tr>`;
+            addressContainer.innerHTML += `
+                <div class="preview-row">
+                    <div class="preview-cell" data-label="Type"><span>${type.charAt(0).toUpperCase() + type.slice(1)}</span></div>
+                    <div class="preview-cell" data-label="State"><span>${state || '-'}</span></div>
+                    <div class="preview-cell" data-label="District"><span>${district || '-'}</span></div>
+                    <div class="preview-cell" data-label="Address Line 1"><span>${addressLine1 || '-'}</span></div>
+                    <div class="preview-cell" data-label="Post Office"><span>${postOffice || '-'}</span></div>
+                    <div class="preview-cell" data-label="Pin Code"><span>${pinCode || '-'}</span></div>
+                </div>`;
         });
 
-        document.querySelectorAll('.academic-block').forEach(block => {
-            const level = block.querySelector('select[name*="[level]"]').value;
-            const institute = block.querySelector('input[name*="[institute]"]').value;
-            const board = block.querySelector('input[name*="[board_university]"]').value;
-            const year = block.querySelector('input[name*="[year_passed]"]').value;
+        // Academic preview - Header (only for desktop)
+        academicContainer.innerHTML = `
+            <div class="preview-header">
+                <div class="preview-cell">Level</div>
+                <div class="preview-cell">Institute</div>
+                <div class="preview-cell">Board/University</div>
+                <div class="preview-cell">Year Passed</div>
+            </div>`;
 
-            academicTable.innerHTML += `
-                <tr>
-                    <td>${level ? level.charAt(0).toUpperCase() + level.slice(1) : '-'}</td>
-                    <td>${institute || '-'}</td>
-                    <td>${board || '-'}</td>
-                    <td>${year || '-'}</td>
-                </tr>`;
+        // Academic preview - Data
+        document.querySelectorAll('.academic-entry').forEach(entry => {
+            const level = entry.querySelector('select[name*="[level]"]').value;
+            const institute = entry.querySelector('input[name*="[institute]"]').value;
+            const board = entry.querySelector('input[name*="[board_university]"]').value;
+            const year = entry.querySelector('input[name*="[year_passed]"]').value;
+
+            academicContainer.innerHTML += `
+                <div class="preview-row">
+                    <div class="preview-cell" data-label="Level"><span>${level ? level.charAt(0).toUpperCase() + level.slice(1) : '-'}</span></div>
+                    <div class="preview-cell" data-label="Institute"><span>${institute || '-'}</span></div>
+                    <div class="preview-cell" data-label="Board/University"><span>${board || '-'}</span></div>
+                    <div class="preview-cell" data-label="Year Passed"><span>${year || '-'}</span></div>
+                </div>`;
         });
+        
+        // Show preview modal
+        const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+        previewModal.show();
     });
 
-});
+    // Declaration checkbox handler
+    const declarationCheck = document.getElementById('declarationCheck');
+    const saveAndNextBtn = document.getElementById('saveAndNextBtn');
+    
+    declarationCheck.addEventListener('change', function() {
+        saveAndNextBtn.disabled = !this.checked;
+    });
 
-document.addEventListener('DOMContentLoaded', function() {
+    // Save and Next button handler
+    saveAndNextBtn.addEventListener('click', function() {
+        if (declarationCheck.checked) {
+            document.getElementById('step2Form').submit();
+        }
+    });
+
     // Toastr configuration
     toastr.options = {
         positionClass: 'toast-top-right',
@@ -436,15 +569,74 @@ document.addEventListener('DOMContentLoaded', function() {
         timeOut: 5000,
         closeButton: true
     };
-
-    @if(session('toastr'))
-        toastr['{{ session('toastr.type') }}']('{{ session('toastr.message') }}', 'Notification');
-    @endif
 });
+</script>
+
+<script>
+    function addAcademic() {
+        const container = document.getElementById('academic-container');
+        const index = container.children.length;
+        const html = `
+            <div class="mb-3 academic-entry">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <select name="academic_qualifications[${index}][level]" class="form-select" required>
+                                <option value="">Select Level</option>
+                                <option value="Post Graduation">Post Graduation</option>
+                                <option value="Others">Others</option>
+                            </select>
+                            <label>Level</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input name="academic_qualifications[${index}][institute]" class="form-control" required placeholder="Enter Institute">
+                            <label>Institute</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input name="academic_qualifications[${index}][board_university]" class="form-control" required placeholder="Enter Board/University">
+                            <label>Board/University</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            <input name="academic_qualifications[${index}][year_passed]" class="form-control" required pattern="[0-9]{4}" placeholder="Enter Year">
+                            <label>Year Passed</label>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-danger btn-sm remove-academic" onclick="removeAcademic(this)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function removeAcademic(button) {
+        const entry = button.closest('.academic-entry');
+        if (!entry.dataset.required) {
+            entry.remove();
+            // Re-index remaining entries
+            const container = document.getElementById('academic-container');
+            Array.from(container.children).forEach((entry, index) => {
+                const inputs = entry.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    const name = input.name.replace(/academic_qualifications\[\d+\]/, `academic_qualifications[${index}]`);
+                    input.name = name;
+                });
+            });
+        }
+    }
 </script>
 @endpush
 
 @php
-    $step = 1;
+    $step = 2;
     $percentage = 20;
 @endphp

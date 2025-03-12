@@ -18,6 +18,10 @@ class ApplicationStep1Request extends FormRequest
             'dob' => 'required|date|before:today',
             'gender' => 'required|in:Male,Female,Other',
             'category' => 'required|string|max:50',
+            'cat_cert_no' => 'nullable|string|max:50',
+            'cat_issue_date' => 'nullable|date|before:today',
+            'cat_issue_by' => 'nullable|string|max:50',
+            'highest_qualification' => 'required|string|max:50',
             'email' => 'required|email|max:255',
             'mobile' => 'required|string|digits:10',
             // 

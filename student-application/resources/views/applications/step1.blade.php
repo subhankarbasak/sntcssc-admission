@@ -49,8 +49,17 @@
                 <div class="invalid-feedback">Please select a gender.</div>
             </div>
             <div class="col-md-6">
+                <label class="form-label fw-semibold text-dark required">Are you Person with Benchmark Disability (PwBD)?</label>
+                <select name="is_pwbd" class="form-select" required>
+                    <option value="">Select one</option>
+                    <option value="1" {{ old('is_pwbd', $profile->is_pwbd ?? $student->is_pwbd) == '1' ? 'selected' : '' }}>Yes</option>
+                    <option value="0" {{ old('is_pwbd', $profile->is_pwbd ?? $student->is_pwbd) == '0' ? 'selected' : '' }}>No</option>
+                </select>
+                <div class="invalid-feedback">Please select options for Benchmark Disability.</div>
+            </div>
+            <div class="col-md-6">
                 <label class="form-label fw-semibold text-dark required">Category</label>
-                <select name="category" class="form-select" required>
+                <select name="category" class="form-select" id="category" onchange="toggleCategory()" required>
                     <option value="">Select Category</option>
                     <option value="UR" {{ old('category', $profile->category ?? $student->category) == 'UR' ? 'selected' : '' }}>UR</option>
                     <option value="SC" {{ old('category', $profile->category ?? $student->category) == 'SC' ? 'selected' : '' }}>SC</option>
@@ -60,14 +69,44 @@
                 </select>
                 <div class="invalid-feedback">Please select a category.</div>
             </div>
+            <!-- If Category selected as other than UR -->
+
+            <div id="categoryDetails" class="">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="text" name="cat_cert_no" class="form-control @error('cat_cert_no') is-invalid @enderror" id="cat_cert_no" value="{{ old('cat_cert_no', $profile->cat_cert_no ?? $student->cat_cert_no) }}" required>
+                            <label for="cat_cert_no">Certificate No.</label>
+                            @error('cat_cert_no') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="date" name="cat_issue_date" class="form-control @error('cat_issue_date') is-invalid @enderror" id="cat_issue_date" value="{{ old('cat_issue_date', $profile->cat_issue_date ?? $student->cat_issue_date) }}" required>
+                            <label for="cat_issue_date">Certificate Issue Date.</label>
+                            @error('cat_issue_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="text" name="cat_issue_by" class="form-control @error('cat_issue_by') is-invalid @enderror" id="cat_issue_by" value="{{ old('cat_issue_by', $profile->cat_issue_by ?? $student->cat_issue_by) }}" required>
+                            <label for="cat_issue_by">Issuing Authority</label>
+                            @error('cat_issue_by') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Highest Qualifcation -->
             <div class="col-md-6">
-                <label class="form-label fw-semibold text-dark required">Are you Person with Benchmark Disability (PwBD)?</label>
-                <select name="is_pwbd" class="form-select" required>
-                    <option value="">Select one</option>
-                    <option value="1" {{ old('is_pwbd', $profile->is_pwbd ?? $student->is_pwbd) == '1' ? 'selected' : '' }}>Yes</option>
-                    <option value="0" {{ old('is_pwbd', $profile->is_pwbd ?? $student->is_pwbd) == '0' ? 'selected' : '' }}>No</option>
-                </select>
-                <div class="invalid-feedback">Please select options for Benchmark Disability.</div>
+                <label class="form-label fw-semibold text-dark required" for="Highest Qualification">Highest Qualification</label>
+                    <select name="highest_qualification" class="form-select @error('highest_qualification') is-invalid @enderror" required>
+                        <option value="">Select Highest Qualification</option>
+                        <option value="Graduate" {{ old('highest_qualification', $profile->highest_qualification ?? $student->highest_qualification) == 'Graduate' ? 'selected' : '' }}>Graduation Completed</option>
+                        <option value="Post Graduate" {{ old('highest_qualification', $profile->highest_qualification ?? $student->highest_qualification) == 'Post Graduate' ? 'selected' : '' }}>Post Graduate</option>
+                        <option value="Final Undergraduate Semester" {{ old('highest_qualification', $profile->highest_qualification ?? $student->highest_qualification) == 'Final Undergraduate Semester' ? 'selected' : '' }}>Final Undergraduate Semester</option>
+                    </select>
+                    @error('highest_qualification') <div class="invalid-feedback">{{ $message }}</div> @enderror
+
             </div>
             <div class="col-md-6">
                 <label class="form-label fw-semibold text-dark required">Occupation</label>
@@ -316,9 +355,42 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<script>
+    // Toggle button for Certificate details
+
+    function toggleCategory() {
+        const caste = document.getElementById('category').value;
+        const certificateDetails = document.getElementById('categoryDetails');
+        const requiredCastes = ['SC', 'ST', 'OBC A', 'OBC B', 'EWS'];
+        const caste_no = document.getElementById('cat_cert_no');
+        const caste_doi = document.getElementById('cat_issue_date');
+        const caste_isby = document.getElementById('cat_issue_by');
+
+        if (requiredCastes.includes(caste)) {
+            certificateDetails.style.display = '';
+            caste_no.required = true;
+            caste_doi.required = true;
+            caste_isby.required = true;
+        } else {
+            certificateDetails.style.display = 'none';
+            caste_no.value = '';
+            caste_doi.value = '';
+            caste_isby.value = '';
+            caste_no.required = false;
+            caste_doi.required = false;
+            caste_isby.required = false;
+        }
+    }
+
+    // Ensure the correct state is set on page load if a caste is already selected
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleCategory();
+    });
+</script>
 @endpush
 
 @php
-    $step = 0;
+    $step = 1;
     $percentage = 0;
 @endphp
