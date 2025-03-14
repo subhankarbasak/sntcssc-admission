@@ -314,7 +314,7 @@
 
 @section('preview-footer')
     <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Edit</button>
-    <button type="button" class="btn btn-primary shadow-sm" id="saveAndNextBtn" disabled>Save and Next</button>
+    <button type="button" class="btn btn-primary shadow-sm" id="saveAndNextBtn" disabled>Save and Next<i class="bi bi-arrow-right ms-2"></i></button>
 @endsection
 
 @push('styles')
@@ -569,6 +569,10 @@ document.addEventListener('DOMContentLoaded', function() {
         timeOut: 5000,
         closeButton: true
     };
+
+    @if(session('toastr'))
+        toastr['{{ session('toastr.type') }}']('{{ session('toastr.message') }}', 'Notification');
+    @endif
 });
 </script>
 

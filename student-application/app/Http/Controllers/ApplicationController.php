@@ -492,7 +492,7 @@ class ApplicationController extends Controller
                 }
             }
 
-            $this->applicationService->saveStep4($applicationId, $files);
+            $this->applicationService->saveStep4($application, $files);
 
             return redirect()->route('application.step5', $application)
                 ->with('toastr', ['type' => 'success', 'message' => 'Documents uploaded successfully!']);
@@ -566,7 +566,7 @@ class ApplicationController extends Controller
             $paymentData = $request->only(['amount', 'method', 'transaction_date', 'transaction_id']);
             $screenshot = $request->file('screenshot');
 
-            $this->applicationService->processPayment($applicationId, $paymentData, $screenshot);
+            $this->applicationService->processPayment($application, $paymentData, $screenshot);
 
             return redirect()->route('application.status', $application)
                 ->with('toastr', ['type' => 'success', 'message' => 'Payment submitted successfully!']);

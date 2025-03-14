@@ -202,7 +202,8 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label fw-semibold text-dark">Appearing for UPSC CSE 2026?</label>
-                <select name="is_appearing_upsc_cse" class="form-select">
+                <select name="is_appearing_upsc_cse" class="form-select" required>
+                <option value="">Select an option</option>
                     <option value="1" {{ old('is_appearing_upsc_cse', $application->is_appearing_upsc_cse ?? 0) == 1 ? 'selected' : '' }}>Yes</option>
                     <option value="0" {{ old('is_appearing_upsc_cse', $application->is_appearing_upsc_cse ?? 0) == 0 ? 'selected' : '' }}>No</option>
                 </select>
@@ -210,9 +211,16 @@
             <div class="col-md-6">
                 <label class="form-label fw-semibold text-dark">UPSC Attempts Count</label>
                 <input type="number" name="upsc_attempts_count" class="form-control" 
-                       value="{{ old('upsc_attempts_count', $application->upsc_attempts_count ?? 0) }}" min="0">
+                       value="{{ old('upsc_attempts_count', $application->upsc_attempts_count ?? 0) }}" min="0" required>
                 <div class="invalid-feedback">Please enter a valid number (0 or more).</div>
             </div>
+            <input type="hidden" name="student_id" value="{{ $profile->student_id ?? $student->id }}">
+            <input type="hidden" name="advertisement_id" value="{{ $advertisement->id }}">
+        </div>
+
+        <!-- Rest of the form fields remain unchanged -->
+        <div class="row g-4">
+            <!-- [Previous form fields remain unchanged] -->
             <input type="hidden" name="student_id" value="{{ $profile->student_id ?? $student->id }}">
             <input type="hidden" name="advertisement_id" value="{{ $advertisement->id }}">
         </div>
@@ -221,28 +229,33 @@
 
 @section('footer')
     <div class="form-footer">
-        <div class="d-flex justify-content-between flex-wrap gap-2">
-            <div></div>
-            <div>
-                <button type="button" class="btn btn-outline-secondary me-2 shadow-sm" 
-                        data-bs-toggle="modal" data-bs-target="#previewModal">Preview</button>
-                <button type="submit" form="applicationForm" class="btn btn-primary px-4 shadow-sm">Save and Next</button>
-            </div>
+        <div class="d-flex justify-content-end flex-wrap gap-2">
+            <button type="button" class="btn btn-primary px-4 shadow-sm" id="previewNextBtn"><i class="bi bi-eye"></i> Preview and Next</button>
         </div>
     </div>
 @endsection
 
 @section('preview')
-    <table class="table table-striped table-bordered table-hover">
-        <tbody id="previewTable">
-            <!-- Populated by JavaScript -->
-        </tbody>
-    </table>
+    <div class="modal-body">
+        <table class="table table-striped table-bordered table-hover">
+            <tbody id="previewTable">
+                <!-- Populated by JavaScript -->
+            </tbody>
+        </table>
+        <div class="mt-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="declarationCheck">
+                <label class="form-check-label" for="declarationCheck">
+                    I hereby declare that all the information provided is true and correct to the best of my knowledge.
+                </label>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('preview-footer')
     <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Edit</button>
-    <button type="button" class="btn btn-primary shadow-sm" onclick="$('#applicationForm').submit()">Save and Next</button>
+    <button type="button" class="btn btn-primary shadow-sm" id="saveNextBtn" disabled>Save and Next<i class="bi bi-arrow-right ms-2"></i></button>
 @endsection
 
 @push('scripts')
@@ -251,6 +264,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('applicationForm');
     const previewModal = document.getElementById('previewModal');
     const previewTable = document.getElementById('previewTable');
+    const previewNextBtn = document.getElementById('previewNextBtn');
+    const saveNextBtn = document.getElementById('saveNextBtn');
+    const declarationCheck = document.getElementById('declarationCheck');
 
     // Toastr options
     toastr.options = {
@@ -260,8 +276,8 @@ document.addEventListener('DOMContentLoaded', function() {
         timeOut: 3000
     };
 
-    // Form validation
-    form.addEventListener('submit', function(e) {
+    // Function to validate form
+    function validateForm() {
         let isValid = true;
         form.querySelectorAll('[required]').forEach(input => {
             if (!input.value) {
@@ -296,11 +312,16 @@ document.addEventListener('DOMContentLoaded', function() {
             isValid = false;
         }
 
-        if (!isValid) {
-            e.preventDefault();
-            toastr.error('Please correct the errors in the form.');
+        return isValid;
+    }
+
+    // Preview and Next button click handler
+    previewNextBtn.addEventListener('click', function() {
+        if (validateForm()) {
+            // Trigger modal show
+            new bootstrap.Modal(previewModal).show();
         } else {
-            toastr.success('Form saved successfully!');
+            toastr.error('Please correct the errors in the form.');
         }
     });
 
@@ -329,7 +350,10 @@ document.addEventListener('DOMContentLoaded', function() {
             'school_language': 'Medium in School',
             'optional_subject': 'Optional Subject',
             'is_appearing_upsc_cse': 'Appearing for UPSC CSE',
-            'upsc_attempts_count': 'UPSC Attempts Count'
+            'upsc_attempts_count': 'UPSC Attempts Count',
+            'cat_cert_no' : 'Certificate No.',
+            'cat_issue_date' : 'Certificate Issue Date.',
+            'cat_issue_by' : 'Issuing Authority'
         };
 
         for (let [key, value] of formData.entries()) {
@@ -352,13 +376,36 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         previewTable.innerHTML = previewHTML;
+        // Reset checkbox and button state
+        declarationCheck.checked = false;
+        saveNextBtn.disabled = true;
+    });
+
+    // Declaration checkbox handler
+    declarationCheck.addEventListener('change', function() {
+        saveNextBtn.disabled = !this.checked;
+    });
+
+    // Save and Next button handler
+    saveNextBtn.addEventListener('click', function() {
+        if (declarationCheck.checked) {
+            form.submit();
+            toastr.success('Form saved successfully!');
+        }
+    });
+
+    // Form submission handler
+    form.addEventListener('submit', function(e) {
+        if (!validateForm()) {
+            e.preventDefault();
+            toastr.error('Please correct the errors in the form.');
+        }
     });
 });
 </script>
 
 <script>
     // Toggle button for Certificate details
-
     function toggleCategory() {
         const caste = document.getElementById('category').value;
         const certificateDetails = document.getElementById('categoryDetails');

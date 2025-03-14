@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     @if(session('toastr'))
-        toastr[{{ session('toastr.type') }}]('{{ session('toastr.message') }}');
+        toastr['{{ session('toastr.type') }}']('{{ session('toastr.message') }}', 'Notification');
     @endif
 
     const form = document.getElementById('paymentForm');

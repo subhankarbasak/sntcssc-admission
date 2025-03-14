@@ -408,47 +408,9 @@ class ApplicationService
     }
 
     // ./ End Step 3 Here
-    // public function saveStep4($applicationId, array $files)
-    // {
-    //     try {
-    //         DB::beginTransaction();
-
-    //         // Delete existing documents if they are being replaced
-    //         $existingDocs = $this->getDocuments($applicationId);
-    //         foreach ($files as $type => $file) {
-    //             $existing = $existingDocs->where('type', $type)->first();
-    //             if ($existing) {
-    //                 Storage::disk('public')->delete($existing->file_path);
-    //                 $existing->delete();
-    //             }
-
-    //             $path = $file->store('documents/' . $applicationId, 'public');
-    //             $this->documentRepository->create([
-    //                 'application_id' => $applicationId,
-    //                 'type' => $type,
-    //                 'file_path' => $path,
-    //                 'file_size' => $file->getSize(),
-    //                 'file_mime' => $file->getMimeType(),
-    //                 'verification_status' => 'pending',
-    //                 'uploaded_at' => now()
-    //             ]);
-    //         }
-
-    //         DB::commit();
-    //         return true;
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         \Log::error('Step 4 save failed: ' . $e->getMessage());
-    //         throw $e;
-    //     }
-    // }
-
-    // public function getDocuments($applicationId)
-    // {
-    //     return $this->documentRepository->getByApplicationId($applicationId);
-    // }
-    public function saveStep4($applicationId, array $files)
+    public function saveStep4($application, array $files)
     {
+        $applicationId = $application->id;
         try {
             DB::beginTransaction();
     
@@ -456,12 +418,17 @@ class ApplicationService
     
             foreach ($files as $type => $file) {
                 $existing = $existingDocs->where('type', $type)->first();
+                // Generate custom filename: applicationId_photo_timestamp.extension
+                $timestamp = now()->format('YmdHis'); // e.g., 20250314123456
+                $extension = $file->getClientOriginalExtension(); // Get file extension
+                $customFileName = "{$application->application_number}_{$type}_{$timestamp}.{$extension}";
+                $path = 'documents/' . $application->application_number . '/' . $customFileName;
     
                 if ($existing) {
                     // Update existing document
                     Storage::disk('public')->delete($existing->file_path); // Delete old file
-                    $path = $file->store('documents/' . $applicationId, 'public');
-                    
+                    $file->storeAs('documents/' . $application->application_number, $customFileName, 'public');
+    
                     $this->documentRepository->update($existing->id, [
                         'file_path' => $path,
                         'file_size' => $file->getSize(),
@@ -471,7 +438,7 @@ class ApplicationService
                     ]);
                 } else {
                     // Create new document
-                    $path = $file->store('documents/' . $applicationId, 'public');
+                    $file->storeAs('documents/' . $application->application_number, $customFileName, 'public');
                     $this->documentRepository->create([
                         'application_id' => $applicationId,
                         'type' => $type,
@@ -574,19 +541,30 @@ class ApplicationService
     // ./ Submit Application End
 
     // Payment process step starts
-    public function processPayment($applicationId, array $paymentData, $screenshot = null)
+    public function processPayment($application, array $paymentData, $screenshot = null)
     {
+        $applicationId = $application->id;
         try {
             \DB::beginTransaction();
-
+    
             $application = $this->applicationRepository->find($applicationId);
             if (!$application || $application->status !== 'submitted') {
                 throw new \Exception('Application not eligible for payment');
             }
-
+    
             $screenshotId = null;
             if ($screenshot) {
-                $path = $screenshot->store('documents/payments', 'public');
+                // Generate custom filename
+                $timestamp = now()->format('YmdHis'); // e.g., 20250314123456
+                $randomString = \Str::random(6); // e.g., X7K9P2
+                $customFileName = "{$application->application_number}_payment_{$timestamp}_{$randomString}";
+    
+                // Get the original file extension
+                $extension = $screenshot->getClientOriginalExtension();
+    
+                // Store the file with the custom name
+                $path = $screenshot->storeAs('documents/payments', "{$customFileName}.{$extension}", 'public');
+    
                 $document = $this->documentRepository->create([
                     'application_id' => $applicationId,
                     'type' => 'payment_ss',
@@ -595,18 +573,18 @@ class ApplicationService
                 ]);
                 $screenshotId = $document->id;
             }
-
+    
             $paymentData = array_merge($paymentData, [
                 'application_id' => $applicationId,
                 'screenshot_document_id' => $screenshotId,
                 'status' => 'pending'
             ]);
-
+    
             $payment = $this->paymentRepository->create($paymentData);
-
+    
             // Update application payment status
             $application->update(['payment_status' => 'pending']);
-
+    
             \DB::commit();
             return $payment;
         } catch (\Exception $e) {
