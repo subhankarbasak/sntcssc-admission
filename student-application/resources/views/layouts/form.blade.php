@@ -195,7 +195,7 @@
         }
         .active .step-number { background: #0d6efd; color: white; }
         .completed .step-number { background: #198754; }
-        .form-step { padding: 30px; }
+        .form-step { padding: 10px; }
         .form-footer {
             padding: 20px;
             border-top: 1px solid #e9ecef;

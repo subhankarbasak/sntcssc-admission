@@ -3,7 +3,7 @@
     <input type="hidden" name="upsc_attempts[{{ $index }}][id]" value="{{ $attempt->id ?? '' }}">
     <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 mt-2 me-2" 
             onclick="removeUpscAttempt(this)">
-        <i class="fas fa-trash"></i>
+        <i class="bi bi-trash"></i>
     </button>
     <div class="row">
         <div class="col-md-3 mb-3">

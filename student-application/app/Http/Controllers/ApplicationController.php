@@ -44,6 +44,16 @@ class ApplicationController extends Controller
         $application = $student->applications()
         ->where('advertisement_id', $advertisementId)
         ->first();
+
+        if ($application->student_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this application');
+        }
+
+
+        if ($application->status == 'submitted') {
+            return redirect()->route('dashboard')
+            ->with('toastr', ['type' => 'error', 'message' => 'Your application has already been submitted.']);
+        }
         
         // dd($application);
         if($application === null){
@@ -112,6 +122,15 @@ class ApplicationController extends Controller
 
     public function step2(Application $application)
     {
+        if ($application->student_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this application');
+        }
+
+        if ($application->status == 'submitted') {
+            return redirect()->route('dashboard')
+            ->with('toastr', ['type' => 'error', 'message' => 'Your application has already been submitted.']);
+        }
+
         $applicationId = $application->id;
         $application = Application::findOrFail($applicationId);
         $student = Auth::user();
@@ -375,6 +394,15 @@ class ApplicationController extends Controller
 
     public function step3(Application $application)
     {
+        if ($application->student_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this application');
+        }
+
+        if ($application->status == 'submitted') {
+            return redirect()->route('dashboard')
+            ->with('toastr', ['type' => 'error', 'message' => 'Your application has already been submitted.']);
+        }
+
         $applicationId = $application->id;
         $application = Application::findOrFail($applicationId);
         
@@ -391,23 +419,6 @@ class ApplicationController extends Controller
 
         return view('applications.step3', compact('application', 'employment', 'enrollment', 'upscAttempts'));
     }
-
-    // public function storeStep3(ApplicationStep3Request $request, $applicationId)
-    // {
-    //     try {
-    //         $this->applicationService->saveStep3($applicationId, $request->validated());
-            
-    //         return redirect()->route('application.step4', $applicationId)
-    //             ->with('toastr', ['type' => 'success', 'message' => 'Step 3 completed!']);
-    //     } catch (\Exception $e) {
-    //         \Log::error('Step 3 save failed - msg from controller: ' . $e->getMessage());
-    //         return back()
-    //             ->withInput()
-    //             ->with('toastr', ['type' => 'error', 'message' => 'Failed to save step 3']);
-    //     }
-    // }
-
-    // 
 
     public function storeStep3(ApplicationStep3Request $request, Application $application)
     {
@@ -448,6 +459,15 @@ class ApplicationController extends Controller
 
     public function step4(Application $application)
     {
+        if ($application->student_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this application');
+        }
+
+        if ($application->status == 'submitted') {
+            return redirect()->route('dashboard')
+            ->with('toastr', ['type' => 'error', 'message' => 'Your application has already been submitted.']);
+        }
+
         $applicationId = $application->id;
         $application = Application::findOrFail($applicationId);
 
@@ -508,6 +528,15 @@ class ApplicationController extends Controller
     // End Step 4
     public function step5(Application $application)
     {
+        if ($application->student_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this application');
+        }
+        
+        if ($application->status == 'submitted') {
+            return redirect()->route('dashboard')
+            ->with('toastr', ['type' => 'error', 'message' => 'Your application has already been submitted.']);
+        }
+
         $applicationId = $application->id;
         $application = Application::findOrFail($applicationId);
 
@@ -517,6 +546,10 @@ class ApplicationController extends Controller
 
     public function submit(Request $request, Application $application)
     {
+        if ($application->student_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this application');
+        }
+
         $applicationId = $application->id;
         $application = Application::findOrFail($applicationId);
 
@@ -538,6 +571,10 @@ class ApplicationController extends Controller
 
     public function payment(Application $application)
     {
+        if ($application->student_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this application');
+        }
+
         $applicationId = $application->id;
 
         $application = Application::findOrFail($applicationId);
@@ -605,7 +642,11 @@ class ApplicationController extends Controller
 public function download(Application $application)
     {
         $applicationId = $application->id;
-        $application = Application::findOrFail($applicationId);
+        // $application = Application::findOrFail($applicationId);
+
+        if ($application->student_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this application');
+        }
         
         try {
             $application = Application::with([
@@ -615,9 +656,9 @@ public function download(Application $application)
                 'payment.screenshot'
             ])->findOrFail($applicationId);
 
-            if ($application->student_id !== auth()->id()) {
-                abort(403, 'Unauthorized access to this application');
-            }
+            // if ($application->student_id !== auth()->id()) {
+            //     abort(403, 'Unauthorized access to this application');
+            // }
 
             $details = $this->applicationService->getApplicationDetails($applicationId);
             // $logoPath = public_path('images/logo.png');

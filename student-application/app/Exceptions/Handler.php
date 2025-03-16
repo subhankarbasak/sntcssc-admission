@@ -61,6 +61,7 @@ class Handler extends ExceptionHandler
         // Handle web requests
         if ($this->isHttpException($exception)) {
             $statusCode = $exception->getStatusCode();
+            dd($statusCode);
 
             // Prepare error details (only in local environment)
             $errorDetails = [];

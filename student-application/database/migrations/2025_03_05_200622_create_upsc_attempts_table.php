@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('roll_number');
             $table->boolean('prelims_cleared')->default(false);
             $table->boolean('mains_cleared')->default(false);
-            $table->unsignedTinyInteger('attempt_number');
+            // $table->unsignedTinyInteger('attempt_number');
             $table->timestamps();
         });
     }

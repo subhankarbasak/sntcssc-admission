@@ -210,7 +210,7 @@
                         <div class="col-md-4">
                             <div class="form-floating">
                                 <input type="text" name="secondary_roll" class="form-control @error('secondary_roll') is-invalid @enderror" id="secondary_roll" value="{{ old('secondary_roll') }}" required placeholder="Enter Secondary Roll No.">
-                                <label for="secondary_roll">Secondary Roll No.</label>
+                                <label for="secondary_roll">10th Roll No. (without any space)</label>
                                 @error('secondary_roll') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                         </div>
@@ -487,7 +487,7 @@
                             </div>
                         </div>
                         <!-- Higher Secondary -->
-                        <div class="mb-3 academic-entry">
+                        <div class="mb-3 academic-entry" data-required="true">
                             <div class="row g-3 align-items-center">
                                 <div class="col-md-3">
                                     <div class="form-floating">
@@ -516,14 +516,14 @@
                                     </div>
                                 </div>
                                 <div class="col-md-1">
-                                    <button type="button" class="btn btn-danger btn-sm remove-academic" onclick="removeAcademic(this)">
+                                    <button type="button" class="btn btn-danger btn-sm remove-academic" disabled onclick="removeAcademic(this)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <!-- Graduation -->
-                        <div class="mb-3 academic-entry">
+                        <div class="mb-3 academic-entry" data-required="true">
                             <div class="row g-3 align-items-center">
                                 <div class="col-md-3">
                                     <div class="form-floating">
@@ -552,7 +552,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-1">
-                                    <button type="button" class="btn btn-danger btn-sm remove-academic" onclick="removeAcademic(this)">
+                                    <button type="button" class="btn btn-danger btn-sm remove-academic" disabled onclick="removeAcademic(this)">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>

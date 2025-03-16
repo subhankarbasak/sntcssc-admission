@@ -10,7 +10,7 @@
             <section class="mb-4 bg-white p-4 rounded-lg shadow-sm border-start border-success">
                 <h5 class="fw-semibold text-dark mb-3">Personal Details</h5>
                 <div class="row g-3">
-                    <div class="col-12 col-md-8">
+                    <div class="col-12 col-md-10">
                         <div class="table-responsive">
                             <table class="table table-bordered mb-0">
                                 <tbody>
@@ -20,7 +20,7 @@
                                     </tr>
                                     <tr>
                                         <th class="fw-medium bg-light py-2">Date of Birth</th>
-                                        <td class="py-2">{{ \Carbon\Carbon::parse($details['profile']->dob)->format('d M Y') }}</td>
+                                        <td class="py-2">{{ \Carbon\Carbon::parse($details['profile']->dob)->format('d/M/Y') }}</td>
                                     </tr>
                                     <tr>
                                         <th class="fw-medium bg-light py-2">Gender</th>
@@ -31,18 +31,46 @@
                                         <td class="py-2">{{ $details['profile']->email }}</td>
                                     </tr>
                                     <tr>
-                                        <th class="fw-medium bg-light py-2">Mobile</th>
-                                        <td class="py-2">{{ $details['profile']->mobile }}</td>
+                                        <th class="fw-medium bg-light py-2">Mobile /Whatsapp No.</th>
+                                        <td class="py-2">{{ $details['profile']->mobile }} / {{ $details['profile']->whatsapp }}</td>
                                     </tr>
                                     <tr>
                                         <th class="fw-medium bg-light py-2">Category</th>
                                         <td class="py-2">{{ $details['profile']->category }}</td>
                                     </tr>
+                                    <tr>
+                                        <th class="fw-medium bg-light py-2">Father's Name</th>
+                                        <td class="py-2">{{ $details['profile']->father_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="fw-medium bg-light py-2">Father's Occupation</th>
+                                        <td class="py-2">{{ $details['profile']->father_occupation }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="fw-medium bg-light py-2">Mother's Name</th>
+                                        <td class="py-2">{{ $details['profile']->mother_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="fw-medium bg-light py-2">Mother's Occupation</th>
+                                        <td class="py-2">{{ $details['profile']->mother_occupation }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="fw-medium bg-light py-2">Family's Annual Income</th>
+                                        <td class="py-2">{{ $details['profile']->family_income }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="fw-medium bg-light py-2">Medium of Language</th>
+                                        <td class="py-2">{{ $details['profile']->school_language }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="fw-medium bg-light py-2">Highest Qualifcation</th>
+                                        <td class="py-2">{{ $details['profile']->highest_qualification }}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-2">
                         <div class="d-flex flex-column gap-3">
                             <!-- Photograph -->
                             <div>
@@ -52,7 +80,7 @@
                                         <img src="{{ Storage::url($details['documents']->where('type', 'photo')->first()->file_path) }}"
                                              class="img-fluid w-100 rounded"
                                              alt="Student Photo"
-                                             style="max-height: 180px; object-fit: cover;">
+                                             style="max-height: 180px; object-fit: contain;">
                                     </div>
                                 @else
                                     <div class="border rounded p-2 bg-light text-center d-flex align-items-center justify-content-center" style="height: 180px;">
@@ -238,7 +266,7 @@
                         <tbody>
                             @foreach($details['documents'] as $document)
                                 <tr>
-                                    <td class="py-2">{{ ucfirst(str_replace('_', ' ', $document->type)) }}</td>
+                                    <td class="py-2">{{ getFieldLabel($document->type) }}</td>
                                     <td class="py-2">
                                         <a href="{{ Storage::url($document->file_path) }}"
                                            target="_blank"
@@ -319,7 +347,7 @@
     }
     h5 {
         font-size: 1.25rem;
-        color: #212529;
+        /* color: #212529; */
     }
 
     /* Typography */
