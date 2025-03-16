@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SNTCSSC Admission Portal</title>
+    <title>Satyendra Nath Tagore Civil Services Study Centre | @yield('title')</title>
+    <link rel="icon" href="https://csscwb.in/assets/front-end/images/others/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" type="image/x-icon" href="https://csscwb.in/assets/front-end/images/others/favicon.ico">
+    <meta name="Description" content="Satyendra Nath Tagore Civil Services Study Centre is ready to serve as a beacon for UPSC aspirants and provide guidance and mentorship to the leaders of tomorrow">
+    <meta name="author" content="Subhankar Basak">
+    <meta name="keywords" content="sntcssc, csscwb, satyendra nath tagore civil services study centre">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -185,7 +191,7 @@
             }
 
             .hero {
-                padding: 4rem 1rem 3rem;
+                padding: 6rem 1rem 3rem;
             }
 
             .hero-title {

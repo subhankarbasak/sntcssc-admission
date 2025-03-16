@@ -9,9 +9,10 @@ use App\Http\Controllers\ApplicationController;
 use App\Models\Advertisement;
 use App\Models\Application;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    // return view('welcome');
+    return view('landing');
+});
 
 
 // Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
@@ -20,9 +21,9 @@ use App\Models\Application;
 //     return view('dashboard');
 // })->middleware('auth')->name('dashboard');
 
-Route::get('/', function () {
-    return view('landing');
-})->name('landing');
+// Route::get('/', function () {
+//     return view('landing');
+// })->name('landing');
 
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
 
