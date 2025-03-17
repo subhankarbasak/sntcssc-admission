@@ -132,7 +132,7 @@
                         <h6 class="mb-3 fw-bold">
                             {{ $address->type === 'present' ? 'Present Address' : 'Permanent Address' }}
                             @if($index > 0)
-                            <button type="button" class="btn btn-danger btn-sm float-end remove-address">Remove</button>
+                            <button type="button" class="btn btn-danger btn-sm float-end remove-address d-none">Remove</button>
                             @endif
                         </h6>
                         <input type="hidden" name="addresses[{{$index}}][id]" value="{{ $address->id ?? '' }}">
@@ -259,7 +259,37 @@
                                 <label>Year Passed</label>
                             </div>
                         </div>
-                        @if($index > 1)
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                <input name="academic_qualifications[{{$index}}][subjects]" class="form-control" value="{{ old("academic_qualifications.$index.subjects", $academic->subjects) }}" placeholder="Enter Subjects">
+                                <label>Subjects</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating">
+                                <input name="academic_qualifications[{{$index}}][total_marks]" class="form-control" value="{{ old("academic_qualifications.$index.total_marks", $academic->total_marks) }}" placeholder="Enter total_marks">
+                                <label>Total Marks</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating">
+                                <input name="academic_qualifications[{{$index}}][marks_obtained]" class="form-control" value="{{ old("academic_qualifications.$index.marks_obtained", $academic->marks_obtained) }}" placeholder="Enter marks_obtained">
+                                <label>Marks Obtained</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating">
+                                <input name="academic_qualifications[{{$index}}][cgpa]" class="form-control" value="{{ old("academic_qualifications.$index.cgpa", $academic->cgpa) }}" placeholder="Enter cgpa">
+                                <label>GPA/CGPA/SGPA</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating">
+                                <input name="academic_qualifications[{{$index}}][division]" class="form-control" value="{{ old("academic_qualifications.$index.division", $academic->division) }}" placeholder="Enter division">
+                                <label>Division</label>
+                            </div>
+                        </div>
+                        @if($index > 2)
                         <div class="col-md-1">
                             <button type="button" class="btn btn-danger btn-sm remove-academic" onclick="removeAcademic(this)">
                                 <i class="bi bi-trash"></i>
@@ -268,6 +298,7 @@
                         @endif
                     </div>
                 </div>
+                <hr>
                 @endforeach
             </div>
             <button type="button" class="btn btn-outline-primary mt-2" onclick="addAcademic()">Add Other Qualifications</button>
@@ -524,6 +555,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="preview-cell">Institute</div>
                 <div class="preview-cell">Board/University</div>
                 <div class="preview-cell">Year Passed</div>
+                <div class="preview-cell">Subjects</div>
+                <div class="preview-cell">Total Marks</div>
+                <div class="preview-cell">Marks Obtained</div>
+                <div class="preview-cell">GPA/CGPA/SGPA</div>
+                <div class="preview-cell">Division</div>
             </div>`;
 
         // Academic preview - Data
@@ -532,6 +568,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const institute = entry.querySelector('input[name*="[institute]"]').value;
             const board = entry.querySelector('input[name*="[board_university]"]').value;
             const year = entry.querySelector('input[name*="[year_passed]"]').value;
+            const subjects = entry.querySelector('input[name*="[subjects]"]').value;
+            const tmarks = entry.querySelector('input[name*="[total_marks]"]').value;
+            const marksobt = entry.querySelector('input[name*="[marks_obtained]"]').value;
+            const gpa = entry.querySelector('input[name*="[cgpa]"]').value;
+            const division = entry.querySelector('input[name*="[division]"]').value;
 
             academicContainer.innerHTML += `
                 <div class="preview-row">
@@ -539,6 +580,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="preview-cell" data-label="Institute"><span>${institute || '-'}</span></div>
                     <div class="preview-cell" data-label="Board/University"><span>${board || '-'}</span></div>
                     <div class="preview-cell" data-label="Year Passed"><span>${year || '-'}</span></div>
+                    <div class="preview-cell" data-label="Subjects"><span>${subjects || '-'}</span></div>
+                    <div class="preview-cell" data-label="Total Marks"><span>${tmarks || '-'}</span></div>
+                    <div class="preview-cell" data-label="Marks Obtained"><span>${marksobt || '-'}</span></div>
+                    <div class="preview-cell" data-label="GPA/CGPA/SGPA"><span>${gpa || '-'}</span></div>
+                    <div class="preview-cell" data-label="Division"><span>${division || '-'}</span></div>
                 </div>`;
         });
         

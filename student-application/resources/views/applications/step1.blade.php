@@ -64,8 +64,7 @@
                     <option value="UR" {{ old('category', $profile->category ?? $student->category) == 'UR' ? 'selected' : '' }}>UR</option>
                     <option value="SC" {{ old('category', $profile->category ?? $student->category) == 'SC' ? 'selected' : '' }}>SC</option>
                     <option value="ST" {{ old('category', $profile->category ?? $student->category) == 'ST' ? 'selected' : '' }}>ST</option>
-                    <option value="OBC A" {{ old('category', $profile->category ?? $student->category) == 'OBC A' ? 'selected' : '' }}>OBC A</option>
-                    <option value="OBC B" {{ old('category', $profile->category ?? $student->category) == 'OBC B' ? 'selected' : '' }}>OBC B</option>
+                    <option value="OBC" {{ old('category', $profile->category ?? $student->category) == 'OBC' ? 'selected' : '' }}>OBC</option>
                 </select>
                 <div class="invalid-feedback">Please select a category.</div>
             </div>
@@ -163,7 +162,7 @@
                 <div class="invalid-feedback">Annual Family Income is required.</div>
             </div>
             <div class="col-md-6">
-                <label class="form-label fw-semibold text-dark required">Medium in School</label>
+                <label class="form-label fw-semibold text-dark required">Medium of Instruction at School Level</label>
                 <select name="school_language" class="form-select" required>
                     <option value="">Select one</option>
                     <option value="Bengali" {{ old('school_language', $profile->school_language ?? $student->school_language) == 'Bengali' ? 'selected' : '' }}>Bengali</option>
@@ -201,7 +200,7 @@
                 </select>
             </div>
             <div class="col-md-6">
-                <label class="form-label fw-semibold text-dark">Appearing for UPSC CSE 2026?</label>
+                <label class="form-label fw-semibold text-dark">Are you appearing in the UPSC CSE 2026?</label>
                 <select name="is_appearing_upsc_cse" class="form-select" required>
                 <option value="">Select an option</option>
                     <option value="1" {{ old('is_appearing_upsc_cse', $application->is_appearing_upsc_cse ?? 0) == 1 ? 'selected' : '' }}>Yes</option>
@@ -209,7 +208,7 @@
                 </select>
             </div>
             <div class="col-md-6">
-                <label class="form-label fw-semibold text-dark">UPSC Attempts Count</label>
+                <label class="form-label fw-semibold text-dark">How many times have you attended the UPSC CSE exam?</label>
                 <input type="number" name="upsc_attempts_count" class="form-control" 
                        value="{{ old('upsc_attempts_count', $application->upsc_attempts_count ?? 0) }}" min="0" required>
                 <div class="invalid-feedback">Please enter a valid number (0 or more).</div>
@@ -347,10 +346,10 @@ document.addEventListener('DOMContentLoaded', function() {
             'mobile': 'Mobile Number',
             'whatsapp': 'Whatsapp Number',
             'family_income': 'Annual Family Income',
-            'school_language': 'Medium in School',
+            'school_language': 'Medium of Instruction at School Level',
             'optional_subject': 'Optional Subject',
             'is_appearing_upsc_cse': 'Appearing for UPSC CSE',
-            'upsc_attempts_count': 'UPSC Attempts Count',
+            'upsc_attempts_count': 'How many times have you attended the UPSC CSE exam?',
             'cat_cert_no' : 'Certificate No.',
             'cat_issue_date' : 'Certificate Issue Date.',
             'cat_issue_by' : 'Issuing Authority'
@@ -409,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function toggleCategory() {
         const caste = document.getElementById('category').value;
         const certificateDetails = document.getElementById('categoryDetails');
-        const requiredCastes = ['SC', 'ST', 'OBC A', 'OBC B', 'EWS'];
+        const requiredCastes = ['SC', 'ST', 'OBC', 'EWS'];
         const caste_no = document.getElementById('cat_cert_no');
         const caste_doi = document.getElementById('cat_issue_date');
         const caste_isby = document.getElementById('cat_issue_by');

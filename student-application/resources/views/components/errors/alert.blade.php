@@ -1,7 +1,7 @@
 <!-- Updated component with customization options -->
-@props(['title' => 'Something went wrong!!'])
+@props(['title' => 'Something went wrong!!', 'errors' => null])
 
-@if ($errors->any())
+@if ($errors && $errors->any())
 <div {{ $attributes->merge(['class' => 'alert alert-danger alert-dismissible fade show']) }} role="alert">
     <h5 class="alert-heading mb-3">
         <i class="bi bi-exclamation-octagon-fill"></i> {{ $title }}

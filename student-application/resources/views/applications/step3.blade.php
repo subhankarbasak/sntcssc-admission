@@ -66,7 +66,7 @@
 
         <!-- Current Enrollment -->
         <section class="card mb-4 shadow-sm rounded-3">
-            <div class="card-header bg-white py-3 px-4 fw-semibold border-bottom">Current Enrollment</div>
+            <div class="card-header bg-white py-3 px-4 fw-semibold border-bottom">Whether presently enrolled in any course at any Institute?</div>
             <div class="card-body p-4">
                 <div class="row g-4">
                     <div class="col-md-6">
@@ -94,7 +94,7 @@
         <!-- UPSC Attempts -->
         <section class="card mb-4 shadow-sm rounded-3">
             <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
-                <span class="fw-semibold">UPSC Attempts</span>
+                <span class="fw-semibold">Have you appeared in UPSC CSE Exam earlier? if yes, give below the details in ascending chronological order:</span>
                 <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="addUpscAttempt()">
                     <i class="bi bi-plus me-1"></i> Add Attempt
                 </button>

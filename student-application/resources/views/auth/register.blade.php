@@ -275,8 +275,7 @@
                                     <option value="UR" {{ old('category') == 'UR' ? 'selected' : '' }}>UR</option>
                                     <option value="SC" {{ old('category') == 'SC' ? 'selected' : '' }}>SC</option>
                                     <option value="ST" {{ old('category') == 'ST' ? 'selected' : '' }}>ST</option>
-                                    <option value="OBC A" {{ old('category') == 'OBC A' ? 'selected' : '' }}>OBC A</option>
-                                    <option value="OBC B" {{ old('category') == 'OBC B' ? 'selected' : '' }}>OBC B</option>
+                                    <option value="OBC" {{ old('category') == 'OBC' ? 'selected' : '' }}>OBC</option>
                                 </select>
                                 <label for="category">Category</label>
                                 @error('category') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -1102,7 +1101,7 @@
     function toggleCategory() {
         const caste = document.getElementById('category').value;
         const certificateDetails = document.getElementById('categoryDetails');
-        const requiredCastes = ['SC', 'ST', 'OBC A', 'OBC B'];
+        const requiredCastes = ['SC', 'ST', 'OBC', 'OBC B'];
         const inputs = certificateDetails.querySelectorAll('input');
         
         if (requiredCastes.includes(caste)) {
