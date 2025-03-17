@@ -479,6 +479,36 @@
                                         <label>Year Passed</label>
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[0][subjects]" class="form-control" value="{{ old('academic_qualifications.0.subjects') }}" required placeholder="Enter Subjects">
+                                        <label>Subjects</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[0][total_marks]" class="form-control" value="{{ old('academic_qualifications.0.total_marks') }}" required placeholder="Enter Total Marks">
+                                        <label>Total Marks</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[0][marks_obtained]" class="form-control" value="{{ old('academic_qualifications.0.marks_obtained') }}" required placeholder="Enter Marks Obtained">
+                                        <label>Marks Obtained</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[0][cgpa]" class="form-control" value="{{ old('academic_qualifications.0.cgpa') }}" placeholder="Enter Marks Obtained">
+                                        <label>GPA/CGPA/SGPA</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[0][division]" class="form-control" value="{{ old('academic_qualifications.0.division') }}" placeholder="Enter Marks Obtained">
+                                        <label>Division</label>
+                                    </div>
+                                </div>
                                 <div class="col-md-1">
                                     <button type="button" class="btn btn-danger btn-sm remove-academic" disabled title="Secondary qualification is required">
                                         <i class="bi bi-trash"></i>
@@ -486,6 +516,7 @@
                                 </div>
                             </div>
                         </div>
+                        <hr>
                         <!-- Higher Secondary -->
                         <div class="mb-3 academic-entry" data-required="true">
                             <div class="row g-3 align-items-center">
@@ -515,6 +546,36 @@
                                         <label>Year Passed</label>
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[1][subjects]" class="form-control" value="{{ old('academic_qualifications.1.subjects') }}" required placeholder="Enter Subjects">
+                                        <label>Subjects</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[1][total_marks]" class="form-control" value="{{ old('academic_qualifications.1.total_marks') }}" required placeholder="Enter Total Marks">
+                                        <label>Total Marks</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[1][marks_obtained]" class="form-control" value="{{ old('academic_qualifications.1.marks_obtained') }}" required placeholder="Enter Marks Obtained">
+                                        <label>Marks Obtained</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[1][cgpa]" class="form-control" value="{{ old('academic_qualifications.1.cgpa') }}" placeholder="Enter Marks Obtained">
+                                        <label>GPA/CGPA/SGPA</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[1][division]" class="form-control" value="{{ old('academic_qualifications.1.division') }}" placeholder="Enter Marks Obtained">
+                                        <label>Division</label>
+                                    </div>
+                                </div>
                                 <div class="col-md-1">
                                     <button type="button" class="btn btn-danger btn-sm remove-academic" disabled onclick="removeAcademic(this)">
                                         <i class="bi bi-trash"></i>
@@ -522,6 +583,7 @@
                                 </div>
                             </div>
                         </div>
+                        <hr>
                         <!-- Graduation -->
                         <div class="mb-3 academic-entry" data-required="true">
                             <div class="row g-3 align-items-center">
@@ -549,6 +611,36 @@
                                     <div class="form-floating">
                                         <input name="academic_qualifications[2][year_passed]" class="form-control" value="{{ old('academic_qualifications.2.year_passed') }}" pattern="[0-9]{4}" placeholder="Enter Year">
                                         <label>Year Passed</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[2][subjects]" class="form-control" value="{{ old('academic_qualifications.2.subjects') }}" required placeholder="Enter Subjects">
+                                        <label>Subjects</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[2][total_marks]" class="form-control" value="{{ old('academic_qualifications.2.total_marks') }}" placeholder="Enter Total Marks">
+                                        <label>Total Marks</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[2][marks_obtained]" class="form-control" value="{{ old('academic_qualifications.2.marks_obtained') }}" placeholder="Enter Marks Obtained">
+                                        <label>Marks Obtained</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[2][cgpa]" class="form-control" value="{{ old('academic_qualifications.2.cgpa') }}" placeholder="Enter GPA/CGPA/SGPA">
+                                        <label>GPA/CGPA/SGPA</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input name="academic_qualifications[2][division]" class="form-control" value="{{ old('academic_qualifications.2.division') }}" placeholder="Enter Division">
+                                        <label>Division</label>
                                     </div>
                                 </div>
                                 <div class="col-md-1">
@@ -873,6 +965,7 @@
         const container = document.getElementById('academic-container');
         const index = container.children.length;
         const html = `
+        <hr>
             <div class="mb-3 academic-entry">
                 <div class="row g-3 align-items-center">
                     <div class="col-md-3">
@@ -901,6 +994,36 @@
                         <div class="form-floating">
                             <input name="academic_qualifications[${index}][year_passed]" class="form-control" required pattern="[0-9]{4}" placeholder="Enter Year">
                             <label>Year Passed</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input name="academic_qualifications[${index}][subjects]" class="form-control" required placeholder="Enter Subjects">
+                            <label>Subjects</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            <input name="academic_qualifications[${index}][total_marks]" class="form-control" required placeholder="Enter Total Marks">
+                            <label>Total Marks</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            <input name="academic_qualifications[${index}][marks_obtained]" class="form-control" required placeholder="Enter Marks Obtained">
+                            <label>Marks Obtained</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            <input name="academic_qualifications[${index}][cgpa]" class="form-control" placeholder="Enter Subjects">
+                            <label>GPA/CGPA/SGPA</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            <input name="academic_qualifications[${index}][division]" class="form-control" placeholder="Enter Subjects">
+                            <label>Division</label>
                         </div>
                     </div>
                     <div class="col-md-1">

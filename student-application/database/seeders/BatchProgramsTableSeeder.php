@@ -17,7 +17,7 @@ class BatchProgramsTableSeeder extends Seeder
             [
                 'batch_id' => 1,
                 'program_id' => 1,
-                'fee' => 1000.00,
+                'fee' => 100.00,
                 'available_seats' => 200,
                 'max_applications' => 2000,
                 'status' => 'open',

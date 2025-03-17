@@ -15,7 +15,7 @@ class ProgramsTableSeeder extends Seeder
     {
         DB::table('programs')->insert([
             [
-                'name' => 'Composite Course',
+                'name' => 'SNTCSSC Composite Course',
                 'code' => 'COMP',
                 'description' => 'An introduction to Composite Course.',
                 'base_duration' => '10 months',

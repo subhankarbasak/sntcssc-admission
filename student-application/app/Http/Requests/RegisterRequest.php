@@ -36,6 +36,11 @@ class RegisterRequest extends FormRequest
             'academic_qualifications.*.institute' => 'required|string',
             'academic_qualifications.*.board_university' => 'required|string',
             'academic_qualifications.*.year_passed' => 'nullable|digits:4|before_or_equal:' . date('Y'),
+            'academic_qualifications.*.subjects' => 'required|string',
+            'academic_qualifications.*.total_marks' => 'nullable|string',
+            'academic_qualifications.*.marks_obtained' => 'nullable|string',
+            'academic_qualifications.*.cgpa' => 'nullable|string',
+            'academic_qualifications.*.division' => 'nullable|string',
         ];
     }
 }

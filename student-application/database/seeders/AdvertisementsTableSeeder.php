@@ -16,8 +16,8 @@ class AdvertisementsTableSeeder extends Seeder
         $advertisements = [
             [
                 'batch_id' => 1,
-                'title' => 'SNTCSSC 2026 Admissions',
-                'code' => 'ADV-2026-COMPOSITE-COURSE',
+                'title' => 'SNTCSSC Composite Course 2026 Batch',
+                'code' => 'sntcssc-admission-2026-batch',
                 'application_start' => now(),
                 'application_end' => now(),
                 'status' => 'published',

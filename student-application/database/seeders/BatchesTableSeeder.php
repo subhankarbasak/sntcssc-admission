@@ -52,8 +52,8 @@ class BatchesTableSeeder extends Seeder
                 'name' => 'Batch 2026',
                 'academic_year' => 2026,
                 'code' => 'BATCH-2026',
-                'start_date' => '2025-07-01',
-                'end_date' => '2026-06-30',
+                'start_date' => '2025-03-16',
+                'end_date' => '2026-04-20',
                 'status' => 'planned',
             ],
         ];
