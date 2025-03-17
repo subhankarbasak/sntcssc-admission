@@ -189,6 +189,27 @@
     .modal-content {
         border-radius: 5px;
     }
+
+/* Spinner */
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
 </style>
 @endpush
 
@@ -376,18 +397,23 @@
                                     <div class="form-floating">
                                         <select name="addresses[0][state]" class="form-select state-select" id="present_state" required onchange="updateDistricts(this, 'present_district')">
                                             <option value="">Select State</option>
+                                            @foreach(array_keys($indiaStatesDistricts) as $state)
+                                                <option value="{{ $state }}" {{ old('addresses.0.state') == $state ? 'selected' : '' }}>{{ $state }}</option>
+                                            @endforeach
                                         </select>
                                         <label>State</label>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <div class="form-floating">
-                                        <select name="addresses[0][district]" class="form-select district-select" id="present_district" required>
+                                        <select name="addresses[0][district]" class="form-select district-select" id="present_district" required data-old-value="{{ old('addresses.0.district') }}">
                                             <option value="">Select District</option>
+                                            <!-- Districts will be populated by JS -->
                                         </select>
                                         <label>District</label>
                                     </div>
                                 </div>
+                                <!-- State and District -->
                                 <div class="mb-3">
                                     <div class="form-floating">
                                         <input name="addresses[0][pin_code]" class="form-control" value="{{ old('addresses.0.pin_code') }}" required pattern="[0-9]{6}" placeholder="Enter Pin Code">
@@ -423,14 +449,18 @@
                                     <div class="form-floating">
                                         <select name="addresses[1][state]" class="form-select state-select" id="permanent_state" required onchange="updateDistricts(this, 'permanent_district')">
                                             <option value="">Select State</option>
+                                            @foreach(array_keys($indiaStatesDistricts) as $state)
+                                                <option value="{{ $state }}" {{ old('addresses.1.state') == $state ? 'selected' : '' }}>{{ $state }}</option>
+                                            @endforeach
                                         </select>
                                         <label>State</label>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <div class="form-floating">
-                                        <select name="addresses[1][district]" class="form-select district-select" id="permanent_district" required>
+                                        <select name="addresses[1][district]" class="form-select district-select" id="permanent_district" required data-old-value="{{ old('addresses.1.district') }}">
                                             <option value="">Select District</option>
+                                            <!-- Districts will be populated by JS -->
                                         </select>
                                         <label>District</label>
                                     </div>
@@ -656,7 +686,7 @@
 
                 <!-- Buttons -->
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                    <button type="button" class="btn btn-primary" id="createAccountBtn">Create Account</button>
+                    <button type="button" class="btn btn-primary" id="createAccountBtn"><i class="bi bi-eye"></i> Preview and Next</button>
                 </div>
                 <div class="text-center mt-3 footer-links">
                     <small>Already have an account? <a href="{{ route('login') }}">Log in</a> | <a href="#">Terms</a> | <a href="#">Privacy</a></small>
@@ -685,7 +715,7 @@
                     </label>
                 </div>
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="confirmCreateBtn" disabled>Confirm & Proceed</button>
+                <button type="button" class="btn btn-primary" id="confirmCreateBtn" disabled>Confirm & Proceed <i class="bi bi-arrow-right ms-2"></i></button>
             </div>
         </div>
     </div>
@@ -912,26 +942,33 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Populate states
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: 'toast-top-right',
+            timeOut: '5000',
+        };
+
         const stateSelects = document.querySelectorAll('.state-select');
         stateSelects.forEach(select => {
-            Object.keys(indiaStatesDistricts).forEach(state => {
-                const option = document.createElement('option');
-                option.value = state;
-                option.textContent = state;
-                select.appendChild(option);
-            });
+            const selectedState = select.value;
+            if (selectedState) {
+                const districtSelectId = select.id === 'present_state' ? 'present_district' : 'permanent_district';
+                updateDistricts(select, districtSelectId);
+                const districtSelect = document.getElementById(districtSelectId);
+                const oldDistrict = districtSelect.dataset.oldValue || '';
+                if (oldDistrict) districtSelect.value = oldDistrict;
+            }
         });
 
-        // Form validation
-        const form = document.getElementById('registrationForm');
-        form.addEventListener('submit', event => {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
+        const oldAcademic = @json(old('academic_qualifications', []));
+        if (oldAcademic.length > 3) {
+            for (let i = 3; i < oldAcademic.length; i++) {
+                addAcademic(oldAcademic[i]);
             }
-            form.classList.add('was-validated');
-        });
+        }
+
+        toggleCategory();
     });
 
     function togglePassword(fieldId) {
@@ -961,68 +998,68 @@
         }
     }
 
-    function addAcademic() {
+    function addAcademic(oldData = null) {
         const container = document.getElementById('academic-container');
-        const index = container.children.length;
+        const index = container.querySelectorAll('.academic-entry').length;
         const html = `
-        <hr>
+            <hr>
             <div class="mb-3 academic-entry">
                 <div class="row g-3 align-items-center">
                     <div class="col-md-3">
                         <div class="form-floating">
                             <select name="academic_qualifications[${index}][level]" class="form-select" required>
                                 <option value="">Select Level</option>
-                                <option value="Post Graduation">Post Graduation</option>
-                                <option value="Others">Others</option>
+                                <option value="Post Graduation" ${oldData?.level === 'Post Graduation' ? 'selected' : ''}>Post Graduation</option>
+                                <option value="Others" ${oldData?.level === 'Others' ? 'selected' : ''}>Others</option>
                             </select>
                             <label>Level</label>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][institute]" class="form-control" required placeholder="Enter Institute">
+                            <input name="academic_qualifications[${index}][institute]" class="form-control" value="${oldData?.institute || ''}" required placeholder="Enter Institute">
                             <label>Institute</label>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][board_university]" class="form-control" required placeholder="Enter Board/University">
+                            <input name="academic_qualifications[${index}][board_university]" class="form-control" value="${oldData?.board_university || ''}" required placeholder="Enter Board/University">
                             <label>Board/University</label>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][year_passed]" class="form-control" required pattern="[0-9]{4}" placeholder="Enter Year">
+                            <input name="academic_qualifications[${index}][year_passed]" class="form-control" value="${oldData?.year_passed || ''}" required pattern="[0-9]{4}" placeholder="Enter Year">
                             <label>Year Passed</label>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][subjects]" class="form-control" required placeholder="Enter Subjects">
+                            <input name="academic_qualifications[${index}][subjects]" class="form-control" value="${oldData?.subjects || ''}" required placeholder="Enter Subjects">
                             <label>Subjects</label>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][total_marks]" class="form-control" required placeholder="Enter Total Marks">
+                            <input name="academic_qualifications[${index}][total_marks]" class="form-control" value="${oldData?.total_marks || ''}" required placeholder="Enter Total Marks">
                             <label>Total Marks</label>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][marks_obtained]" class="form-control" required placeholder="Enter Marks Obtained">
+                            <input name="academic_qualifications[${index}][marks_obtained]" class="form-control" value="${oldData?.marks_obtained || ''}" required placeholder="Enter Marks Obtained">
                             <label>Marks Obtained</label>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][cgpa]" class="form-control" placeholder="Enter Subjects">
+                            <input name="academic_qualifications[${index}][cgpa]" class="form-control" value="${oldData?.cgpa || ''}" placeholder="Enter GPA/CGPA/SGPA">
                             <label>GPA/CGPA/SGPA</label>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][division]" class="form-control" placeholder="Enter Subjects">
+                            <input name="academic_qualifications[${index}][division]" class="form-control" value="${oldData?.division || ''}" placeholder="Enter Division">
                             <label>Division</label>
                         </div>
                     </div>
@@ -1040,16 +1077,11 @@
     function removeAcademic(button) {
         const entry = button.closest('.academic-entry');
         if (!entry.dataset.required) {
+            entry.previousElementSibling.remove();
             entry.remove();
-            // Re-index remaining entries
-            const container = document.getElementById('academic-container');
-            Array.from(container.children).forEach((entry, index) => {
-                const inputs = entry.querySelectorAll('input, select');
-                inputs.forEach(input => {
-                    const name = input.name.replace(/academic_qualifications\[\d+\]/, `academic_qualifications[${index}]`);
-                    input.name = name;
-                });
-            });
+            toastr.success('Academic qualification removed successfully');
+        } else {
+            toastr.warning('Cannot remove required qualification');
         }
     }
 
@@ -1066,69 +1098,139 @@
             });
         }
     }
-</script>
-<script>
-    // ... existing functions ...
 
+    function toggleCategory() {
+        const caste = document.getElementById('category').value;
+        const certificateDetails = document.getElementById('categoryDetails');
+        const requiredCastes = ['SC', 'ST', 'OBC A', 'OBC B'];
+        const inputs = certificateDetails.querySelectorAll('input');
+        
+        if (requiredCastes.includes(caste)) {
+            certificateDetails.style.display = 'block';
+            inputs.forEach(input => input.required = true);
+        } else {
+            certificateDetails.style.display = 'none';
+            inputs.forEach(input => {
+                input.required = false;
+                input.value = '';
+            });
+        }
+    }
+</script>
+
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('registrationForm');
         const createBtn = document.getElementById('createAccountBtn');
         const confirmBtn = document.getElementById('confirmCreateBtn');
         const declarationCheck = document.getElementById('declarationCheck');
 
-        // Toastr options
-        toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "positionClass": "toast-top-right",
-            "timeOut": "3000"
-        };
-
-        // Handle Create Account button click
         createBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            
-            // Check all required fields
-            const requiredFields = form.querySelectorAll('[required]');
-            let allFilled = true;
-            
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    allFilled = false;
-                    field.classList.add('is-invalid');
-                } else {
-                    field.classList.remove('is-invalid');
-                }
-            });
-
-            if (!allFilled) {
-                toastr.error('Please fill all mandatory fields');
-                return;
+            if (form.checkValidity()) {
+                showPreviewModal();
+                toastr.success('Preview generated successfully');
+            } else {
+                form.classList.add('was-validated');
+                const invalidFields = form.querySelectorAll(':invalid');
+                invalidFields.forEach(field => {
+                    const readableName = getReadableFieldName(field);
+                    toastr.error(`Please fill in "${readableName}" correctly`);
+                });
             }
-
-            // If all fields are filled, show preview modal
-            showPreviewModal();
         });
 
-        // Handle declaration checkbox
         declarationCheck.addEventListener('change', function() {
             confirmBtn.disabled = !this.checked;
+            if (this.checked) {
+                toastr.info('Declaration confirmed');
+            }
         });
 
-        // Handle final submission
         confirmBtn.addEventListener('click', function() {
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="spinner"></span>Processing...';
+            toastr.info('Submitting registration...');
             form.submit();
         });
 
+        function getReadableFieldName(field) {
+            const name = field.name;
+            const label = field.labels[0]?.textContent || '';
+
+            // If there's a label, use it
+            if (label) return label;
+
+            // Parse complex field names like academic_qualifications[2][subjects]
+            if (name.includes('academic_qualifications')) {
+                const match = name.match(/academic_qualifications\[(\d+)\]\[(\w+)\]/);
+                if (match) {
+                    const index = parseInt(match[1], 10);
+                    const fieldName = match[2];
+                    const levelMap = {
+                        0: 'Secondary',
+                        1: 'Higher Secondary',
+                        2: 'Graduation'
+                    };
+                    const level = levelMap[index] || `Additional Qualification ${index - 2}`;
+                    const fieldMap = {
+                        'level': 'Level',
+                        'institute': 'Institute',
+                        'board_university': 'Board/University',
+                        'year_passed': 'Year Passed',
+                        'subjects': 'Subjects',
+                        'total_marks': 'Total Marks',
+                        'marks_obtained': 'Marks Obtained',
+                        'cgpa': 'GPA/CGPA/SGPA',
+                        'division': 'Division'
+                    };
+                    return `${level} ${fieldMap[fieldName] || fieldName}`;
+                }
+            }
+
+            // Handle address fields
+            if (name.includes('addresses')) {
+                const match = name.match(/addresses\[(\d+)\]\[(\w+)\]/);
+                if (match) {
+                    const type = match[1] === '0' ? 'Present' : 'Permanent';
+                    const fieldName = match[2];
+                    const fieldMap = {
+                        'address_line1': 'Address Line 1',
+                        'post_office': 'Post Office',
+                        'state': 'State',
+                        'district': 'District',
+                        'pin_code': 'Pin Code'
+                    };
+                    return `${type} ${fieldMap[fieldName] || fieldName}`;
+                }
+            }
+
+            // Fallback to simple field names
+            const simpleFieldMap = {
+                'secondary_roll': 'Secondary Roll No.',
+                'first_name': 'First Name',
+                'last_name': 'Last Name',
+                'gender': 'Gender',
+                'dob': 'Date of Birth',
+                'category': 'Category',
+                'cat_cert_no': 'Category Certificate No.',
+                'cat_issue_date': 'Category Certificate Issue Date',
+                'cat_issue_by': 'Category Certificate Issuing Authority',
+                'highest_qualification': 'Highest Qualification',
+                'email': 'Email Address',
+                'mobile': 'Mobile Number',
+                'password': 'Password',
+                'password_confirmation': 'Password Confirmation'
+            };
+            return simpleFieldMap[name] || name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        }
 
         function showPreviewModal() {
             const previewContent = document.getElementById('previewContent');
             previewContent.innerHTML = '';
-            
             const formData = new FormData(form);
             let previewHTML = '';
 
-            // Personal Information
             previewHTML += '<div class="section-title">Personal Information</div>';
             previewHTML += '<table class="preview-table">';
             previewHTML += createTableRow('Secondary Roll No.', formData.get('secondary_roll'));
@@ -1136,20 +1238,20 @@
             previewHTML += createTableRow('Gender', formData.get('gender'));
             previewHTML += createTableRow('Date of Birth', formData.get('dob'));
             previewHTML += createTableRow('Category', formData.get('category'));
-            previewHTML += createTableRow('Certificate No.', formData.get('cat_cert_no'));
-            previewHTML += createTableRow('Issue Date', formData.get('cat_issue_date'));
-            previewHTML += createTableRow('Issued By', formData.get('cat_issue_by'));
+            if (formData.get('cat_cert_no')) {
+                previewHTML += createTableRow('Certificate No.', formData.get('cat_cert_no'));
+                previewHTML += createTableRow('Issue Date', formData.get('cat_issue_date'));
+                previewHTML += createTableRow('Issued By', formData.get('cat_issue_by'));
+            }
             previewHTML += createTableRow('Highest Qualification', formData.get('highest_qualification'));
             previewHTML += '</table>';
 
-            // Contact Information
             previewHTML += '<div class="section-title">Contact Information</div>';
             previewHTML += '<table class="preview-table">';
             previewHTML += createTableRow('Email Address', formData.get('email'));
             previewHTML += createTableRow('Mobile Number', formData.get('mobile'));
             previewHTML += '</table>';
 
-            // Address Information
             previewHTML += '<div class="section-title">Present Address</div>';
             previewHTML += '<table class="preview-table">';
             previewHTML += createTableRow('Address Line', formData.get('addresses[0][address_line1]'));
@@ -1168,24 +1270,10 @@
             previewHTML += createTableRow('Pin Code', formData.get('addresses[1][pin_code]'));
             previewHTML += '</table>';
 
-            // Academic Qualifications
-            // previewHTML += '<div class="section-title">Academic Qualifications</div>';
-            // const academicEntries = document.querySelectorAll('.academic-entry');
-            // academicEntries.forEach((entry, index) => {
-            //     previewHTML += '<table class="preview-table">';
-            //     previewHTML += `<tr><th colspan="2">Qualification ${index + 1}</th></tr>`;
-            //     previewHTML += createTableRow('Level', formData.get(`academic_qualifications[${index}][level]`));
-            //     previewHTML += createTableRow('Institute', formData.get(`academic_qualifications[${index}][institute]`));
-            //     previewHTML += createTableRow('Board/University', formData.get(`academic_qualifications[${index}][board_university]`));
-            //     previewHTML += createTableRow('Year Passed', formData.get(`academic_qualifications[${index}][year_passed]`));
-            //     previewHTML += '</table>';
-            // });
-
-            // Academic Qualifications
             previewHTML += '<div class="section-title">Academic Qualifications</div>';
             previewHTML += '<table class="preview-table">';
-            previewHTML += '<tr><th>Level</th><th>Institute</th><th>Board/University</th><th>Year Passed</th></tr>';
-
+            previewHTML += '<tr><th>Level</th><th>Institute</th><th>Board/University</th><th>Year</th><th>Subjects</th><th>Total Marks</th><th>Marks Obtained</th><th>GPA/CGPA</th><th>Division</th></tr>';
+            
             const academicEntries = document.querySelectorAll('.academic-entry');
             academicEntries.forEach((entry, index) => {
                 previewHTML += '<tr>';
@@ -1193,60 +1281,26 @@
                 previewHTML += `<td>${formData.get(`academic_qualifications[${index}][institute]`) || ''}</td>`;
                 previewHTML += `<td>${formData.get(`academic_qualifications[${index}][board_university]`) || ''}</td>`;
                 previewHTML += `<td>${formData.get(`academic_qualifications[${index}][year_passed]`) || ''}</td>`;
+                previewHTML += `<td>${formData.get(`academic_qualifications[${index}][subjects]`) || ''}</td>`;
+                previewHTML += `<td>${formData.get(`academic_qualifications[${index}][total_marks]`) || ''}</td>`;
+                previewHTML += `<td>${formData.get(`academic_qualifications[${index}][marks_obtained]`) || ''}</td>`;
+                previewHTML += `<td>${formData.get(`academic_qualifications[${index}][cgpa]`) || ''}</td>`;
+                previewHTML += `<td>${formData.get(`academic_qualifications[${index}][division]`) || ''}</td>`;
                 previewHTML += '</tr>';
             });
-
+            previewHTML += '</table>';
 
             previewContent.innerHTML = previewHTML;
-
             const modal = new bootstrap.Modal(document.getElementById('previewModal'));
             modal.show();
         }
 
         function createTableRow(label, value) {
             if (value) {
-                return `
-                    <tr>
-                        <th scope="row">${label}</th>
-                        <td>${value}</td>
-                    </tr>
-                `;
+                return `<tr><th scope="row">${label}</th><td>${value}</td></tr>`;
             }
             return '';
         }
-    });
-</script>
-
-<script>
-    // Toggle button for Certificate details
-
-    function toggleCategory() {
-        const caste = document.getElementById('category').value;
-        const certificateDetails = document.getElementById('categoryDetails');
-        const requiredCastes = ['SC', 'ST', 'OBC A', 'OBC B', 'EWS'];
-        const caste_no = document.getElementById('cat_cert_no');
-        const caste_doi = document.getElementById('cat_issue_date');
-        const caste_isby = document.getElementById('cat_issue_by');
-
-        if (requiredCastes.includes(caste)) {
-            certificateDetails.style.display = '';
-            caste_no.required = true;
-            caste_doi.required = true;
-            caste_isby.required = true;
-        } else {
-            certificateDetails.style.display = 'none';
-            caste_no.value = '';
-            caste_doi.value = '';
-            caste_isby.value = '';
-            caste_no.required = false;
-            caste_doi.required = false;
-            caste_isby.required = false;
-        }
-    }
-
-    // Ensure the correct state is set on page load if a caste is already selected
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleCategory();
     });
 </script>
 @endpush

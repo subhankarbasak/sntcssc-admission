@@ -45,14 +45,16 @@ class ApplicationController extends Controller
         ->where('advertisement_id', $advertisementId)
         ->first();
 
-        if ($application->student_id !== auth()->id()) {
-            abort(403, 'Unauthorized access to this application');
-        }
+        if (!is_null($application)) {
 
+            if ($application->student_id !== auth()->id()) {
+                abort(403, 'Unauthorized access to this application');
+            }
 
-        if ($application->status == 'submitted') {
-            return redirect()->route('dashboard')
-            ->with('toastr', ['type' => 'error', 'message' => 'Your application has already been submitted.']);
+            if ($application->status == 'submitted') {
+                return redirect()->route('dashboard')
+                ->with('toastr', ['type' => 'error', 'message' => 'Your application has already been submitted.']);
+            }
         }
         
         // dd($application);
