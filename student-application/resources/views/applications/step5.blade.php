@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function() {
     finalSubmitBtn.addEventListener('click', function() {
         if (confirmCheckbox.checked) {
             toastr.success('Application submitted successfully!');
-            confirmModal.hide();
+            // confirmModal.hide();
             form.submit();
         }
     });
@@ -540,6 +540,19 @@ document.addEventListener('DOMContentLoaded', function() {
         toastr['{{ session('toastr.type') }}']('{{ session('toastr.message') }}', 'Notification');
     @endif
 });
+</script>
+
+<script>
+    const form = document.getElementById('applicationForm');
+    const nextBtn = document.getElementById('finalSubmitBtn');
+    nextBtn.addEventListener('click', function() {
+        // Add spinner and disable button
+        nextBtn.disabled = true;
+        nextBtn.innerHTML = '<span class="spinner"></span>Processing...';
+        
+        // Submit the form
+        form.submit();
+    });
 </script>
 @endpush
 

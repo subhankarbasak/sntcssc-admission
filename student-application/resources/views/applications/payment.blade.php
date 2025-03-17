@@ -26,8 +26,8 @@
                     <label for="method" class="form-label fw-medium required">Payment Method</label>
                     <select name="method" class="form-control" id="method" required>
                         <option value="" disabled selected>Select Payment Method</option>
-                        <option value="UPI">UPI</option>
-                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="UPI">UPI QR code</option>
+                        <option value="Bank Transfer">Direct Bank Transfer</option>
                     </select>
                     <div class="invalid-feedback">Please select a payment method.</div>
                 </div>
@@ -40,17 +40,17 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="transaction_id" class="form-label fw-medium required">Transaction ID</label>
+                    <label for="transaction_id" class="form-label fw-medium required">Transaction ID / UTR No.</label>
                     <input type="text" name="transaction_id" class="form-control" id="transaction_id" required>
                     @error('transaction_id') <span class="text-danger small">{{ $message }}</span> @enderror
                     <div class="invalid-feedback">Please enter a transaction ID.</div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="screenshot" class="form-label fw-medium">Payment Screenshot <span class="text-muted fw-normal">(Optional)</span></label>
-                    <input type="file" name="screenshot" class="form-control" id="screenshot" accept=".jpg,.png,.pdf">
+                    <label for="screenshot" class="form-label fw-medium">Payment Screenshot <span class="text-muted fw-normal fst-italic">(Ensure the receipt or screenshot clearly displays the transaction ID or UTR number, date, and transaction amount.)</span></label>
+                    <input type="file" name="screenshot" class="form-control" id="screenshot" accept=".jpg,.png,.pdf" required>
                     @error('screenshot') <span class="text-danger small">{{ $message }}</span> @enderror
-                    <small class="text-muted">Max 5MB (JPG/PNG/PDF)</small>
+                    <small class="text-muted">Max 3MB (JPG/PNG/PDF)</small>
                     <div class="preview-area mt-2" id="screenshot-preview"></div>
                 </div>
             </form>
@@ -64,14 +64,14 @@
             <a href="{{ route('application.step5', $application) }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Previous
             </a>
-            <div>
+            <div class="d-none">
                 <a href="{{ route('application.status', $application) }}" class="btn btn-primary shadow-sm position-relative overflow-hidden">
                     <span class="position-relative z-1">Go to Dashboard <i class="bi bi-arrow-right ms-2"></i></span>
                 </a>
             </div>
             @if(!$payment)
                 <div>
-                    <button type="submit" form="paymentForm" class="btn btn-primary shadow-sm">
+                    <button type="submit" form="paymentForm" id="payBtn" class="btn btn-primary shadow-sm">
                         Submit Payment <i class="bi bi-check2 ms-2"></i>
                     </button>
                 </div>
@@ -102,6 +102,8 @@
 
 @push('scripts')
 <script>
+        const form = document.getElementById('paymentForm');
+        const nextBtn = document.getElementById('payBtn');
 document.addEventListener('DOMContentLoaded', function() {
     toastr.options = {
         positionClass: "toast-top-right",
@@ -123,6 +125,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.stopPropagation();
                 toastr.error('Please fill in all required fields correctly.');
             } else {
+                // Add spinner and disable button
+                nextBtn.disabled = true;
+                nextBtn.innerHTML = '<span class="spinner"></span>Processing...';
+                
                 toastr.success('Payment details submitted successfully!');
             }
             form.classList.add('was-validated');

@@ -127,28 +127,26 @@
         }
 
 
-        /* Style for the spinner */
-        #spinner {
-            display: none;
-            border: 3px solid transparent;
-            border-top: 3px solid #ffffff;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
+    /* Style for the spinner */
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 8px;
+    }
 
-        /* Keyframes for spinner animation */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
 
-        /* Button in processing state */
-        .processing {
-            background-color: #6c757d;
-            cursor: not-allowed;
-        }
+    .btn-primary:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
 
     input[readonly] {
     cursor: not-allowed;

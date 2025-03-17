@@ -253,7 +253,7 @@
                                 <td>{{ $details['profile']->family_income ?? '' }}</td>
                             </tr>
                             <tr>
-                                <th>School's Medium</th>
+                                <th>Medium of Instruction at School Level</th>
                                 <td>{{ $details['profile']->school_language }}</td>
                             </tr>
                         </table>
@@ -314,11 +314,13 @@
             <table class="info-table consolidated-table">
                 <thead>
                     <tr>
-                        <th>Level</th>
+                        <th>Exams</th>
                         <th>Institute</th>
                         <th>Board/University</th>
                         <th>Year Passed</th>
-                        <th>Percentage/Grade</th>
+                        <th>Total Marks</th>
+                        <th>Marks Obtained</th>
+                        <th>Grade</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -328,7 +330,9 @@
                         <td>{{ $academic->institute }}</td>
                         <td>{{ $academic->board_university }}</td>
                         <td>{{ $academic->year_passed }}</td>
-                        <td>{{ $academic->percentage_grade }}</td>
+                        <td>{{ $academic->total_marks }}</td>
+                        <td>{{ $academic->marks_obtained }}</td>
+                        <td>{{ $academic->division }}</td>
                     </tr>
                     @empty
                     <tr>
@@ -344,7 +348,7 @@
             <div class="section-title">Employment History</div>
             <table class="info-table">
                 <tr>
-                    <th>Employed</th>
+                    <th>Are you currently employed?</th>
                     <td>{{ $details['employment']->is_employed ? 'Yes' : 'No' }}</td>
                     <th>Designation</th>
                     <td>{{ $details['employment']->is_employed ? $details['employment']->designation : 'N/A' }}</td>
@@ -360,7 +364,7 @@
 
         <!-- Current Enrollment -->
         <div class="section">
-            <div class="section-title">Current Enrollment</div>
+            <div class="section-title">Whether presently enrolled in any course at any Institute?</div>
             <table class="info-table">
                 <tr>
                     <th>Course Name</th>
@@ -373,7 +377,7 @@
 
         <!-- UPSC Attempts - Single Table -->
         <div class="section">
-            <div class="section-title">UPSC Attempts</div>
+            <div class="section-title">Have you appeared in UPSC CSE Exam earlier? if yes, give below the details in ascending chronological order:</div>
             <table class="info-table consolidated-table">
                 <thead>
                     <tr>

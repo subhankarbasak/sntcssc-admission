@@ -163,12 +163,12 @@
                         </div>
                     </div>
 
-                    <div class="mb-3 d-flex justify-content-between">
+                    <div class="mb-3 d-flex justify-content-between d-none">
                         <a href="{{ route('password.request') }}" class="footer-links">Forgot Password?</a>
                         <span class="toggle-link" id="toggleLoginMethod">Login with DOB</span>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <button type="submit" id="loginBtn" class="btn btn-primary w-100">Login</button>
 
                     <div class="text-center mt-3 footer-links">
                         <small>Don't have an account? <a href="{{ route('register') }}">Register</a></small>
@@ -202,6 +202,7 @@
         const passwordInput = document.getElementById('password');
         const dobInput = document.getElementById('dob');
         const loginMethod = document.getElementById('loginMethod');
+        const loginBtn = document.getElementById('loginBtn');
 
         // Toggle login method
         toggleLink.addEventListener('click', () => {
@@ -256,5 +257,15 @@
         icon.classList.toggle('bi-eye');
         icon.classList.toggle('bi-eye-slash');
     }
+
+
+    loginBtn.addEventListener('click', function() {
+    // Add spinner and disable button
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<span class="spinner"></span>Processing...';
+    
+    // Submit the form
+    document.getElementById('loginForm').submit();
+});
 </script>
 @endpush

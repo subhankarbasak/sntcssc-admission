@@ -44,8 +44,10 @@
                                             <strong>Ends:</strong> {{ $advertisement->application_end->format('d M Y') }}
                                         </p>
                                         <div class="mt-3">
-                                            <a href="{{ route('application.create', $advertisement) }}" 
-                                               class="btn btn-primary w-100">Apply Now</a>
+                                            <form id="applicationForm" action="{{ route('application.create', $advertisement) }}" method="GET">
+                                                @csrf
+                                                <button href="#" class="btn btn-primary w-100" id="applyBtn">Apply Now</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -223,6 +225,35 @@
                 };
                 toastr[toastMessage.type](toastMessage.message);
             }
+        });
+    </script>
+
+    <script>
+        // document.getElementById('applyBtn').addEventListener('click', function(event) {
+        //     event.preventDefault(); // Prevent the default anchor action
+            
+        //     var applyBtn = this; // Reference to the button
+        //     var form = document.getElementById('applicationForm'); // Reference to the form
+
+        //     // Add spinner and disable button
+        //     applyBtn.disabled = true;
+        //     applyBtn.innerHTML = '<span class="spinner"></span>Processing...';
+            
+        //     // Submit the form after a small delay (optional, to see spinner)
+        //     setTimeout(function() {
+        //         form.submit();
+        //     }, 500); // Adjust the delay as needed
+        // });
+
+        const applyBtn = document.getElementById('applyBtn');
+
+        applyBtn.addEventListener('click', function() {
+            // Add spinner and disable button
+            applyBtn.disabled = true;
+            applyBtn.innerHTML = '<span class="spinner"></span>Processing...';
+            
+            // Submit the form
+            document.getElementById('applicationForm').submit();
         });
     </script>
 @endpush

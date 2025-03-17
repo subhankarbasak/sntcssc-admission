@@ -274,8 +274,8 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="https://admission.sntcssc.in/register">Register</a></li>
-                        <li class="nav-item"><a class="nav-link" href="https://admission.sntcssc.in/login">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
                     </ul>
                 </div>
             </div>
@@ -286,7 +286,7 @@
         <div class="container">
             <h1 class="hero-title">SNTCSSC Composite Course Batch 2026</h1>
             <p class="hero-subtitle">Follow these steps to register and apply for the SNTCSSC Admission Test with ease.</p>
-            <a href="https://admission.sntcssc.in/register" class="btn btn-primary">Get Started</a>
+            <a href="{{ route('register') }}" class="btn btn-primary">Get Started</a>
         </div>
     </section>
 

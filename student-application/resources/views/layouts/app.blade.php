@@ -154,6 +154,26 @@
     cursor: not-allowed;
     }
 
+    /* Spinner */
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 8px;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .btn-primary:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
 
     </style>
     @stack('styles')
@@ -167,7 +187,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-1 col-md-2 text-center">
-                    <a href="https://csscwb.in">
+                    <a href="{{ url('/') }}">
                         <img src="https://csscwb.in/assets/front-end/images/others/sntcssc-logo.png" alt="Institute Logo" class="img-fluid" style="max-height: 70px;">
                     </a>
                 </div>

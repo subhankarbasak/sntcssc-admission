@@ -1,6 +1,36 @@
 <!-- resources/views/applications/status.blade.php -->
 @extends('layouts.app')
 
+@push('styles')
+<style>
+
+        /* Tooltip */
+        .tooltip-custom {
+            position: relative;
+        }
+        .tooltip-custom:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+</style>
+@endpush
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -41,6 +71,9 @@
                                         <span class="badge {{ $application->payment_status === 'paid' ? 'bg-success' : ($application->payment_status === 'pending' ? 'bg-warning' : 'bg-danger') }}">
                                             {{ ucfirst($application->payment_status) }}
                                         </span>
+                                        
+                                        
+                                        <span class="tooltip-custom"><i class="bi bi-info-circle tooltip-icon"></i><span class="tooltip-text">Payment verification takes 3 days after submission.</span></span>
                                     </td>
                                 </tr>
                                 @if($application->applied_at)
@@ -256,11 +289,13 @@
                         </tbody>
                     </table>
 
-                    <div class="text-end mt-4">
-                        <a href="{{ route('application.download', $application) }}" 
-                        class="btn btn-success me-2">Download PDF</a>
+                    <div class="d-flex justify-content-between flex-column flex-md-row gap-3">
+                        <form id="downloadForm" action="{{ route('application.download', $application) }}" method="GET" class="text-center">
+                            @csrf
+                            <button href="#" class="btn btn-primary" id="downloadBtn"><i class="bi bi-file-pdf ms-2"></i> Download as PDF</button>
+                        </form>
                         <a href="{{ route('dashboard') }}" 
-                        class="btn btn-primary">Back to Dashboard</a>
+                        class="btn btn-primary">Back to Dashboard <i class="bi bi-arrow-right ms-2"></i></a>
                     </div>
                 </div>
             </div>
@@ -279,5 +314,23 @@
         toastr[{{ session('toastr.type') }}]('{{ session('toastr.message') }}');
     @endif
     </script>
+
+<script>
+    const form = document.getElementById('downloadForm');
+    const nextBtn = document.getElementById('downloadBtn');
+    nextBtn.addEventListener('click', function() {
+        // Add spinner and disable button
+        nextBtn.disabled = true;
+        nextBtn.innerHTML = '<span class="spinner"></span>Processing...';
+        
+        // Submit the form
+        form.submit();
+
+        setTimeout(function() {
+            nextBtn.disabled = false;
+            nextBtn.innerHTML = '<i class="bi bi-file-pdf ms-2"></i> Download as PDF';
+        }, 2000);
+    });
+</script>
 @endpush
 @endsection

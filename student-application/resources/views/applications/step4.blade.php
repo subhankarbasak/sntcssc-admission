@@ -176,7 +176,7 @@
 
 @section('preview-footer')
     <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Edit</button>
-    <button type="button" class="btn btn-primary shadow-sm" id="saveAndNextBtn" disabled>Save and Next</button>
+    <button type="button" class="btn btn-primary shadow-sm" id="saveAndNextBtn" disabled>Save and Next <i class="bi bi-arrow-right ms-2"></i></button>
 @endsection
 
 @push('styles')
@@ -366,6 +366,18 @@ document.addEventListener('DOMContentLoaded', function() {
         toastr['{{ session('toastr.type') }}']('{{ session('toastr.message') }}', 'Notification');
     @endif
 });
+</script>
+<script>
+    const form = document.getElementById('applicationForm');
+    const nextBtn = document.getElementById('saveAndNextBtn');
+    nextBtn.addEventListener('click', function() {
+        // Add spinner and disable button
+        nextBtn.disabled = true;
+        nextBtn.innerHTML = '<span class="spinner"></span>Processing...';
+        
+        // Submit the form
+        form.submit();
+    });
 </script>
 @endpush
 

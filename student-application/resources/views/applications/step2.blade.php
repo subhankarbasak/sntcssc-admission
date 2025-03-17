@@ -684,6 +684,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 </script>
+<script>
+    const form = document.getElementById('step2Form');
+    const nextBtn = document.getElementById('saveAndNextBtn');
+    nextBtn.addEventListener('click', function() {
+        // Add spinner and disable button
+        nextBtn.disabled = true;
+        nextBtn.innerHTML = '<span class="spinner"></span>Processing...';
+        
+        // Submit the form
+        form.submit();
+    });
+</script>
 @endpush
 
 @php
