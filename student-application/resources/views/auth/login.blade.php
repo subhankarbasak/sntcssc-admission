@@ -163,9 +163,9 @@
                         </div>
                     </div>
 
-                    <div class="mb-3 d-flex justify-content-between d-none">
-                        <a href="{{ route('password.request') }}" class="footer-links">Forgot Password?</a>
-                        <span class="toggle-link" id="toggleLoginMethod">Login with DOB</span>
+                    <div class="mb-3 d-flex justify-content-between">
+                        <a href="{{ route('student.password.request') }}" class="footer-links">Forgot Password?</a>
+                        <span class="toggle-link d-none" id="toggleLoginMethod">Login with DOB</span>
                     </div>
 
                     <button type="submit" id="loginBtn" class="btn btn-primary w-100">Login</button>

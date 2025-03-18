@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\StudentForgotPasswordController;
 use Illuminate\Auth\Middleware\Authenticate;
 use App\Http\Controllers\ApplicationController;
 use App\Models\Advertisement;
@@ -51,6 +54,18 @@ Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestF
 Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+// Students Forgot password added on 19.03.2025
+Route::prefix('student')->group(function () {
+    Route::get('/forgot-password', [StudentForgotPasswordController::class, 'showForgotPasswordForm'])
+        ->name('student.password.request');
+    Route::post('/forgot-password', [StudentForgotPasswordController::class, 'sendResetLinkEmail'])
+        ->name('student.password.email');
+    Route::get('/reset-password/{token}', [StudentForgotPasswordController::class, 'showResetForm'])
+        ->name('student.password.reset');
+    Route::post('/reset-password', [StudentForgotPasswordController::class, 'reset'])
+        ->name('student.password.update');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/application/{advertisement:code}/apply', [ApplicationController::class, 'create'])->name('application.create');
