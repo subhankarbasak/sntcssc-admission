@@ -8,6 +8,9 @@ use App\Http\Requests\StudentRegistrationRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Domain\Services\StudentService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RegistrationSuccess; // We'll create this Mailable
 
 class RegisterController extends Controller
 {
@@ -251,10 +254,24 @@ class RegisterController extends Controller
             // Auth::guard('student')->login($student);
             Auth::guard('web')->login($student);
             $request->session()->regenerate();
+
+            // Store temporary registration data in session
+            $request->session()->put('show_welcome', true);
+            $credentials = [
+                'email' => $request->email,
+                'password' => $request->password // Plain password before hashing
+            ];
+            $request->session()->put('registration_credentials', $credentials);
+
+            // Send registration success email
+            Mail::to($student->email)->send(new RegistrationSuccess($student, $credentials['password']));
+
+
             \Log::info('Login successful for: ' . $student->first_name);
             
-            return redirect()->route('dashboard')
-                ->with('toastr', ['type' => 'success', 'message' => 'Registration successful!']);
+            // return redirect()->route('dashboard')
+            //     ->with('toastr', ['type' => 'success', 'message' => 'Registration successful!']);
+            return redirect()->route('welcome');
         } catch (\Exception $e) {
             // return back()
             //     ->withInput()
@@ -286,5 +303,37 @@ class RegisterController extends Controller
     {
         $exists = Student::where('mobile', $request->value)->exists();
         return response()->json(['exists' => $exists]);
+    }
+
+
+    public function showWelcome(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        if (!$request->session()->has('show_welcome')) {
+            return redirect()->route('dashboard');
+        }
+
+        $credentials = $request->session()->get('registration_credentials');
+        
+        return view('auth.welcome', [
+            'email' => $credentials['email'],
+            'password' => $credentials['password']
+        ]);
+    }
+
+    public function proceedToDashboard(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        // Clear the welcome flag and credentials from session
+        $request->session()->forget(['show_welcome', 'registration_credentials']);
+        
+        return redirect()->route('dashboard')
+            ->with('toastr', ['type' => 'success', 'message' => 'Welcome to your dashboard!']);
     }
 }

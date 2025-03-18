@@ -14,6 +14,9 @@ Route::get('/', function () {
     return view('landing');
 });
 
+Route::get('/welcome', [RegisterController::class, 'showWelcome'])->name('welcome');
+Route::post('/proceed-to-dashboard', [RegisterController::class, 'proceedToDashboard'])->name('proceed-to-dashboard');
+
 
 // Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 // Route::post('/register', [RegisterController::class, 'register']);
