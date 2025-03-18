@@ -265,7 +265,8 @@
                                 ['icon' => 'bi-telephone', 'title' => 'Communication'],
                                 ['icon' => 'bi-briefcase', 'title' => 'Others Detail'],
                                 ['icon' => 'bi-shield', 'title' => 'Documents Uploads'],
-                                ['icon' => 'bi-file-text', 'title' => 'Review']
+                                ['icon' => 'bi-file-text', 'title' => 'Review Application'],
+                                ['icon' => 'bi-currency-rupee', 'title' => 'Application Fees Submission']
                             ];
                         @endphp
                         @foreach($steps as $index => $stepInfo)

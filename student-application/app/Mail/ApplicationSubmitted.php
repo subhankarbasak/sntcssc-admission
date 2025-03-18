@@ -44,7 +44,8 @@ class ApplicationSubmitted extends Mailable
      */
     public function content(): Content
     {
-        $downloadUrl = route('application.download', $this->application->id);
+        // $downloadUrl = route('application.download', $this->application->id);
+        $downloadUrl = route('application.status', $this->application->application_number);
 
         return new Content(
             view: 'emails.application_submitted',

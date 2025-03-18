@@ -169,6 +169,6 @@ document.addEventListener('DOMContentLoaded', function() {
 @endpush
 
 @php
-    $step = 5;
+    $step = 6;
     $percentage = 100;
 @endphp

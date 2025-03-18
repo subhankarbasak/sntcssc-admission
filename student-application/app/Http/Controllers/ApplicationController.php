@@ -579,7 +579,7 @@ class ApplicationController extends Controller
                 ->with('toastr', ['type' => 'error', 'message' => 'Failed to submit application: ' . $e->getMessage()]);
         }
     }
-    
+
     // End Step 5 (Submit Application)
 
 
@@ -653,7 +653,7 @@ class ApplicationController extends Controller
 
     // ./ End Application Status Checking
 
-public function download(Application $application)
+    public function download(Application $application)
     {
         $applicationId = $application->id;
         // $application = Application::findOrFail($applicationId);
@@ -709,8 +709,8 @@ public function download(Application $application)
                     'dpi' => 96 // Optimize for faster rendering
                 ]);
 
-            // return $pdf->download('application_' . $application->application_number . '.pdf');
-            return $pdf->stream();
+            return $pdf->download('application_' . $application->application_number . '.pdf');
+            // return $pdf->stream();
         } catch (\Exception $e) {
             Log::error('PDF generation failed: ' . $e->getMessage());
             abort(500, 'Unable to generate PDF. Please try again later.');

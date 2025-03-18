@@ -172,7 +172,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="footer">
+    <div class="footer" style="display:none;">
         <span class="page-info">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
     </div>
 
