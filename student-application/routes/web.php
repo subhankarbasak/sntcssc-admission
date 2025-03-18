@@ -86,6 +86,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/bulk-update', [DashboardController::class, 'bulkUpdate'])->name('admin.bulk-update');
     // For update Application status and payment status
     Route::get('/applications', [ApplicationManagementController::class, 'index'])->name('applications.index');
+    Route::get('/applications/{application}', [ApplicationManagementController::class, 'show'])->name('applications.show');
     Route::patch('/applications/{application}/status', [ApplicationManagementController::class, 'updateStatus'])->name('applications.update-status');
     Route::patch('/payments/{payment}/status', [ApplicationManagementController::class, 'updatePaymentStatus'])->name('applications.update-payment-status');
 });

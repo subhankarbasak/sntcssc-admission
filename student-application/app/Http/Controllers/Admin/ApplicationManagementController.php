@@ -51,6 +51,12 @@ class ApplicationManagementController extends Controller
         }
     }
 
+    public function show(Application $application)
+    {
+        // dd($application->documents);
+        return view('admin.applications.show', compact('application'));
+    }
+
     public function updateStatus(Request $request, Application $application)
     {
         try {
@@ -72,7 +78,7 @@ class ApplicationManagementController extends Controller
                     'updated_by' => auth()->id()
                 ]);
 
-                dd($application->studentProfile->email);
+                // dd($application->studentProfile->email);
 
                 // Send email notification
                 if ($application->studentProfile->email) {
