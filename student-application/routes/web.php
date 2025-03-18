@@ -10,7 +10,8 @@ use App\Models\Advertisement;
 use App\Models\Application;
 
 // For Admin
-use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ApplicationManagementController;
 
 Route::get('/', function () {
     // return view('welcome');
@@ -83,6 +84,10 @@ Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::post('/export', [DashboardController::class, 'export'])->name('admin.export');
     Route::post('/bulk-update', [DashboardController::class, 'bulkUpdate'])->name('admin.bulk-update');
+    // For update Application status and payment status
+    Route::get('/applications', [ApplicationManagementController::class, 'index'])->name('applications.index');
+    Route::patch('/applications/{application}/status', [ApplicationManagementController::class, 'updateStatus'])->name('applications.update-status');
+    Route::patch('/payments/{payment}/status', [ApplicationManagementController::class, 'updatePaymentStatus'])->name('applications.update-payment-status');
 });
 
 

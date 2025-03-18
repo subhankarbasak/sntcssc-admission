@@ -101,8 +101,44 @@ class Application extends Model
             ->first();
     }
 
+    // public function payment()
+    // {
+    //     return $this->belongsTo(Payment::class);
+    // }
+    
+    // Admin 
+
+// Add scopes for filtering and searching
+    public function scopeByStatus($query, $status) {
+        return $query->where('status', $status);
+    }
+
+    public function scopeByPaymentStatus($query, $paymentStatus) {
+        return $query->where('payment_status', $paymentStatus);
+    }
+
+    public function scopeSearch($query, $search) {
+        return $query->where(function ($q) use ($search) {
+            $q->where('application_number', 'like', "%{$search}%")
+              ->orWhereHas('studentProfile', function ($q) use ($search) {
+                  $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('mobile', 'like', "%{$search}%");
+              });
+        });
+    }
+
+    // Fix the payment relationship (it was incorrectly set as belongsTo)
     public function payment()
     {
-        return $this->belongsTo(Payment::class);
+        return $this->hasOne(Payment::class);
+    }
+
+    // Add permanent address relationship
+    public function permanentAddress()
+    {
+        return $this->hasOne(ApplicationAddress::class)
+            ->where('type', 'permanent');
     }
 }

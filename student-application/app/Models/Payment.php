@@ -36,4 +36,9 @@ class Payment extends Model
     {
         return $this->belongsTo(Document::class, 'screenshot_document_id');
     }
+
+    // Add scope for filtering
+    public function scopeByStatus($query, $status) {
+        return $query->where('status', $status);
+    }
 }
