@@ -551,23 +551,35 @@ class ApplicationController extends Controller
         if ($application->student_id !== auth()->id()) {
             abort(403, 'Unauthorized access to this application');
         }
-
+    
         $applicationId = $application->id;
         $application = Application::findOrFail($applicationId);
-
-        // dd($applicationId);
+    
         try {
+            \DB::beginTransaction();
+    
             $application = $this->applicationService->submitApplication($applicationId);
-            // dd($application);
-
+    
+            try {
+                \Mail::to($application->profile->email)->send(new \App\Mail\ApplicationSubmitted($application));
+            } catch (\Exception $emailException) {
+                \Log::warning('Failed to send confirmation email: ' . $emailException->getMessage());
+                // Continue with success even if email fails, but log the issue
+            }
+    
+            \DB::commit();
+    
             return redirect()->route('application.payment', $application)
-                ->with('toastr', ['type' => 'success', 'message' => 'Application submitted successfully!']);
+                ->with('toastr', ['type' => 'success', 'message' => 'Application submitted successfully! Check your email for confirmation and download link.']);
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            \DB::rollBack();
+            
+            \Log::error('Application submission failed: ' . $e->getMessage());
             return back()
-                ->with('toastr', ['type' => 'error', 'message' => $e->getMessage()]);
+                ->with('toastr', ['type' => 'error', 'message' => 'Failed to submit application: ' . $e->getMessage()]);
         }
     }
+    
     // End Step 5 (Submit Application)
 
 
