@@ -88,7 +88,11 @@ class ApplicationService
 
                     'student_profile_id' => $profileId,
                     'application_number' => 'APP' . time(),
-                    'status' => 'draft'
+                    'status' => 'draft',
+
+                    'optional_subject' => $data['optional_subject'],
+                    'is_appearing_upsc_cse' => $data['is_appearing_upsc_cse'],
+                    'upsc_attempts_count' => $data['upsc_attempts_count']
                 ]);
             }else{
                 // Means there are application found with this Student ID and Advertisement ID, so need to Update Applications and Student Profile Accordingly

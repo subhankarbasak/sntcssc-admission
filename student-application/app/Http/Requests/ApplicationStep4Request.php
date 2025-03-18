@@ -36,7 +36,7 @@ class ApplicationStep4Request extends FormRequest
             'category_cert' => [
                 // Required if category is not 'UR' and no existing certificate
                 function ($attribute, $value, $fail) use ($documents, $profile) {
-                    if ($profile && $profile->category !== 'UR' && !$documents->where('type', 'category_cert')->first() && !$this->hasFile('category_cert')) {
+                    if ($profile && $profile->category !== 'Unreserved' && !$documents->where('type', 'category_cert')->first() && !$this->hasFile('category_cert')) {
                         $fail('Please upload a category certificate.');
                     }
                 },

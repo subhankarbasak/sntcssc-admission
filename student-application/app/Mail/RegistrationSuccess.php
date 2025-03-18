@@ -21,7 +21,7 @@ class RegistrationSuccess extends Mailable
 
     public function build()
     {
-        return $this->subject('Account Creation Successful - SNTCSSC Composite Course 2025')
+        return $this->subject('Account Creation Successful - SNTCSSC Composite Course 2026')
             ->view('emails.registration_success')
             ->with([
                 'student' => $this->student,

@@ -16,6 +16,6 @@
     <p>Please log in to your account for more details or contact support if you have any questions.</p>
     
     <p>Best regards,<br>
-    Application Team</p>
+    Team SNTCSSC</p>
 </body>
 </html>
