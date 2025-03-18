@@ -272,10 +272,8 @@
                             <div class="form-floating">
                                 <select name="category" class="form-select @error('category') is-invalid @enderror" id="category" onchange="toggleCategory()" required>
                                     <option value="">Select Category</option>
-                                    <option value="UR" {{ old('category') == 'UR' ? 'selected' : '' }}>UR</option>
-                                    <option value="SC" {{ old('category') == 'SC' ? 'selected' : '' }}>SC</option>
-                                    <option value="ST" {{ old('category') == 'ST' ? 'selected' : '' }}>ST</option>
-                                    <option value="OBC" {{ old('category') == 'OBC' ? 'selected' : '' }}>OBC</option>
+                                    <option value="Unreserved" {{ old('category') == 'Unreserved' ? 'selected' : '' }}>Unreserved</option>
+                                    <option value="Reserved" {{ old('category') == 'Reserved' ? 'selected' : '' }}>Reserved</option>
                                 </select>
                                 <label for="category">Category</label>
                                 @error('category') <div class="invalid-feedback">{{ $message }}</div> @enderror

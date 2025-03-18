@@ -11,10 +11,10 @@ class PaymentRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:1',
-            'method' => 'required|in:UPI,Bank Transfer',
+            'method' => 'required|in:UPI,NEFT,IMPS,Direct Account Transfer',
             'transaction_date' => 'required|date|before_or_equal:today',
             'transaction_id' => 'required|string|max:255|unique:payments,transaction_id',
-            'screenshot' => 'nullable|file|mimes:jpg,png,pdf|max:2048'
+            'screenshot' => 'required|file|mimes:jpg,png,pdf|max:2048'
         ];
     }
 }

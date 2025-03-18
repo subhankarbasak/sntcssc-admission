@@ -261,7 +261,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-floating">
-                                <input name="academic_qualifications[{{$index}}][subjects]" class="form-control" value="{{ old("academic_qualifications.$index.subjects", $academic->subjects) }}" placeholder="Enter Subjects">
+                                <input name="academic_qualifications[{{$index}}][subjects]" class="form-control" value="{{ old("academic_qualifications.$index.subjects", $academic->subjects) }}" placeholder="Enter Subjects" required>
                                 <label>Subjects</label>
                             </div>
                         </div>
@@ -484,114 +484,136 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Preview and Next button handler
-    document.getElementById('previewAndNextBtn').addEventListener('click', function() {
-        let isValid = true;
-        const form = document.getElementById('step2Form');
-        
-        // Check all required fields
-        form.querySelectorAll('[required]').forEach(input => {
-            if (!input.value) {
-                input.classList.add('is-invalid');
-                isValid = false;
-            } else {
-                input.classList.remove('is-invalid');
-            }
-        });
+// Replace the existing previewAndNextBtn event listener with this
+document.getElementById('previewAndNextBtn').addEventListener('click', function() {
+    const form = document.getElementById('step2Form');
+    let isValid = true;
+    let errorMessages = [];
 
-        // Check PIN code format
-        form.querySelectorAll('input[name$="[pin_code]"]').forEach(pin => {
-            if (pin.value && !/^[0-9]{6}$/.test(pin.value)) {
-                pin.classList.add('is-invalid');
-                isValid = false;
-            }
-        });
-
-        if (!isValid) {
-            toastr.error('Please fill all required fields correctly.');
-            return;
+    // Check all required fields
+    form.querySelectorAll('[required]').forEach(input => {
+        if (!input.value.trim()) {
+            input.classList.add('is-invalid');
+            isValid = false;
+            
+            // Get label text for more specific error message
+            const label = input.closest('.form-floating')?.querySelector('label')?.textContent || 'Field';
+            const section = input.closest('.address-block') ? 'Address' : 'Academic';
+            errorMessages.push(`${section}: ${label} is required`);
+        } else {
+            input.classList.remove('is-invalid');
         }
-
-        // Populate preview modal
-        const addressContainer = document.getElementById('preview-addresses');
-        const academicContainer = document.getElementById('preview-academics');
-        addressContainer.innerHTML = '';
-        academicContainer.innerHTML = '';
-
-        // Address preview - Header (only for desktop)
-        addressContainer.innerHTML = `
-            <div class="preview-header">
-                <div class="preview-cell">Type</div>
-                <div class="preview-cell">State</div>
-                <div class="preview-cell">District</div>
-                <div class="preview-cell">Address Line 1</div>
-                <div class="preview-cell">Post Office</div>
-                <div class="preview-cell">Pin Code</div>
-            </div>`;
-
-        // Address preview - Data
-        document.querySelectorAll('.address-block').forEach(block => {
-            const type = block.querySelector('input[name*="[type]"]').value;
-            const state = block.querySelector('.state-select').value;
-            const district = block.querySelector('.district-select').value;
-            const addressLine1 = block.querySelector('input[name*="[address_line1]"]').value;
-            const postOffice = block.querySelector('input[name*="[post_office]"]').value;
-            const pinCode = block.querySelector('input[name*="[pin_code]"]').value;
-
-            addressContainer.innerHTML += `
-                <div class="preview-row">
-                    <div class="preview-cell" data-label="Type"><span>${type.charAt(0).toUpperCase() + type.slice(1)}</span></div>
-                    <div class="preview-cell" data-label="State"><span>${state || '-'}</span></div>
-                    <div class="preview-cell" data-label="District"><span>${district || '-'}</span></div>
-                    <div class="preview-cell" data-label="Address Line 1"><span>${addressLine1 || '-'}</span></div>
-                    <div class="preview-cell" data-label="Post Office"><span>${postOffice || '-'}</span></div>
-                    <div class="preview-cell" data-label="Pin Code"><span>${pinCode || '-'}</span></div>
-                </div>`;
-        });
-
-        // Academic preview - Header (only for desktop)
-        academicContainer.innerHTML = `
-            <div class="preview-header">
-                <div class="preview-cell">Level</div>
-                <div class="preview-cell">Institute</div>
-                <div class="preview-cell">Board/University</div>
-                <div class="preview-cell">Year Passed</div>
-                <div class="preview-cell">Subjects</div>
-                <div class="preview-cell">Total Marks</div>
-                <div class="preview-cell">Marks Obtained</div>
-                <div class="preview-cell">GPA/CGPA/SGPA</div>
-                <div class="preview-cell">Division</div>
-            </div>`;
-
-        // Academic preview - Data
-        document.querySelectorAll('.academic-entry').forEach(entry => {
-            const level = entry.querySelector('select[name*="[level]"]').value;
-            const institute = entry.querySelector('input[name*="[institute]"]').value;
-            const board = entry.querySelector('input[name*="[board_university]"]').value;
-            const year = entry.querySelector('input[name*="[year_passed]"]').value;
-            const subjects = entry.querySelector('input[name*="[subjects]"]').value;
-            const tmarks = entry.querySelector('input[name*="[total_marks]"]').value;
-            const marksobt = entry.querySelector('input[name*="[marks_obtained]"]').value;
-            const gpa = entry.querySelector('input[name*="[cgpa]"]').value;
-            const division = entry.querySelector('input[name*="[division]"]').value;
-
-            academicContainer.innerHTML += `
-                <div class="preview-row">
-                    <div class="preview-cell" data-label="Level"><span>${level ? level.charAt(0).toUpperCase() + level.slice(1) : '-'}</span></div>
-                    <div class="preview-cell" data-label="Institute"><span>${institute || '-'}</span></div>
-                    <div class="preview-cell" data-label="Board/University"><span>${board || '-'}</span></div>
-                    <div class="preview-cell" data-label="Year Passed"><span>${year || '-'}</span></div>
-                    <div class="preview-cell" data-label="Subjects"><span>${subjects || '-'}</span></div>
-                    <div class="preview-cell" data-label="Total Marks"><span>${tmarks || '-'}</span></div>
-                    <div class="preview-cell" data-label="Marks Obtained"><span>${marksobt || '-'}</span></div>
-                    <div class="preview-cell" data-label="GPA/CGPA/SGPA"><span>${gpa || '-'}</span></div>
-                    <div class="preview-cell" data-label="Division"><span>${division || '-'}</span></div>
-                </div>`;
-        });
-        
-        // Show preview modal
-        const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
-        previewModal.show();
     });
+
+    // Check PIN code format specifically
+    form.querySelectorAll('input[name$="[pin_code]"]').forEach(pin => {
+        if (pin.value && !/^[0-9]{6}$/.test(pin.value)) {
+            pin.classList.add('is-invalid');
+            isValid = false;
+            errorMessages.push('Address: Please enter a valid 6-digit PIN code');
+        }
+    });
+
+    // Check year format
+    form.querySelectorAll('input[name$="[year_passed]"]').forEach(year => {
+        if (year.value && !/^[0-9]{4}$/.test(year.value)) {
+            year.classList.add('is-invalid');
+            isValid = false;
+            errorMessages.push('Academic: Please enter a valid 4-digit year');
+        }
+    });
+
+    if (!isValid) {
+        // Show all error messages in one toastr notification
+        toastr.error(errorMessages.join('<br>'), 'Validation Error', {
+            timeOut: 7000,  // Longer timeout to read multiple messages
+            extendedTimeOut: 3000,
+            allowHtml: true
+        });
+        return;
+    }
+
+    // If we get here, form is valid - proceed with preview population
+    const addressContainer = document.getElementById('preview-addresses');
+    const academicContainer = document.getElementById('preview-academics');
+    addressContainer.innerHTML = '';
+    academicContainer.innerHTML = '';
+
+    // Address preview - Header (only for desktop)
+    addressContainer.innerHTML = `
+        <div class="preview-header">
+            <div class="preview-cell">Type</div>
+            <div class="preview-cell">State</div>
+            <div class="preview-cell">District</div>
+            <div class="preview-cell">Address Line 1</div>
+            <div class="preview-cell">Post Office</div>
+            <div class="preview-cell">Pin Code</div>
+        </div>`;
+
+    // Address preview - Data
+    document.querySelectorAll('.address-block').forEach(block => {
+        const type = block.querySelector('input[name*="[type]"]').value;
+        const state = block.querySelector('.state-select').value;
+        const district = block.querySelector('.district-select').value;
+        const addressLine1 = block.querySelector('input[name*="[address_line1]"]').value;
+        const postOffice = block.querySelector('input[name*="[post_office]"]').value;
+        const pinCode = block.querySelector('input[name*="[pin_code]"]').value;
+
+        addressContainer.innerHTML += `
+            <div class="preview-row">
+                <div class="preview-cell" data-label="Type"><span>${type.charAt(0).toUpperCase() + type.slice(1)}</span></div>
+                <div class="preview-cell" data-label="State"><span>${state || '-'}</span></div>
+                <div class="preview-cell" data-label="District"><span>${district || '-'}</span></div>
+                <div class="preview-cell" data-label="Address Line 1"><span>${addressLine1 || '-'}</span></div>
+                <div class="preview-cell" data-label="Post Office"><span>${postOffice || '-'}</span></div>
+                <div class="preview-cell" data-label="Pin Code"><span>${pinCode || '-'}</span></div>
+            </div>`;
+    });
+
+    // Academic preview - Header (only for desktop)
+    academicContainer.innerHTML = `
+        <div class="preview-header">
+            <div class="preview-cell">Level</div>
+            <div class="preview-cell">Institute</div>
+            <div class="preview-cell">Board/University</div>
+            <div class="preview-cell">Year Passed</div>
+            <div class="preview-cell">Subjects</div>
+            <div class="preview-cell">Total Marks</div>
+            <div class="preview-cell">Marks Obtained</div>
+            <div class="preview-cell">GPA/CGPA/SGPA</div>
+            <div class="preview-cell">Division</div>
+        </div>`;
+
+    // Academic preview - Data
+    document.querySelectorAll('.academic-entry').forEach(entry => {
+        const level = entry.querySelector('select[name*="[level]"]').value;
+        const institute = entry.querySelector('input[name*="[institute]"]').value;
+        const board = entry.querySelector('input[name*="[board_university]"]').value;
+        const year = entry.querySelector('input[name*="[year_passed]"]').value;
+        const subjects = entry.querySelector('input[name*="[subjects]"]').value;
+        const tmarks = entry.querySelector('input[name*="[total_marks]"]').value;
+        const marksobt = entry.querySelector('input[name*="[marks_obtained]"]').value;
+        const gpa = entry.querySelector('input[name*="[cgpa]"]').value;
+        const division = entry.querySelector('input[name*="[division]"]').value;
+
+        academicContainer.innerHTML += `
+            <div class="preview-row">
+                <div class="preview-cell" data-label="Level"><span>${level ? level.charAt(0).toUpperCase() + level.slice(1) : '-'}</span></div>
+                <div class="preview-cell" data-label="Institute"><span>${institute || '-'}</span></div>
+                <div class="preview-cell" data-label="Board/University"><span>${board || '-'}</span></div>
+                <div class="preview-cell" data-label="Year Passed"><span>${year || '-'}</span></div>
+                <div class="preview-cell" data-label="Subjects"><span>${subjects || '-'}</span></div>
+                <div class="preview-cell" data-label="Total Marks"><span>${tmarks || '-'}</span></div>
+                <div class="preview-cell" data-label="Marks Obtained"><span>${marksobt || '-'}</span></div>
+                <div class="preview-cell" data-label="GPA/CGPA/SGPA"><span>${gpa || '-'}</span></div>
+                <div class="preview-cell" data-label="Division"><span>${division || '-'}</span></div>
+            </div>`;
+    });
+    
+    // Show preview modal only if validation passes
+    const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+    previewModal.show();
+});
 
     // Declaration checkbox handler
     const declarationCheck = document.getElementById('declarationCheck');

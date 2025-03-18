@@ -20,7 +20,7 @@
                                     </tr>
                                     <tr>
                                         <th class="fw-medium bg-light py-2">Date of Birth</th>
-                                        <td class="py-2">{{ \Carbon\Carbon::parse($details['profile']->dob)->format('d/M/Y') }}</td>
+                                        <td class="py-2">{{ \Carbon\Carbon::parse($details['profile']->dob)->format('d/m/Y') }}</td>
                                     </tr>
                                     <tr>
                                         <th class="fw-medium bg-light py-2">Gender</th>

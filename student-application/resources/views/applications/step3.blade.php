@@ -66,14 +66,14 @@
 
         <!-- Current Enrollment -->
         <section class="card mb-4 shadow-sm rounded-3">
-            <div class="card-header bg-white py-3 px-4 fw-semibold border-bottom">Whether presently enrolled in any course at any Institute?</div>
+            <div class="card-header bg-white py-3 px-4 fw-semibold border-bottom">Whether presently enrolled in any course at any Institute? <span class="font-italic">If not, write as NA</span></div>
             <div class="card-body p-4">
                 <div class="row g-4">
                     <div class="col-md-6">
                         <label class="form-label fw-medium">Course Name</label>
                         <input type="text" name="enrollment[course_name]" class="form-control rounded-3 shadow-sm" 
                                value="{{ old('enrollment.course_name', $enrollment?->course_name) }}" 
-                               placeholder="Enter course name">
+                               placeholder="Enter course name" required>
                         @error('enrollment.course_name')
                             <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
                         @enderror
@@ -82,7 +82,7 @@
                         <label class="form-label fw-medium">Institute</label>
                         <input type="text" name="enrollment[institute]" class="form-control rounded-3 shadow-sm" 
                                value="{{ old('enrollment.institute', $enrollment?->institute) }}" 
-                               placeholder="Enter institute name">
+                               placeholder="Enter institute name" required>
                         @error('enrollment.institute')
                             <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
                         @enderror

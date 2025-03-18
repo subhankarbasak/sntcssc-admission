@@ -599,7 +599,7 @@ class ApplicationController extends Controller
         // Assuming a fixed fee from advertisement_programs for simplicity
         // $fee = $application->advertisement->programs->first()->batch_program->fee ?? 1000;
 
-        if($profile->category === 'SC' || $profile->category === 'ST'|| $profile->category === 'OBC'  || $profile->category === 'OBC A' || $profile->category === 'OBC B' ){
+        if($profile->category === 'SC' || $profile->category === 'ST'|| $profile->category === 'OBC'  || $profile->category === 'OBC A' || $profile->category === 'OBC B' || $profile->category === 'Reserved' ){
             $fee = 50;
         }else{
             $fee = 100;

@@ -26,10 +26,49 @@
                     <label for="method" class="form-label fw-medium required">Payment Method</label>
                     <select name="method" class="form-control" id="method" required>
                         <option value="" disabled selected>Select Payment Method</option>
-                        <option value="UPI">UPI QR code</option>
-                        <option value="Bank Transfer">Direct Bank Transfer</option>
+                        <option value="UPI">UPI QR Code / UPI ID</option>
+                        <option value="NEFT">NEFT</option>
+                        <option value="IMPS">IMPS</option>
+                        <option value="Direct Account Transfer">Direct Account Transfer</option>
                     </select>
                     <div class="invalid-feedback">Please select a payment method.</div>
+                </div>
+
+                <!-- Payment Details Container -->
+                <div id="payment-details" class="mb-3 d-none">
+                    <!-- UPI QR Code Section -->
+                    <div id="upi-details" class="payment-method-details d-none">
+                        <div class="alert alert-light border p-3">
+                            <h6 class="fw-medium">Scan to Pay</h6>
+                            <img src="{{ url('/images/upi-qr-code.jpg') }}" alt="UPI QR Code" class="img-fluid mb-2" style="max-width: 260px;">
+                            <p class="small text-muted mb-0">
+                                UPI ID: <strong>sntcssc@indianbk</strong><br>
+                                Please include the Transaction ID (or UTR no.), transaction date from your UPI app in the field below
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Bank Details Section -->
+                    <div id="bank-details" class="payment-method-details d-none">
+                        <div class="alert alert-light border p-3">
+                            <h6 class="fw-medium">Bank Account Details</h6>
+                            <dl class="row mb-0 small">
+                                <dt class="col-5">Account Holder:</dt>
+                                <dd class="col-7">CENTRE FOR EXCELLENCE IN PUBLIC MANAGEMENT</dd>
+                                <dt class="col-5">Account Number:</dt>
+                                <dd class="col-7">50189702376</dd>
+                                <dt class="col-5">IFSC Code:</dt>
+                                <dd class="col-7">IDIB000S549</dd>
+                                <dt class="col-5">Bank Name:</dt>
+                                <dd class="col-7">INDIAN BANK</dd>
+                                <dt class="col-5">Branch:</dt>
+                                <dd class="col-7">Salt Lake, GD Market</dd>
+                            </dl> <br>
+                            <p class="small text-muted mb-0">
+                                Please include the Transaction ID (or UTR no.), transaction date from your transaction / deposit receipt in the field below
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -50,7 +89,7 @@
                     <label for="screenshot" class="form-label fw-medium">Payment Screenshot <span class="text-muted fw-normal fst-italic">(Ensure the receipt or screenshot clearly displays the transaction ID or UTR number, date, and transaction amount.)</span></label>
                     <input type="file" name="screenshot" class="form-control" id="screenshot" accept=".jpg,.png,.pdf" required>
                     @error('screenshot') <span class="text-danger small">{{ $message }}</span> @enderror
-                    <small class="text-muted">Max 3MB (JPG/PNG/PDF)</small>
+                    <small class="text-muted">Max 2MB (JPG/PNG/PDF)</small>
                     <div class="preview-area mt-2" id="screenshot-preview"></div>
                 </div>
             </form>
@@ -97,13 +136,14 @@
         border-radius: 0.5rem;
         color: #6b7280;
     }
+    .payment-method-details {
+        transition: all 0.3s ease-in-out;
+    }
 </style>
 @endpush
 
 @push('scripts')
 <script>
-        const form = document.getElementById('paymentForm');
-        const nextBtn = document.getElementById('payBtn');
 document.addEventListener('DOMContentLoaded', function() {
     toastr.options = {
         positionClass: "toast-top-right",
@@ -113,11 +153,29 @@ document.addEventListener('DOMContentLoaded', function() {
         preventDuplicates: true
     };
 
-    @if(session('toastr'))
-        toastr['{{ session('toastr.type') }}']('{{ session('toastr.message') }}', 'Notification');
-    @endif
-
     const form = document.getElementById('paymentForm');
+    const paymentMethodSelect = document.getElementById('method');
+    const paymentDetails = document.getElementById('payment-details');
+    const upiDetails = document.getElementById('upi-details');
+    const bankDetails = document.getElementById('bank-details');
+    const nextBtn = document.getElementById('payBtn');
+
+    // Handle payment method change
+    paymentMethodSelect.addEventListener('change', function() {
+        const method = this.value;
+        paymentDetails.classList.remove('d-none');
+        
+        if (method === 'UPI') {
+            upiDetails.classList.remove('d-none');
+            bankDetails.classList.add('d-none');
+        } else if (method) {
+            bankDetails.classList.remove('d-none');
+            upiDetails.classList.add('d-none');
+        } else {
+            paymentDetails.classList.add('d-none');
+        }
+    });
+
     if (form) {
         form.addEventListener('submit', function(event) {
             if (!form.checkValidity()) {
@@ -125,10 +183,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.stopPropagation();
                 toastr.error('Please fill in all required fields correctly.');
             } else {
-                // Add spinner and disable button
                 nextBtn.disabled = true;
                 nextBtn.innerHTML = '<span class="spinner"></span>Processing...';
-                
                 toastr.success('Payment details submitted successfully!');
             }
             form.classList.add('was-validated');
@@ -136,12 +192,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const screenshotInput = document.getElementById('screenshot');
         const previewArea = document.getElementById('screenshot-preview');
+        
         screenshotInput.addEventListener('change', function() {
             const file = this.files[0];
-            const maxSize = 5 * 1024 * 1024; // 5MB
+            const maxSize = 3 * 1024 * 1024; // 3MB
 
             if (file && file.size > maxSize) {
-                toastr.error('File size exceeds limit (5MB)');
+                toastr.error('File size exceeds limit (3MB)');
                 this.value = '';
                 previewArea.innerHTML = '';
                 return;

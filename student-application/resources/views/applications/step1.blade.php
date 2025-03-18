@@ -61,10 +61,8 @@
                 <label class="form-label fw-semibold text-dark required">Category</label>
                 <select name="category" class="form-select" id="category" onchange="toggleCategory()" required>
                     <option value="">Select Category</option>
-                    <option value="UR" {{ old('category', $profile->category ?? $student->category) == 'UR' ? 'selected' : '' }}>UR</option>
-                    <option value="SC" {{ old('category', $profile->category ?? $student->category) == 'SC' ? 'selected' : '' }}>SC</option>
-                    <option value="ST" {{ old('category', $profile->category ?? $student->category) == 'ST' ? 'selected' : '' }}>ST</option>
-                    <option value="OBC" {{ old('category', $profile->category ?? $student->category) == 'OBC' ? 'selected' : '' }}>OBC</option>
+                    <option value="Unreserved" {{ old('category', $profile->category ?? $student->category) == 'Unreserved' ? 'selected' : '' }}>Unreserved</option>
+                    <option value="Reserved" {{ old('category', $profile->category ?? $student->category) == 'Reserved' ? 'selected' : '' }}>Reserved</option>
                 </select>
                 <div class="invalid-feedback">Please select a category.</div>
             </div>
@@ -173,7 +171,7 @@
                 <div class="invalid-feedback">Please select a school medium.</div>
             </div>
             <div class="col-md-6">
-                <label class="form-label fw-semibold text-dark">Optional Subject</label>
+                <label class="form-label fw-semibold text-dark required">Optional Subject</label>
                 <select name="optional_subject" class="form-select" required>
                     <option value="">Select Optional Subject</option>
                     @foreach(json_decode('{
@@ -200,7 +198,7 @@
                 </select>
             </div>
             <div class="col-md-6">
-                <label class="form-label fw-semibold text-dark">Are you appearing in the UPSC CSE 2026?</label>
+                <label class="form-label fw-semibold text-dark required">Are you appearing in the UPSC CSE 2026?</label>
                 <select name="is_appearing_upsc_cse" class="form-select" required>
                 <option value="">Select an option</option>
                     <option value="1" {{ old('is_appearing_upsc_cse', $application->is_appearing_upsc_cse ?? 0) == 1 ? 'selected' : '' }}>Yes</option>
@@ -208,7 +206,7 @@
                 </select>
             </div>
             <div class="col-md-6">
-                <label class="form-label fw-semibold text-dark">How many times have you attended the UPSC CSE exam?</label>
+                <label class="form-label fw-semibold text-dark required">How many times have you attended the UPSC CSE exam?</label>
                 <input type="number" name="upsc_attempts_count" class="form-control" 
                        value="{{ old('upsc_attempts_count', $application->upsc_attempts_count ?? 0) }}" min="0" required>
                 <div class="invalid-feedback">Please enter a valid number (0 or more).</div>
