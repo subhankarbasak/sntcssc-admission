@@ -9,6 +9,9 @@ use App\Http\Controllers\ApplicationController;
 use App\Models\Advertisement;
 use App\Models\Application;
 
+// For Admin
+use App\Http\Controllers\Admin\AdminDashboardController;
+
 Route::get('/', function () {
     // return view('welcome');
     return view('landing');
@@ -72,6 +75,17 @@ Route::middleware('auth')->group(function () {
 Route::post('/validate/secondary_roll', [RegisterController::class, 'validateSecondaryRoll'])->name('validate.secondary_roll');
 Route::post('/validate/email', [RegisterController::class, 'validateEmail'])->name('validate.email');
 Route::post('/validate/mobile', [RegisterController::class, 'validateMobile'])->name('validate.mobile');
+
+
+// For Admin
+// Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {});
+Route::prefix('admin')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::post('/export', [DashboardController::class, 'export'])->name('admin.export');
+    Route::post('/bulk-update', [DashboardController::class, 'bulkUpdate'])->name('admin.bulk-update');
+});
+
+
 
 Route::get('/test-auth', function () {
     return auth()->check() ? 'Logged in' : 'Not logged in';
