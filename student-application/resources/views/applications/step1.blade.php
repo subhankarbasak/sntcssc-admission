@@ -62,7 +62,9 @@
                 <select name="category" class="form-select" id="category" onchange="toggleCategory()" required>
                     <option value="">Select Category</option>
                     <option value="Unreserved" {{ old('category', $profile->category ?? $student->category) == 'Unreserved' ? 'selected' : '' }}>Unreserved</option>
-                    <option value="Reserved" {{ old('category', $profile->category ?? $student->category) == 'Reserved' ? 'selected' : '' }}>Reserved</option>
+                    <option value="SC" {{ old('category', $profile->category ?? $student->category) == 'SC' ? 'selected' : '' }}>SC</option>
+                    <option value="ST" {{ old('category', $profile->category ?? $student->category) == 'ST' ? 'selected' : '' }}>ST</option>
+                    <option value="OBC" {{ old('category', $profile->category ?? $student->category) == 'OBC' ? 'selected' : '' }}>OBC</option>
                 </select>
                 <div class="invalid-feedback">Please select a category.</div>
             </div>
@@ -98,8 +100,8 @@
                 <label class="form-label fw-semibold text-dark required" for="Highest Qualification">Highest Qualification</label>
                     <select name="highest_qualification" class="form-select @error('highest_qualification') is-invalid @enderror" required>
                         <option value="">Select Highest Qualification</option>
-                        <option value="Graduate" {{ old('highest_qualification', $profile->highest_qualification ?? $student->highest_qualification) == 'Graduate' ? 'selected' : '' }}>Graduation Completed</option>
-                        <option value="Post Graduate" {{ old('highest_qualification', $profile->highest_qualification ?? $student->highest_qualification) == 'Post Graduate' ? 'selected' : '' }}>Post Graduate</option>
+                        <option value="Postgraduate and above" {{ old('highest_qualification', $profile->highest_qualification ?? $student->highest_qualification) == 'Postgraduate and above' ? 'selected' : '' }}>Postgraduate and above</option>
+                        <option value="Graduate" {{ old('highest_qualification', $profile->highest_qualification ?? $student->highest_qualification) == 'Graduate' ? 'selected' : '' }}>Graduate</option>
                         <option value="Final Undergraduate Semester" {{ old('highest_qualification', $profile->highest_qualification ?? $student->highest_qualification) == 'Final Undergraduate Semester' ? 'selected' : '' }}>Final Undergraduate Semester</option>
                     </select>
                     @error('highest_qualification') <div class="invalid-feedback">{{ $message }}</div> @enderror

@@ -304,7 +304,7 @@
                             <li>Contact Information</li>
                             <li>Address</li>
                             <li>Academic Qualifications</li>
-                            <li>Password</li>
+                            <li>Create Your New Password for Login</li>
                         </ul>
                         <p class="text-muted small"><strong>Note:</strong> Ensure all details are correct, as they cannot be modified after submission.</p>
                     </div>

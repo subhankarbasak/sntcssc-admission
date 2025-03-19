@@ -11,7 +11,7 @@ class RegisterRequest extends FormRequest
     {
         return [
 
-            'secondary_roll' => 'required|string|max:255|unique:students',
+            'secondary_roll' => 'required|regex:/^[A-Za-z0-9]+$/|string|max:255|unique:students',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:students,email|max:255',

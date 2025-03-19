@@ -36,7 +36,15 @@
                                     </tr>
                                     <tr>
                                         <th class="fw-medium bg-light py-2">Category</th>
-                                        <td class="py-2">{{ $details['profile']->category }}</td>
+                                        <td class="py-2">
+                                            @if(is_null($details['profile']->category))
+                                                {{-- Do not print anything if the category is null --}}
+                                            @elseif($details['profile']->category == 'Unreserved' || $details['profile']->category == 'UR')
+                                                <span>Unreserved</span>
+                                            @elseif(in_array($details['profile']->category, ['SC', 'ST', 'OBC']))
+                                                <span>Reserved</span>
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th class="fw-medium bg-light py-2">Father's Name</th>

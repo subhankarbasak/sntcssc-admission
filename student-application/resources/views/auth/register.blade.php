@@ -230,8 +230,8 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <div class="form-floating">
-                                <input type="text" name="secondary_roll" class="form-control @error('secondary_roll') is-invalid @enderror" id="secondary_roll" value="{{ old('secondary_roll') }}" required placeholder="Enter Secondary Roll No.">
-                                <label for="secondary_roll">10th Roll No. (without any space)</label>
+                                <input type="text" name="secondary_roll" class="form-control @error('secondary_roll') is-invalid @enderror" id="secondary_roll" value="{{ old('secondary_roll') }}" required placeholder="Enter Secondary Roll No." pattern="[A-Za-z0-9]+" oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '')">
+                                <label for="secondary_roll">Matriculation /10th /SSLC Roll No.</label>
                                 @error('secondary_roll') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                         </div>
@@ -273,7 +273,9 @@
                                 <select name="category" class="form-select @error('category') is-invalid @enderror" id="category" onchange="toggleCategory()" required>
                                     <option value="">Select Category</option>
                                     <option value="Unreserved" {{ old('category') == 'Unreserved' ? 'selected' : '' }}>Unreserved</option>
-                                    <option value="Reserved" {{ old('category') == 'Reserved' ? 'selected' : '' }}>Reserved</option>
+                                    <option value="SC" {{ old('category') == 'SC' ? 'selected' : '' }}>SC</option>
+                                    <option value="ST" {{ old('category') == 'ST' ? 'selected' : '' }}>ST</option>
+                                    <option value="OBC" {{ old('category') == 'OBC' ? 'selected' : '' }}>OBC</option>
                                 </select>
                                 <label for="category">Category</label>
                                 @error('category') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -311,8 +313,8 @@
                             <div class="form-floating">
                                 <select name="highest_qualification" class="form-select @error('highest_qualification') is-invalid @enderror" required>
                                     <option value="">Select Highest Qualification</option>
-                                    <option value="Graduate" {{ old('highest_qualification') == 'Graduate' ? 'selected' : '' }}>Graduation Completed</option>
-                                    <option value="Post Graduate" {{ old('highest_qualification') == 'Post Graduate' ? 'selected' : '' }}>Post Graduate</option>
+                                    <option value="Postgraduate and above" {{ old('highest_qualification') == 'Postgraduate and above' ? 'selected' : '' }}>Postgraduate and above</option>
+                                    <option value="Graduate" {{ old('highest_qualification') == 'Graduate' ? 'selected' : '' }}>Graduate</option>
                                     <option value="Final Undergraduate Semester" {{ old('highest_qualification') == 'Final Undergraduate Semester' ? 'selected' : '' }}>Final Undergraduate Semester</option>
                                 </select>
                                 <label for="Highest Qualification">Highest Qualification</label>
@@ -345,7 +347,7 @@
 
                 <!-- Account Security -->
                 <div class="form-section">
-                    <h5 class="section-title"><i class="bi bi-lock-fill"></i>Account Security</h5>
+                    <h5 class="section-title"><i class="bi bi-lock-fill"></i>Account Security: Create Your New Password for Login</h5>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="form-floating position-relative">
@@ -1233,12 +1235,12 @@
             previewHTML += createTableRow('Secondary Roll No.', formData.get('secondary_roll'));
             previewHTML += createTableRow('Full Name', `${formData.get('first_name')} ${formData.get('last_name')}`);
             previewHTML += createTableRow('Gender', formData.get('gender'));
-            previewHTML += createTableRow('Date of Birth', formData.get('dob'));
+            previewHTML += createTableRow('Date of Birth (YYYY-MM-DD)', formData.get('dob'));
             previewHTML += createTableRow('Category', formData.get('category'));
             if (formData.get('cat_cert_no')) {
                 previewHTML += createTableRow('Certificate No.', formData.get('cat_cert_no'));
-                previewHTML += createTableRow('Issue Date', formData.get('cat_issue_date'));
-                previewHTML += createTableRow('Issued By', formData.get('cat_issue_by'));
+                previewHTML += createTableRow('Date of issue (YYYY-MM-DD)', formData.get('cat_issue_date'));
+                previewHTML += createTableRow('Issuing Authority', formData.get('cat_issue_by'));
             }
             previewHTML += createTableRow('Highest Qualification', formData.get('highest_qualification'));
             previewHTML += '</table>';

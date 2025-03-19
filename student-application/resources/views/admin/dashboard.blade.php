@@ -183,7 +183,7 @@
                                         {{ ucfirst($application->payment_status) }}
                                     </span>
                                 </td>
-                                <td>{{ $application->applied_at->format('d M Y H:i') }}</td>
+                                <td>{{ $application->applied_at?->format('d M Y H:i') }}</td>
                             </tr>
                             @empty
                             <tr>
