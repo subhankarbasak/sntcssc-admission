@@ -137,3 +137,16 @@ Route::get('/clear', function() {
     return "Cleared!";
 
 });
+
+// Link storage
+Route::get('/link-storage', function () {
+    $target = storage_path('app/public'); // Path to storage/app/public
+    $link = public_path('storage');       // Path to public/storage
+
+    if (!file_exists($link)) {
+        symlink($target, $link);
+        return "Storage linked successfully!";
+    }
+
+    return "Storage is already linked.";
+});

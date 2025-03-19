@@ -61,14 +61,14 @@
                 <div class="card shadow-sm p-4 h-100">
                     <label for="category_cert" class="form-label fw-semibold text-dark">
                         Category Certificate 
-                        @if($profile && $profile->category !== 'UR')
+                        @if($profile && $profile->category !== 'Unreserved')
                             <span class="text-danger">*</span>
                         @else
                             <span class="text-muted fw-normal">(Optional)</span>
                         @endif
                     </label>
                     <input type="file" name="category_cert" class="form-control" id="category_cert" accept=".pdf,.jpg,.png"
-                           {{ $profile && $profile->category !== 'UR' && !$documents->where('type', 'category_cert')->first() ? 'required' : '' }}>
+                           {{ $profile && $profile->category !== 'Unreserved' && !$documents->where('type', 'category_cert')->first() ? 'required' : '' }}>
                     <small class="text-muted">Max 5MB (PDF/JPG/PNG)</small>
                     <div class="preview-area mt-2" id="category_cert-preview">
                         @if($documents->where('type', 'category_cert')->first())
@@ -222,7 +222,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('applicationForm');
-    const isCategoryRequired = {{ $profile && $profile->category !== 'UR' ? 'true' : 'false' }};
+    const isCategoryRequired = {{ $profile && $profile->category !== 'Unreserved' ? 'true' : 'false' }};
     const isPwbdRequired = {{ $profile && $profile->is_pwbd == 1 ? 'true' : 'false' }};
 
     // Toastr options

@@ -231,7 +231,7 @@
                         <div class="col-md-4">
                             <div class="form-floating">
                                 <input type="text" name="secondary_roll" class="form-control @error('secondary_roll') is-invalid @enderror" id="secondary_roll" value="{{ old('secondary_roll') }}" required placeholder="Enter Secondary Roll No." pattern="[A-Za-z0-9]+" oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '')">
-                                <label for="secondary_roll">Matriculation /10th /SSLC Roll No.</label>
+                                <label for="secondary_roll">Madhyamik (Class X) Roll No.</label>
                                 @error('secondary_roll') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                         </div>
@@ -315,7 +315,7 @@
                                     <option value="">Select Highest Qualification</option>
                                     <option value="Postgraduate and above" {{ old('highest_qualification') == 'Postgraduate and above' ? 'selected' : '' }}>Postgraduate and above</option>
                                     <option value="Graduate" {{ old('highest_qualification') == 'Graduate' ? 'selected' : '' }}>Graduate</option>
-                                    <option value="Final Undergraduate Semester" {{ old('highest_qualification') == 'Final Undergraduate Semester' ? 'selected' : '' }}>Final Undergraduate Semester</option>
+                                    <option value="Undergraduate - Final Year" {{ old('highest_qualification') == 'Undergraduate - Final Year' ? 'selected' : '' }}>Undergraduate - Final Year</option>
                                 </select>
                                 <label for="Highest Qualification">Highest Qualification</label>
                                 @error('highest_qualification') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -347,7 +347,7 @@
 
                 <!-- Account Security -->
                 <div class="form-section">
-                    <h5 class="section-title"><i class="bi bi-lock-fill"></i>Account Security: Create Your New Password for Login</h5>
+                    <h5 class="section-title"><i class="bi bi-lock-fill"></i>Account Security: Create Your New Password for Login (Minimum 8 characters)</h5>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="form-floating position-relative">

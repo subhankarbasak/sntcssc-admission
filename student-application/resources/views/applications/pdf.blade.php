@@ -212,7 +212,7 @@
                         <table class="info-table">
                             <tr>
                                 <th>Name</th>
-                                <td>{{ $details['profile']->first_name }} {{ $details['profile']->last_name }}</td>
+                                <td>{{ strtoupper($details['profile']->first_name) }} {{ strtoupper($details['profile']->last_name) }}</td>
                                 <th>Gender</th>
                                 <td>{{ $details['profile']->gender }}</td>
                             </tr>
@@ -419,7 +419,7 @@
                 <table class="info-table">
                     <tr>
                         <th>Amount</th>
-                        <td>₹{{ number_format($application->payment->amount, 2) }}</td>
+                        <td>Rs. {{ number_format($application->payment->amount, 2) }}</td>
                         <th>Method</th>
                         <td>{{ $application->payment->method }}</td>
                     </tr>
@@ -439,7 +439,7 @@
             <table class="info-table">
                 @foreach($details['documents'] as $document)
                     <tr>
-                        <th>{{ ucfirst(str_replace('_', ' ', $document->type)) }}</th>
+                        <th>{{ getFieldLabel($document->type) }}</th>
                         <td>Attached</td>
                     </tr>
                 @endforeach

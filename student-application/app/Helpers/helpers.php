@@ -20,6 +20,7 @@ if (!function_exists('getFieldLabel')) {
             // 
             'level' => "Level",
             'category_cert' => "Category Certificate",
+            'pwbd_cert' => "PwBD Certificate",
             'payment_ss' => "Payment Screenshot"
         ];
 

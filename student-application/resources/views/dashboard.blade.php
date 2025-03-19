@@ -34,14 +34,14 @@
                 <div class="card-body">
                     <div class="row g-4">
                         @foreach($advertisements as $advertisement)
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="card h-100 border-0 hover-shadow">
                                     <div class="card-body">
                                         <h5 class="card-title">{{ $advertisement->title }}</h5>
                                         <p class="card-text">
                                             <strong>Code:</strong> {{ $advertisement->code }}<br>
                                             <strong>Batch:</strong> {{ $advertisement->batch->name }}<br>
-                                            <strong>Ends:</strong> {{ $advertisement->application_end->format('d M Y') }}
+                                            <strong>Registration Ends on:</strong> {{ $advertisement->application_end->format('F d, Y, l, g:i A') }}
                                         </p>
                                         <div class="mt-3">
                                             <form id="applicationForm" action="{{ route('application.create', $advertisement) }}" method="GET">

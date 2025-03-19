@@ -23,6 +23,37 @@ class Student extends Authenticatable
         'uuid' => 'string',
     ];
 
+    // 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($student) {
+            $student->registration_no = self::generateRegistrationNo();
+        });
+    }
+
+    private static function generateRegistrationNo()
+    {
+        $date = date('Ymd'); // Current date in YYYYMMDD format
+
+        // Generate a random number and pad with zeros to ensure it's 4 digits
+        $random_number = sprintf("%04d", rand(0, 9999)); 
+
+        // Create the initial registration number
+        $registration_no = $date . $random_number; 
+
+        // Ensure uniqueness
+        while (self::where('registration_no', $registration_no)->exists()) {
+            $random_number = sprintf("%04d", rand(0, 9999)); 
+            $registration_no = $date . $random_number; 
+        }
+
+        return $registration_no;
+    }
+
+    // 
+
     public function profile()
     {
         return $this->hasOne(StudentProfile::class);
