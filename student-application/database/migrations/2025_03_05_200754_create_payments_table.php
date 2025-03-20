@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('application_id')->constrained('applications')->onDelete('cascade');
             $table->decimal('amount', 10, 2);
-            $table->enum('method', ['UPI', 'Bank Transfer']);
+            $table->enum('method', ['UPI', 'NEFT', 'IMPS', 'Direct Account Transfer']);
             $table->date('transaction_date');
             $table->string('transaction_id')->unique();
             $table->foreignId('screenshot_document_id')->nullable()->constrained('documents')->onDelete('set null');

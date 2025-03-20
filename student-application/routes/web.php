@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/application/{application:application_number}/submit', [ApplicationController::class, 'submit'])->name('application.submit');
     Route::get('/application/{application:application_number}/payment', [ApplicationController::class, 'payment'])->name('application.payment');
     Route::post('/application/{application:application_number}/payment', [ApplicationController::class, 'storePayment'])->name('application.store.payment');
+    Route::patch('/application/{application:application_number}/payment', [ApplicationController::class, 'storePayment'])->name('application.update.payment');
     Route::get('/application/{application:application_number}/status', [ApplicationController::class, 'status'])->name('application.status');
     Route::get('/application/{application:application_number}/download', [ApplicationController::class, 'download'])->name('application.download');
 

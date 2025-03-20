@@ -32,4 +32,10 @@ class DocumentRepository implements DocumentRepositoryInterface
         $document = Document::findOrFail($id);
         return $document->delete();
     }
+
+    // Add this method
+    public function find($id)
+    {
+        return Document::find($id);
+    }
 }

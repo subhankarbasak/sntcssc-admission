@@ -548,6 +548,7 @@ class ApplicationService
     public function processPayment($application, array $paymentData, $screenshot = null)
     {
         $applicationId = $application->id;
+    
         try {
             \DB::beginTransaction();
     
@@ -556,35 +557,84 @@ class ApplicationService
                 throw new \Exception('Application not eligible for payment');
             }
     
-            $screenshotId = null;
-            if ($screenshot) {
-                // Generate custom filename
-                $timestamp = now()->format('YmdHis'); // e.g., 20250314123456
-                $randomString = \Str::random(6); // e.g., X7K9P2
-                $customFileName = "{$application->application_number}_payment_{$timestamp}_{$randomString}";
+            // Check if a payment already exists for this application
+            $existingPayment = $this->paymentRepository->findByApplicationId($applicationId);
     
-                // Get the original file extension
-                $extension = $screenshot->getClientOriginalExtension();
+            if ($existingPayment) {
+                // Update existing payment
+                $screenshotId = $existingPayment->screenshot_document_id;
     
-                // Store the file with the custom name
-                $path = $screenshot->storeAs('documents/payments', "{$customFileName}.{$extension}", 'public');
+                if ($screenshot) {
+                    // If a new screenshot is provided, update or create the document
+                    if ($screenshotId) {
+                        // Update existing document
+                        $document = $this->documentRepository->find($screenshotId);
+                        Storage::disk('public')->delete($document->file_path); // Delete old file
     
-                $document = $this->documentRepository->create([
+                        $timestamp = now()->format('YmdHis');
+                        $randomString = \Str::random(6);
+                        $customFileName = "{$application->application_number}_payment_{$timestamp}_{$randomString}";
+                        $extension = $screenshot->getClientOriginalExtension();
+                        $path = $screenshot->storeAs('documents/payments', "{$customFileName}.{$extension}", 'public');
+    
+                        $this->documentRepository->update($screenshotId, [
+                            'file_path' => $path,
+                            'verification_status' => 'pending'
+                        ]);
+                    } else {
+                        // Create new document if no previous screenshot existed
+                        $timestamp = now()->format('YmdHis');
+                        $randomString = \Str::random(6);
+                        $customFileName = "{$application->application_number}_payment_{$timestamp}_{$randomString}";
+                        $extension = $screenshot->getClientOriginalExtension();
+                        $path = $screenshot->storeAs('documents/payments', "{$customFileName}.{$extension}", 'public');
+    
+                        $document = $this->documentRepository->create([
+                            'application_id' => $applicationId,
+                            'type' => 'payment_ss',
+                            'file_path' => $path,
+                            'verification_status' => 'pending'
+                        ]);
+                        $screenshotId = $document->id;
+                    }
+                }
+    
+                // Update payment data
+                $paymentData = array_merge($paymentData, [
                     'application_id' => $applicationId,
-                    'type' => 'payment_ss',
-                    'file_path' => $path,
-                    'verification_status' => 'pending'
+                    'screenshot_document_id' => $screenshotId,
+                    'status' => 'pending' // Assuming status should reset to pending on update
                 ]);
-                $screenshotId = $document->id;
+    
+                $this->paymentRepository->update($existingPayment->id, $paymentData);
+                $payment = $existingPayment->fresh(); // Refresh to get updated data
+            } else {
+                // Create new payment
+                $screenshotId = null;
+                if ($screenshot) {
+                    $timestamp = now()->format('YmdHis');
+                    $randomString = \Str::random(6);
+                    $customFileName = "{$application->application_number}_payment_{$timestamp}_{$randomString}";
+                    $extension = $screenshot->getClientOriginalExtension();
+                    $path = $screenshot->storeAs('documents/payments', "{$customFileName}.{$extension}", 'public');
+    
+                    $document = $this->documentRepository->create([
+                        'application_id' => $applicationId,
+                        'type' => 'payment_ss',
+                        'file_path' => $path,
+                        'verification_status' => 'pending'
+                    ]);
+                    $screenshotId = $document->id;
+                }
+    
+                $paymentData = array_merge($paymentData, [
+                    'application_id' => $applicationId,
+                    'screenshot_document_id' => $screenshotId,
+                    'status' => 'pending'
+                ]);
+    
+                $payment = $this->paymentRepository->create($paymentData);
             }
-    
-            $paymentData = array_merge($paymentData, [
-                'application_id' => $applicationId,
-                'screenshot_document_id' => $screenshotId,
-                'status' => 'pending'
-            ]);
-    
-            $payment = $this->paymentRepository->create($paymentData);
     
             // Update application payment status
             $application->update(['payment_status' => 'pending']);

@@ -12,6 +12,88 @@
                     </a>
                 @endif
             </div>
+            <form method="POST" action="{{ route('application.update.payment', $application) }}" enctype="multipart/form-data" id="paymentForm" class="needs-validation" novalidate>
+                @csrf
+                @method('PATCH') <!-- Use PATCH for updates -->
+
+                <div class="mb-3">
+                    <label for="amount" class="form-label fw-medium required">Amount (₹)</label>
+                    <input type="number" name="amount" class="form-control" id="amount" 
+                           value="{{ $payment->amount ?? $fee }}" readonly required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="method" class="form-label fw-medium required">Payment Method</label>
+                    <select name="method" class="form-control" id="method" required>
+                        <option value="" disabled {{ !$payment ? 'selected' : '' }}>Select Payment Method</option>
+                        <option value="UPI" {{ $payment && $payment->method === 'UPI' ? 'selected' : '' }}>UPI QR Code / UPI ID</option>
+                        <option value="NEFT" {{ $payment && $payment->method === 'NEFT' ? 'selected' : '' }}>NEFT</option>
+                        <option value="IMPS" {{ $payment && $payment->method === 'IMPS' ? 'selected' : '' }}>IMPS</option>
+                        <option value="Direct Account Transfer" {{ $payment && $payment->method === 'Direct Account Transfer' ? 'selected' : '' }}>Direct Account Transfer</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a payment method.</div>
+                </div>
+
+                <!-- Payment Details Container -->
+                <div id="payment-details" class="mb-3 {{ $payment ? '' : 'd-none' }}">
+                    <!-- UPI QR Code Section -->
+                    <div id="upi-details" class="payment-method-details {{ $payment && $payment->method === 'UPI' ? '' : 'd-none' }}">
+                        <div class="alert alert-light border p-3">
+                            <h6 class="fw-medium">Scan to Pay</h6>
+                            <img src="{{ url('/images/upi-qr-code.jpg') }}" alt="UPI QR Code" class="img-fluid mb-2" style="max-width: 260px;">
+                            <p class="small text-muted mb-0">
+                                UPI ID: <strong>sntcssc@indianbk</strong><br>
+                                Please include the Transaction ID (or UTR no.), transaction date from your UPI app in the field below
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Bank Details Section -->
+                    <div id="bank-details" class="payment-method-details {{ $payment && $payment->method !== 'UPI' && $payment->method ? '' : 'd-none' }}">
+                        <div class="alert alert-light border p-3">
+                            <h6 class="fw-medium">Bank Account Details</h6>
+                            <dl class="row mb-0 small">
+                                <dt class="col-5">Account Holder:</dt>
+                                <dd class="col-7">CENTRE FOR EXCELLENCE IN PUBLIC MANAGEMENT</dd>
+                                <dt class="col-5">Account Number:</dt>
+                                <dd class="col-7">50189702376</dd>
+                                <dt class="col-5">IFSC Code:</dt>
+                                <dd class="col-7">IDIB000S549</dd>
+                                <dt class="col-5">Bank Name:</dt>
+                                <dd class="col-7">INDIAN BANK</dd>
+                                <dt class="col-5">Branch:</dt>
+                                <dd class="col-7">Salt Lake, GD Market</dd>
+                            </dl> <br>
+                            <p class="small text-muted mb-0">
+                                Please include the Transaction ID (or UTR no.), transaction date from your transaction / deposit receipt in the field below
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="transaction_date" class="form-label fw-medium required">Transaction Date</label>
+                    <input type="date" name="transaction_date" class="form-control" id="transaction_date" 
+                           max="{{ date('Y-m-d') }}" value="{{ $payment ? $payment->transaction_date->format('Y-m-d') : '' }}" required>
+                    <div class="invalid-feedback">Please select a valid transaction date.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="transaction_id" class="form-label fw-medium required">Transaction ID / UTR No.</label>
+                    <input type="text" name="transaction_id" class="form-control" id="transaction_id" 
+                           value="{{ $payment ? $payment->transaction_id : '' }}" required>
+                    @error('transaction_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                    <div class="invalid-feedback">Please enter a transaction ID.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="screenshot" class="form-label fw-medium">Payment Screenshot <span class="text-muted fw-normal fst-italic">(Ensure the receipt or screenshot clearly displays the transaction ID or UTR number, date, and transaction amount.)</span></label>
+                    <input type="file" name="screenshot" class="form-control" id="screenshot" accept=".jpg,.png,.pdf">
+                    @error('screenshot') <span class="text-danger small">{{ $message }}</span> @enderror
+                    <small class="text-muted">Max 2MB (JPG/PNG/PDF). Leave empty to keep existing screenshot.</small>
+                    <div class="preview-area mt-2" id="screenshot-preview"></div>
+                </div>
+            </form>
         @else
             <form method="POST" action="{{ route('application.store.payment', $application) }}" enctype="multipart/form-data" id="paymentForm" class="needs-validation" novalidate>
                 @csrf
@@ -86,7 +168,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="screenshot" class="form-label fw-medium">Payment Screenshot <span class="text-muted fw-normal fst-italic">(Ensure the receipt or screenshot clearly displays the transaction ID or UTR number, date, and transaction amount.)</span></label>
+                    <label for="screenshot" class="form-label fw-medium required">Payment Screenshot <span class="text-muted fw-normal fst-italic">(Ensure the receipt or screenshot clearly displays the transaction ID or UTR number, date, and transaction amount.)</span></label>
                     <input type="file" name="screenshot" class="form-control" id="screenshot" accept=".jpg,.png,.pdf" required>
                     @error('screenshot') <span class="text-danger small">{{ $message }}</span> @enderror
                     <small class="text-muted">Max 2MB (JPG/PNG/PDF)</small>
@@ -108,7 +190,13 @@
                     <span class="position-relative z-1">Go to Dashboard <i class="bi bi-arrow-right ms-2"></i></span>
                 </a>
             </div>
-            @if(!$payment)
+            @if($payment)
+                <div>
+                    <button type="submit" form="paymentForm" id="payBtn" class="btn btn-primary shadow-sm">
+                        Update Payment <i class="bi bi-check2 ms-2"></i>
+                    </button>
+                </div>
+            @else
                 <div>
                     <button type="submit" form="paymentForm" id="payBtn" class="btn btn-primary shadow-sm">
                         Submit Payment <i class="bi bi-check2 ms-2"></i>
@@ -185,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 nextBtn.disabled = true;
                 nextBtn.innerHTML = '<span class="spinner"></span>Processing...';
-                toastr.success('Payment details submitted successfully!');
+                toastr.success('Payment details ' + ({{ $payment ? 'true' : 'false' }} ? 'updated' : 'submitted') + ' successfully!');
             }
             form.classList.add('was-validated');
         });
@@ -195,10 +283,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         screenshotInput.addEventListener('change', function() {
             const file = this.files[0];
-            const maxSize = 3 * 1024 * 1024; // 3MB
+            const maxSize = 2 * 1024 * 1024; // 2MB
 
             if (file && file.size > maxSize) {
-                toastr.error('File size exceeds limit (3MB)');
+                toastr.error('File size exceeds limit (2MB)');
                 this.value = '';
                 previewArea.innerHTML = '';
                 return;
