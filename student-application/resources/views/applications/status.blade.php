@@ -58,7 +58,7 @@
                                     <td>{{ $application->advertisement->title }}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Status</th>
+                                    <th scope="row">Application Status</th>
                                     <td>
                                         <span class="badge {{ $application->status === 'submitted' ? 'bg-success' : ($application->status === 'draft' ? 'bg-warning' : 'bg-info') }}">
                                             {{ ucfirst($application->status) }}
@@ -68,7 +68,7 @@
                                 <tr>
                                     <th scope="row">Payment Status</th>
                                     <td>
-                                        <span class="badge {{ $application->payment_status === 'paid' ? 'bg-success' : ($application->payment_status === 'pending' ? 'bg-warning' : 'bg-danger') }}">
+                                        <span class="badge {{ $application->payment_status === 'paid' ? 'bg-success' : ($application->payment_status === 'pending' ? 'bg-warning' : ($application->payment_status === 'under review' ? 'bg-info' : 'bg-danger')) }}">
                                             {{ ucfirst($application->payment_status) }}
                                         </span>
                                         
@@ -298,10 +298,12 @@
                     </table>
 
                     <div class="d-flex justify-content-between flex-column flex-md-row gap-3">
-                        <form id="downloadForm" action="{{ route('application.download', $application) }}" method="GET" class="text-center">
-                            @csrf
-                            <button href="#" class="btn btn-primary" id="downloadBtn"><i class="bi bi-file-pdf ms-2"></i> Download as PDF</button>
-                        </form>
+                        @if ($application->status === 'submitted')
+                            <form id="downloadForm" action="{{ route('application.download', $application) }}" method="GET" class="text-center">
+                                @csrf
+                                <button href="#" class="btn btn-primary" id="downloadBtn"><i class="bi bi-file-pdf ms-2"></i> Download as PDF</button>
+                            </form>
+                        @endif
                         <a href="{{ route('dashboard') }}" 
                         class="btn btn-primary">Back to Dashboard <i class="bi bi-arrow-right ms-2"></i></a>
                     </div>
@@ -313,14 +315,21 @@
 
 @push('scripts')
     <script>
-    toastr.options = {
-        "positionClass": "toast-top-right",
-        "progressBar": true
-    };
 
-    @if(session('toastr'))
-        toastr[{{ session('toastr.type') }}]('{{ session('toastr.message') }}');
-    @endif
+    document.addEventListener('DOMContentLoaded', function() {
+
+    // Toastr configuration
+        toastr.options = {
+            positionClass: 'toast-top-right',
+            progressBar: true,
+            timeOut: 5000,
+            closeButton: true
+        };
+
+        @if(session('toastr'))
+            toastr['{{ session('toastr.type') }}']('{{ session('toastr.message') }}', 'Notification');
+        @endif
+    });
     </script>
 
 <script>

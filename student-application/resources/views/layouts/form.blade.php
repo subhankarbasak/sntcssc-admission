@@ -209,6 +209,13 @@
         .btn-primary:hover {
             background: linear-gradient(90deg, #0056b3, #0096cc);
         }
+
+        .form-check {
+            background: lightgoldenrodyellow;
+        }
+        .form-check-input {
+            scale: 1.4;
+        }
 /* ./ Form css */
 
     </style>
@@ -223,7 +230,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-1 col-md-2 text-center">
-                    <a href="https://csscwb.in">
+                    <a href="{{ url('/') }}">
                         <img src="https://csscwb.in/assets/front-end/images/others/sntcssc-logo.png" alt="Institute Logo" class="img-fluid" style="max-height: 70px;">
                     </a>
                 </div>

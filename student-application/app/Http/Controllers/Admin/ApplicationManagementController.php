@@ -98,7 +98,7 @@ class ApplicationManagementController extends Controller
     {
         try {
             $request->validate([
-                'status' => 'required|in:pending,paid,failed'
+                'status' => 'required|in:pending,under review,paid,failed'
             ]);
 
             DB::transaction(function () use ($payment, $request) {
@@ -111,6 +111,18 @@ class ApplicationManagementController extends Controller
                 $payment->application->update([
                     'payment_status' => $request->status
                 ]);
+
+
+                $status = $this->mapStatus($request->status);
+                if ($status !== null) {
+                    $payment->screenshot->update([
+                        'verification_status' => $status
+                    ]);
+                } else {
+                    Log::info('Problem while updating verification_status in documents table');
+                    // Handle unexpected status value if necessary
+                    // For example, throw an exception or return an error response.
+                }
 
                 // Log the change
                 Log::info('Payment status updated', [
@@ -133,5 +145,17 @@ class ApplicationManagementController extends Controller
             Log::error('Payment status update failed: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to update payment status');
         }
+    }
+
+    private function mapStatus($requestStatus)
+    {
+        $statusMapping = [
+            'paid' => 'verified',
+            'rejected' => 'rejected',
+            'pending' => 'pending',
+            'under review' => 'pending', // Treating 'under review' as 'pending'
+        ];
+    
+        return $statusMapping[$requestStatus] ?? null; // Returns null if status not found
     }
 }

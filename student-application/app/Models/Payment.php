@@ -12,7 +12,7 @@ class Payment extends Model
 
     protected $fillable = [
         'application_id', 'amount', 'method', 'transaction_date', 'transaction_id',
-        'screenshot_document_id', 'status'
+        'remarks', 'screenshot_document_id', 'status'
     ];
     
     protected $casts = [

@@ -583,33 +583,94 @@ class ApplicationController extends Controller
     // End Step 5 (Submit Application)
 
 
+    // public function payment(Application $application)
+    // {
+    //     if ($application->student_id !== auth()->id()) {
+    //         abort(403, 'Unauthorized access to this application');
+    //     }
+
+    //     $applicationId = $application->id;
+
+    //     $application = Application::findOrFail($applicationId);
+    //     $payment = $this->applicationService->getPaymentDetails($applicationId);
+
+    //     $profile = $application->profile()->where('id', $application->student_profile_id)->first();
+        
+    //     // Assuming a fixed fee from advertisement_programs for simplicity
+    //     // $fee = $application->advertisement->programs->first()->batch_program->fee ?? 1000;
+
+    //     if($profile->category === 'SC' || $profile->category === 'ST'|| $profile->category === 'OBC'  || $profile->category === 'OBC A' || $profile->category === 'OBC B' || $profile->category === 'Reserved' ){
+    //         $fee = 50;
+    //     }else{
+    //         $fee = 100;
+    //     }
+
+    //     return view('applications.payment', compact('application', 'payment', 'fee'));
+    // }
+
+    // public function storePayment(PaymentRequest $request, Application $application)
+    // {
+    //     $applicationId = $application->id;
+    //     $application = Application::findOrFail($applicationId);
+
+    //     try {
+    //         $paymentData = $request->only(['amount', 'method', 'transaction_date', 'transaction_id']);
+    //         $screenshot = $request->file('screenshot');
+
+    //         $this->applicationService->processPayment($application, $paymentData, $screenshot);
+
+    //         return redirect()->route('application.status', $application)
+    //             ->with('toastr', ['type' => 'success', 'message' => 'Payment submitted successfully!']);
+    //     } catch (\Exception $e) {
+    //         return back()
+    //             ->withInput()
+    //             ->with('toastr', ['type' => 'error', 'message' => $e->getMessage()]);
+    //     }
+    // }
+
+    // New added 20.03.2025
+
     public function payment(Application $application)
     {
         if ($application->student_id !== auth()->id()) {
             abort(403, 'Unauthorized access to this application');
         }
 
-        $applicationId = $application->id;
+        if ($application->payment_status === 'under review') {
+            return redirect()->route('dashboard')
+                ->with('toastr', ['type' => 'info', 'message' => 'You have already submitted your payment information.']);
+        } elseif ($application->payment_status === 'paid') {
+            return redirect()->route('dashboard')
+                ->with('toastr', ['type' => 'success', 'message' => 'Your payment has been received.']);
+        }
 
+        $applicationId = $application->id;
         $application = Application::findOrFail($applicationId);
         $payment = $this->applicationService->getPaymentDetails($applicationId);
 
         $profile = $application->profile()->where('id', $application->student_profile_id)->first();
         
-        // Assuming a fixed fee from advertisement_programs for simplicity
-        // $fee = $application->advertisement->programs->first()->batch_program->fee ?? 1000;
-
-        if($profile->category === 'SC' || $profile->category === 'ST'|| $profile->category === 'OBC'  || $profile->category === 'OBC A' || $profile->category === 'OBC B' || $profile->category === 'Reserved' ){
-            $fee = 50;
-        }else{
-            $fee = 100;
-        }
+        $fee = in_array($profile->category, ['SC', 'ST', 'OBC', 'OBC A', 'OBC B', 'Reserved']) ? 50 : 100;
 
         return view('applications.payment', compact('application', 'payment', 'fee'));
     }
 
     public function storePayment(PaymentRequest $request, Application $application)
     {
+        return $this->handlePayment($request, $application, 'store');
+    }
+
+    public function updatePayment(PaymentRequest $request, Application $application)
+    {
+        return $this->handlePayment($request, $application, 'update');
+    }
+
+    private function handlePayment(PaymentRequest $request, Application $application, string $action)
+    {
+        if ($application->student_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this application');
+        }
+
         $applicationId = $application->id;
         $application = Application::findOrFail($applicationId);
 
@@ -619,8 +680,12 @@ class ApplicationController extends Controller
 
             $this->applicationService->processPayment($application, $paymentData, $screenshot);
 
+            $message = $action === 'store' 
+                ? 'Payment submitted successfully!' 
+                : 'Payment updated successfully!';
+
             return redirect()->route('application.status', $application)
-                ->with('toastr', ['type' => 'success', 'message' => 'Payment submitted successfully!']);
+                ->with('toastr', ['type' => 'success', 'message' => $message]);
         } catch (\Exception $e) {
             return back()
                 ->withInput()
@@ -697,7 +762,7 @@ class ApplicationController extends Controller
                 'logo_base64' => $logo_base64,
                 'institute_name' => 'Satyendra Nath Tagore Civil Services Study Centre',
                 'institute_type' => 'Government of West Bengal',
-                'institute_address' => 'NSATI Campus,Block FC, Sector - III, Salt Lake, Kolkata-700106'
+                'institute_address' => 'NSATI Campus, FC Block, Sector-III, Salt Lake, Kolkata-700106'
             ];
 
             $pdf = PDF::loadView('applications.pdf', $data)

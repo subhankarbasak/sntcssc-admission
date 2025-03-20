@@ -3,6 +3,7 @@
 @section('content')
     <h4 class="mb-4"><i class="bi bi-wallet2 me-2"></i>Step 6: Payment Details</h4>
     <div class="card-body p-0">
+        <!-- When payment exists -->
         @if($payment)
             <div class="alert alert-info shadow-sm">
                 Payment already submitted. Status: <strong>{{ ucfirst($payment->status) }}</strong>
@@ -26,103 +27,22 @@
                 <div class="mb-3">
                     <label for="amount" class="form-label fw-medium required">Amount (₹)</label>
                     <input type="number" name="amount" class="form-control" id="amount" 
-                           value="{{ $payment->amount ?? $fee }}" readonly required>
+                        value="{{ old('amount', $payment->amount ?? $fee) }}" readonly required>
                 </div>
 
                 <div class="mb-3">
                     <label for="method" class="form-label fw-medium required">Payment Method</label>
                     <select name="method" class="form-control" id="method" required>
                         <option value="" disabled {{ !$payment ? 'selected' : '' }}>Select Payment Method</option>
-                        <option value="UPI" {{ $payment && $payment->method === 'UPI' ? 'selected' : '' }}>UPI QR Code / UPI ID</option>
-                        <option value="NEFT" {{ $payment && $payment->method === 'NEFT' ? 'selected' : '' }}>NEFT</option>
-                        <option value="IMPS" {{ $payment && $payment->method === 'IMPS' ? 'selected' : '' }}>IMPS</option>
-                        <option value="Direct Account Transfer" {{ $payment && $payment->method === 'Direct Account Transfer' ? 'selected' : '' }}>Direct Account Transfer</option>
+                        <option value="UPI" {{ old('method', $payment->method) === 'UPI' ? 'selected' : '' }}>UPI QR Code / UPI ID</option>
+                        <option value="NEFT" {{ old('method', $payment->method) === 'NEFT' ? 'selected' : '' }}>NEFT</option>
+                        <option value="IMPS" {{ old('method', $payment->method) === 'IMPS' ? 'selected' : '' }}>IMPS</option>
+                        <option value="Direct Account Transfer" {{ old('method', $payment->method) === 'Direct Account Transfer' ? 'selected' : '' }}>Direct Account Transfer</option>
                     </select>
                     <div class="invalid-feedback">Please select a payment method.</div>
                 </div>
 
-                <!-- Payment Details Container -->
-                <div id="payment-details" class="mb-3 {{ $payment ? '' : 'd-none' }}">
-                    <!-- UPI QR Code Section -->
-                    <div id="upi-details" class="payment-method-details {{ $payment && $payment->method === 'UPI' ? '' : 'd-none' }}">
-                        <div class="alert alert-light border p-3">
-                            <h6 class="fw-medium">Scan to Pay</h6>
-                            <img src="{{ url('/images/upi-qr-code.jpg') }}" alt="UPI QR Code" class="img-fluid mb-2" style="max-width: 260px;">
-                            <p class="small text-muted mb-0">
-                                UPI ID: <strong>sntcssc@indianbk</strong><br>
-                                Please include the Transaction ID (or UTR no.), transaction date from your UPI app in the field below
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Bank Details Section -->
-                    <div id="bank-details" class="payment-method-details {{ $payment && $payment->method !== 'UPI' && $payment->method ? '' : 'd-none' }}">
-                        <div class="alert alert-light border p-3">
-                            <h6 class="fw-medium">Bank Account Details</h6>
-                            <dl class="row mb-0 small">
-                                <dt class="col-5">Account Holder:</dt>
-                                <dd class="col-7">CENTRE FOR EXCELLENCE IN PUBLIC MANAGEMENT</dd>
-                                <dt class="col-5">Account Number:</dt>
-                                <dd class="col-7">50189702376</dd>
-                                <dt class="col-5">IFSC Code:</dt>
-                                <dd class="col-7">IDIB000S549</dd>
-                                <dt class="col-5">Bank Name:</dt>
-                                <dd class="col-7">INDIAN BANK</dd>
-                                <dt class="col-5">Branch:</dt>
-                                <dd class="col-7">Salt Lake, GD Market</dd>
-                            </dl> <br>
-                            <p class="small text-muted mb-0">
-                                Please include the Transaction ID (or UTR no.), transaction date from your transaction / deposit receipt in the field below
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="transaction_date" class="form-label fw-medium required">Transaction Date</label>
-                    <input type="date" name="transaction_date" class="form-control" id="transaction_date" 
-                           max="{{ date('Y-m-d') }}" value="{{ $payment ? $payment->transaction_date->format('Y-m-d') : '' }}" required>
-                    <div class="invalid-feedback">Please select a valid transaction date.</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="transaction_id" class="form-label fw-medium required">Transaction ID / UTR No.</label>
-                    <input type="text" name="transaction_id" class="form-control" id="transaction_id" 
-                           value="{{ $payment ? $payment->transaction_id : '' }}" required>
-                    @error('transaction_id') <span class="text-danger small">{{ $message }}</span> @enderror
-                    <div class="invalid-feedback">Please enter a transaction ID.</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="screenshot" class="form-label fw-medium">Payment Screenshot <span class="text-muted fw-normal fst-italic">(Ensure the receipt or screenshot clearly displays the transaction ID or UTR number, date, and transaction amount.)</span></label>
-                    <input type="file" name="screenshot" class="form-control" id="screenshot" accept=".jpg,.png,.pdf">
-                    @error('screenshot') <span class="text-danger small">{{ $message }}</span> @enderror
-                    <small class="text-muted">Max 2MB (JPG/PNG/PDF). Leave empty to keep existing screenshot.</small>
-                    <div class="preview-area mt-2" id="screenshot-preview"></div>
-                </div>
-            </form>
-        @else
-            <form method="POST" action="{{ route('application.store.payment', $application) }}" enctype="multipart/form-data" id="paymentForm" class="needs-validation" novalidate>
-                @csrf
-
-                <div class="mb-3">
-                    <label for="amount" class="form-label fw-medium required">Amount (₹)</label>
-                    <input type="number" name="amount" class="form-control" id="amount" 
-                           value="{{ $fee }}" readonly required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="method" class="form-label fw-medium required">Payment Method</label>
-                    <select name="method" class="form-control" id="method" required>
-                        <option value="" disabled selected>Select Payment Method</option>
-                        <option value="UPI">UPI QR Code / UPI ID</option>
-                        <option value="NEFT">NEFT</option>
-                        <option value="IMPS">IMPS</option>
-                        <option value="Direct Account Transfer">Direct Account Transfer</option>
-                    </select>
-                    <div class="invalid-feedback">Please select a payment method.</div>
-                </div>
-
+                <!-- Payment Details Container remains same -->
                 <!-- Payment Details Container -->
                 <div id="payment-details" class="mb-3 d-none">
                     <!-- UPI QR Code Section -->
@@ -163,13 +83,117 @@
                 <div class="mb-3">
                     <label for="transaction_date" class="form-label fw-medium required">Transaction Date</label>
                     <input type="date" name="transaction_date" class="form-control" id="transaction_date" 
-                           max="{{ date('Y-m-d') }}" required>
+                        max="{{ date('Y-m-d') }}" 
+                        value="{{ old('transaction_date', $payment->transaction_date->format('Y-m-d')) }}" required>
                     <div class="invalid-feedback">Please select a valid transaction date.</div>
                 </div>
 
                 <div class="mb-3">
                     <label for="transaction_id" class="form-label fw-medium required">Transaction ID / UTR No.</label>
-                    <input type="text" name="transaction_id" class="form-control" id="transaction_id" required>
+                    <input type="text" name="transaction_id" class="form-control" id="transaction_id" 
+                        value="{{ old('transaction_id', $payment->transaction_id) }}" required>
+                    @error('transaction_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                    <div class="invalid-feedback">Please enter a transaction ID.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="screenshot" class="form-label fw-medium">Payment Screenshot <span class="text-muted fw-normal fst-italic">(Ensure the receipt or screenshot clearly displays the transaction ID or UTR number, date, and transaction amount.)</span></label>
+                    @if($payment->screenshot)
+                        <div class="existing-screenshot mb-2">
+                            <p class="mb-1">Current screenshot:</p>
+                            <div class="preview-area">
+                                @if (app()->environment('live'))
+                                    <a href="{{ url('public/storage/' . $payment->screenshot->file_path) }}" target="_blank">
+                                        <img src="{{ url('public/storage/' . $payment->screenshot->file_path) }}" class="img-fluid rounded" style="max-height: 120px;" alt="Current Screenshot">
+                                    </a>
+                                @else
+                                    <a href="{{ Storage::url($payment->screenshot->file_path) }}" target="_blank">
+                                        <img src="{{ Storage::url($payment->screenshot->file_path) }}" class="img-fluid rounded" style="max-height: 120px;" alt="Current Screenshot">
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                    <input type="file" name="screenshot" class="form-control" id="screenshot" accept=".jpg,.png,.pdf">
+                    @error('screenshot') <span class="text-danger small">{{ $message }}</span> @enderror
+                    <small class="text-muted">Max 2MB (JPG/PNG/PDF). Select new file to replace existing screenshot.</small>
+                    <div class="preview-area mt-2" id="screenshot-preview"></div>
+                </div>
+            </form>
+
+        <!-- When no payment exists -->
+        @else
+            <form method="POST" action="{{ route('application.store.payment', $application) }}" enctype="multipart/form-data" id="paymentForm" class="needs-validation" novalidate>
+                @csrf
+
+                <div class="mb-3">
+                    <label for="amount" class="form-label fw-medium required">Amount (₹)</label>
+                    <input type="number" name="amount" class="form-control" id="amount" 
+                        value="{{ old('amount', $fee) }}" readonly required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="method" class="form-label fw-medium required">Payment Method</label>
+                    <select name="method" class="form-control" id="method" required>
+                        <option value="" disabled {{ old('method') ? '' : 'selected' }}>Select Payment Method</option>
+                        <option value="UPI" {{ old('method') === 'UPI' ? 'selected' : '' }}>UPI QR Code / UPI ID</option>
+                        <option value="NEFT" {{ old('method') === 'NEFT' ? 'selected' : '' }}>NEFT</option>
+                        <option value="IMPS" {{ old('method') === 'IMPS' ? 'selected' : '' }}>IMPS</option>
+                        <option value="Direct Account Transfer" {{ old('method') === 'Direct Account Transfer' ? 'selected' : '' }}>Direct Account Transfer</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a payment method.</div>
+                </div>
+
+                <!-- Payment Details Container remains same -->
+                <!-- Payment Details Container -->
+                <div id="payment-details" class="mb-3 d-none">
+                    <!-- UPI QR Code Section -->
+                    <div id="upi-details" class="payment-method-details d-none">
+                        <div class="alert alert-light border p-3">
+                            <h6 class="fw-medium">Scan to Pay</h6>
+                            <img src="{{ url('/images/upi-qr-code.jpg') }}" alt="UPI QR Code" class="img-fluid mb-2" style="max-width: 260px;">
+                            <p class="small text-muted mb-0">
+                                UPI ID: <strong>sntcssc@indianbk</strong><br>
+                                Please include the Transaction ID (or UTR no.), transaction date from your UPI app in the field below
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Bank Details Section -->
+                    <div id="bank-details" class="payment-method-details d-none">
+                        <div class="alert alert-light border p-3">
+                            <h6 class="fw-medium">Bank Account Details</h6>
+                            <dl class="row mb-0 small">
+                                <dt class="col-5">Account Holder:</dt>
+                                <dd class="col-7">CENTRE FOR EXCELLENCE IN PUBLIC MANAGEMENT</dd>
+                                <dt class="col-5">Account Number:</dt>
+                                <dd class="col-7">50189702376</dd>
+                                <dt class="col-5">IFSC Code:</dt>
+                                <dd class="col-7">IDIB000S549</dd>
+                                <dt class="col-5">Bank Name:</dt>
+                                <dd class="col-7">INDIAN BANK</dd>
+                                <dt class="col-5">Branch:</dt>
+                                <dd class="col-7">Salt Lake, GD Market</dd>
+                            </dl> <br>
+                            <p class="small text-muted mb-0">
+                                Please include the Transaction ID (or UTR no.), transaction date from your transaction / deposit receipt in the field below
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="transaction_date" class="form-label fw-medium required">Transaction Date</label>
+                    <input type="date" name="transaction_date" class="form-control" id="transaction_date" 
+                        max="{{ date('Y-m-d') }}" 
+                        value="{{ old('transaction_date') }}" required>
+                    <div class="invalid-feedback">Please select a valid transaction date.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="transaction_id" class="form-label fw-medium required">Transaction ID / UTR No.</label>
+                    <input type="text" name="transaction_id" class="form-control" id="transaction_id" 
+                        value="{{ old('transaction_id') }}" required>
                     @error('transaction_id') <span class="text-danger small">{{ $message }}</span> @enderror
                     <div class="invalid-feedback">Please enter a transaction ID.</div>
                 </div>
@@ -192,7 +216,7 @@
             <a href="{{ route('application.step5', $application) }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Previous
             </a>
-            <div class="d-none">
+            <div class="">
                 <a href="{{ route('application.status', $application) }}" class="btn btn-primary shadow-sm position-relative overflow-hidden">
                     <span class="position-relative z-1">Go to Dashboard <i class="bi bi-arrow-right ms-2"></i></span>
                 </a>
@@ -280,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 nextBtn.disabled = true;
                 nextBtn.innerHTML = '<span class="spinner"></span>Processing...';
-                toastr.success('Payment details ' + ({{ $payment ? 'true' : 'false' }} ? 'updated' : 'submitted') + ' successfully!');
+                toastr.warning('Payment details ' + ({{ $payment ? 'true' : 'false' }} ? 'updating' : 'submitting') + ' in progress. Please wait.');
             }
             form.classList.add('was-validated');
         });

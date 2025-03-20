@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('file_path');
             $table->timestamp('uploaded_at')->useCurrent();
             $table->timestamp('verified_at')->nullable();
-            $table->enum('verification_status', ['pending', 'verified', 'rejected'])->default('pending');
+            $table->enum('verification_status', ['pending', 'under review', 'verified', 'rejected'])->default('pending');
             $table->timestamps();
         });
     }

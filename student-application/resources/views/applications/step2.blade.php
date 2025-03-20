@@ -309,7 +309,7 @@
 @section('footer')
     <div class="form-footer">
         <div class="d-flex justify-content-between flex-wrap gap-2">
-            <a href="{{ route('application.create', $advertisement) }}" class="btn btn-outline-secondary">Previous</a>
+            <a href="{{ route('application.create', $advertisement) }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Previous</a>
             <button type="button" class="btn btn-primary shadow-sm" id="previewAndNextBtn">
                 <i class="bi bi-eye"></i> Preview and Next
             </button>
@@ -344,7 +344,7 @@
 @endsection
 
 @section('preview-footer')
-    <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Edit</button>
+    <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal"><i class="bi bi-pencil-square"></i> Edit</button>
     <button type="button" class="btn btn-primary shadow-sm" id="saveAndNextBtn" disabled>Save and Next<i class="bi bi-arrow-right ms-2"></i></button>
 @endsection
 

@@ -204,7 +204,7 @@
 
 @section('preview-footer')
     <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">
-        <i class="bi bi-pencil me-2"></i>Edit
+        <i class="bi bi-pencil-square me-2"></i>Edit
     </button>
     <button type="button" class="btn btn-primary shadow-sm" id="saveAndNextBtn" disabled>
         Save and Next<i class="bi bi-arrow-right ms-2"></i>
@@ -371,7 +371,7 @@ function addUpscAttempt() {
         .then(response => response.text())
         .then(html => {
             container.insertAdjacentHTML('beforeend', html);
-            toastr.success('New UPSC attempt added successfully');
+            toastr.info('New UPSC attempt input field added successfully');
         })
         .catch(error => {
             toastr.error('Failed to add UPSC attempt');

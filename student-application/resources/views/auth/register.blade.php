@@ -22,11 +22,11 @@
         color: var(--primary);
     }
 
-    /* .container {
-        max-width: 960px;
+    .container {
+        /* max-width: 960px; */
         margin: 0 auto;
-        padding: 40px 20px;
-    } */
+        /* padding: 40px 20px; */
+    }
 
     .card {
         border: none;
@@ -45,12 +45,12 @@
     }
 
     .card-body {
-        padding: 30px;
+        padding: 10px;
     }
 
     .form-section {
         margin-bottom: 30px;
-        padding: 20px;
+        padding: 10px;
         background: #fafafa;
         border-radius: 6px;
         border: 1px solid var(--border);
@@ -504,7 +504,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[0][year_passed]" class="form-control" value="{{ old('academic_qualifications.0.year_passed') }}" required pattern="[0-9]{4}" placeholder="Enter Year">
+                                        <input type="number" name="academic_qualifications[0][year_passed]" class="form-control" value="{{ old('academic_qualifications.0.year_passed') }}" required pattern="[0-9]{4}" placeholder="Enter Year">
                                         <label>Year Passed</label>
                                     </div>
                                 </div>
@@ -516,19 +516,19 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[0][total_marks]" class="form-control" value="{{ old('academic_qualifications.0.total_marks') }}" required placeholder="Enter Total Marks">
+                                        <input type="number" name="academic_qualifications[0][total_marks]" class="form-control" value="{{ old('academic_qualifications.0.total_marks') }}" required placeholder="Enter Total Marks">
                                         <label>Total Marks</label>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[0][marks_obtained]" class="form-control" value="{{ old('academic_qualifications.0.marks_obtained') }}" required placeholder="Enter Marks Obtained">
+                                        <input type="number" name="academic_qualifications[0][marks_obtained]" class="form-control" value="{{ old('academic_qualifications.0.marks_obtained') }}" required placeholder="Enter Marks Obtained">
                                         <label>Marks Obtained</label>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[0][cgpa]" class="form-control" value="{{ old('academic_qualifications.0.cgpa') }}" placeholder="Enter Marks Obtained">
+                                        <input type="number" step="0.01" name="academic_qualifications[0][cgpa]" class="form-control" value="{{ old('academic_qualifications.0.cgpa') }}" placeholder="Enter Marks Obtained">
                                         <label>GPA/CGPA/SGPA</label>
                                     </div>
                                 </div>
@@ -571,7 +571,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[1][year_passed]" class="form-control" value="{{ old('academic_qualifications.1.year_passed') }}" required pattern="[0-9]{4}" placeholder="Enter Year">
+                                        <input type="number" name="academic_qualifications[1][year_passed]" class="form-control" value="{{ old('academic_qualifications.1.year_passed') }}" required pattern="[0-9]{4}" placeholder="Enter Year">
                                         <label>Year Passed</label>
                                     </div>
                                 </div>
@@ -583,19 +583,19 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[1][total_marks]" class="form-control" value="{{ old('academic_qualifications.1.total_marks') }}" required placeholder="Enter Total Marks">
+                                        <input type="number" name="academic_qualifications[1][total_marks]" class="form-control" value="{{ old('academic_qualifications.1.total_marks') }}" required placeholder="Enter Total Marks">
                                         <label>Total Marks</label>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[1][marks_obtained]" class="form-control" value="{{ old('academic_qualifications.1.marks_obtained') }}" required placeholder="Enter Marks Obtained">
+                                        <input type="number" name="academic_qualifications[1][marks_obtained]" class="form-control" value="{{ old('academic_qualifications.1.marks_obtained') }}" required placeholder="Enter Marks Obtained">
                                         <label>Marks Obtained</label>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[1][cgpa]" class="form-control" value="{{ old('academic_qualifications.1.cgpa') }}" placeholder="Enter Marks Obtained">
+                                        <input type="number" step="0.01" name="academic_qualifications[1][cgpa]" class="form-control" value="{{ old('academic_qualifications.1.cgpa') }}" placeholder="Enter Marks Obtained">
                                         <label>GPA/CGPA/SGPA</label>
                                     </div>
                                 </div>
@@ -638,7 +638,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[2][year_passed]" class="form-control" value="{{ old('academic_qualifications.2.year_passed') }}" pattern="[0-9]{4}" placeholder="Enter Year">
+                                        <input type="number" name="academic_qualifications[2][year_passed]" class="form-control" value="{{ old('academic_qualifications.2.year_passed') }}" pattern="[0-9]{4}" placeholder="Enter Year">
                                         <label>Year Passed</label>
                                     </div>
                                 </div>
@@ -650,19 +650,19 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[2][total_marks]" class="form-control" value="{{ old('academic_qualifications.2.total_marks') }}" placeholder="Enter Total Marks">
+                                        <input type="number" name="academic_qualifications[2][total_marks]" class="form-control" value="{{ old('academic_qualifications.2.total_marks') }}" placeholder="Enter Total Marks">
                                         <label>Total Marks</label>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[2][marks_obtained]" class="form-control" value="{{ old('academic_qualifications.2.marks_obtained') }}" placeholder="Enter Marks Obtained">
+                                        <input type="number" name="academic_qualifications[2][marks_obtained]" class="form-control" value="{{ old('academic_qualifications.2.marks_obtained') }}" placeholder="Enter Marks Obtained">
                                         <label>Marks Obtained</label>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-floating">
-                                        <input name="academic_qualifications[2][cgpa]" class="form-control" value="{{ old('academic_qualifications.2.cgpa') }}" placeholder="Enter GPA/CGPA/SGPA">
+                                        <input type="number" step="0.01" name="academic_qualifications[2][cgpa]" class="form-control" value="{{ old('academic_qualifications.2.cgpa') }}" placeholder="Enter GPA/CGPA/SGPA">
                                         <label>GPA/CGPA/SGPA</label>
                                     </div>
                                 </div>
@@ -1009,7 +1009,7 @@
                             <select name="academic_qualifications[${index}][level]" class="form-select" required>
                                 <option value="">Select Level</option>
                                 <option value="Post Graduation" ${oldData?.level === 'Post Graduation' ? 'selected' : ''}>Post Graduation</option>
-                                <option value="Others" ${oldData?.level === 'Others' ? 'selected' : ''}>Others</option>
+                                <option value="Other" ${oldData?.level === 'Other' ? 'selected' : ''}>Other</option>
                             </select>
                             <label>Level</label>
                         </div>
@@ -1028,7 +1028,7 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][year_passed]" class="form-control" value="${oldData?.year_passed || ''}" required pattern="[0-9]{4}" placeholder="Enter Year">
+                            <input type="number" name="academic_qualifications[${index}][year_passed]" class="form-control" value="${oldData?.year_passed || ''}" required pattern="[0-9]{4}" placeholder="Enter Year">
                             <label>Year Passed</label>
                         </div>
                     </div>
@@ -1040,19 +1040,19 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][total_marks]" class="form-control" value="${oldData?.total_marks || ''}" required placeholder="Enter Total Marks">
+                            <input type="number" name="academic_qualifications[${index}][total_marks]" class="form-control" value="${oldData?.total_marks || ''}" required placeholder="Enter Total Marks">
                             <label>Total Marks</label>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][marks_obtained]" class="form-control" value="${oldData?.marks_obtained || ''}" required placeholder="Enter Marks Obtained">
+                            <input type="number" name="academic_qualifications[${index}][marks_obtained]" class="form-control" value="${oldData?.marks_obtained || ''}" required placeholder="Enter Marks Obtained">
                             <label>Marks Obtained</label>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-floating">
-                            <input name="academic_qualifications[${index}][cgpa]" class="form-control" value="${oldData?.cgpa || ''}" placeholder="Enter GPA/CGPA/SGPA">
+                            <input type="number" step="0.01" name="academic_qualifications[${index}][cgpa]" class="form-control" value="${oldData?.cgpa || ''}" placeholder="Enter GPA/CGPA/SGPA">
                             <label>GPA/CGPA/SGPA</label>
                         </div>
                     </div>

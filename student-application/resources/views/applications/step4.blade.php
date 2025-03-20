@@ -135,7 +135,7 @@
     <div class="form-footer">
         <div class="d-flex justify-content-between flex-wrap gap-2">
             <a href="{{ route('application.step3', $application) }}" class="btn btn-outline-secondary shadow-sm">
-                Previous
+            <i class="bi bi-arrow-left me-2"></i>Previous
             </a>
             <button type="button" class="btn btn-primary shadow-sm" id="previewAndNextBtn">
                 <i class="bi bi-eye me-2"></i>Preview and Next
@@ -175,7 +175,7 @@
 @endsection
 
 @section('preview-footer')
-    <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Edit</button>
+    <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal"><i class="bi bi-pencil-square"></i> Edit</button>
     <button type="button" class="btn btn-primary shadow-sm" id="saveAndNextBtn" disabled>Save and Next <i class="bi bi-arrow-right ms-2"></i></button>
 @endsection
 
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             toastr.error('Please upload all required documents.');
         } else {
-            toastr.success('Documents saved successfully!');
+            toastr.warning('Saving your information. Please wait..');
         }
     });
 

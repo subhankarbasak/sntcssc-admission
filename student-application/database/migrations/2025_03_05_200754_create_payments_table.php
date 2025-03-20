@@ -18,8 +18,9 @@ return new class extends Migration
             $table->enum('method', ['UPI', 'NEFT', 'IMPS', 'Direct Account Transfer']);
             $table->date('transaction_date');
             $table->string('transaction_id')->unique();
+            $table->string('remarks')->nullable();
             $table->foreignId('screenshot_document_id')->nullable()->constrained('documents')->onDelete('set null');
-            $table->enum('status', ['pending', 'paid', 'failed'])->default('pending');
+            $table->enum('status', ['pending', 'under review', 'paid', 'failed'])->default('pending');
             $table->timestamps();
         });
     }

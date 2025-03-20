@@ -579,7 +579,7 @@ class ApplicationService
     
                         $this->documentRepository->update($screenshotId, [
                             'file_path' => $path,
-                            'verification_status' => 'pending'
+                            'verification_status' => 'under review'
                         ]);
                     } else {
                         // Create new document if no previous screenshot existed
@@ -593,7 +593,7 @@ class ApplicationService
                             'application_id' => $applicationId,
                             'type' => 'payment_ss',
                             'file_path' => $path,
-                            'verification_status' => 'pending'
+                            'verification_status' => 'under review'
                         ]);
                         $screenshotId = $document->id;
                     }
@@ -603,7 +603,7 @@ class ApplicationService
                 $paymentData = array_merge($paymentData, [
                     'application_id' => $applicationId,
                     'screenshot_document_id' => $screenshotId,
-                    'status' => 'pending' // Assuming status should reset to pending on update
+                    'status' => 'under review' // Assuming status should reset to pending on update
                 ]);
     
                 $this->paymentRepository->update($existingPayment->id, $paymentData);
@@ -622,7 +622,7 @@ class ApplicationService
                         'application_id' => $applicationId,
                         'type' => 'payment_ss',
                         'file_path' => $path,
-                        'verification_status' => 'pending'
+                        'verification_status' => 'under review'
                     ]);
                     $screenshotId = $document->id;
                 }
@@ -630,14 +630,14 @@ class ApplicationService
                 $paymentData = array_merge($paymentData, [
                     'application_id' => $applicationId,
                     'screenshot_document_id' => $screenshotId,
-                    'status' => 'pending'
+                    'status' => 'under review'
                 ]);
     
                 $payment = $this->paymentRepository->create($paymentData);
             }
     
             // Update application payment status
-            $application->update(['payment_status' => 'pending']);
+            $application->update(['payment_status' => 'under review']);
     
             \DB::commit();
             return $payment;

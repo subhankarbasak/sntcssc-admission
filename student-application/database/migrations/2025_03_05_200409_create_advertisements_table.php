@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('title');
             $table->string('code')->unique();
             $table->string('slug')->unique()->nullable();
+            $table->string('memo_no')->nullable();
+            $table->date('published_date')->nullable();
             $table->dateTime('application_start');
             $table->dateTime('application_end');
             $table->enum('status', ['draft', 'published', 'closed'])->default('draft');

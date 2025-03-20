@@ -253,7 +253,7 @@
 @endsection
 
 @section('preview-footer')
-    <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal">Edit</button>
+    <button type="button" class="btn btn-outline-secondary shadow-sm" data-bs-dismiss="modal"><i class="bi bi-pencil-square"></i> Edit</button>
     <button type="button" class="btn btn-primary shadow-sm" id="saveNextBtn" disabled>Save and Next<i class="bi bi-arrow-right ms-2"></i></button>
 @endsection
 
@@ -333,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'advertisement_program_id': 'Program Selection',
             'first_name': 'First Name',
             'last_name': 'Last Name',
-            'dob': 'Date of Birth',
+            'dob': 'Date of Birth (YYYY-MM-DD)',
             'gender': 'Gender',
             'category': 'Category',
             'is_pwbd': 'Person with Benchmark Disability',
@@ -351,8 +351,9 @@ document.addEventListener('DOMContentLoaded', function() {
             'is_appearing_upsc_cse': 'Appearing for UPSC CSE',
             'upsc_attempts_count': 'How many times have you attended the UPSC CSE exam?',
             'cat_cert_no' : 'Certificate No.',
-            'cat_issue_date' : 'Certificate Issue Date.',
-            'cat_issue_by' : 'Issuing Authority'
+            'cat_issue_date' : 'Date of Issuance (YYYY-MM-DD)',
+            'cat_issue_by' : 'Issuing Authority',
+            'highest_qualification' : 'Highest Qualification'
         };
 
         for (let [key, value] of formData.entries()) {
@@ -389,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
     saveNextBtn.addEventListener('click', function() {
         if (declarationCheck.checked) {
             form.submit();
-            toastr.success('Form saved successfully!');
+            toastr.warning('Saving in progress. Please wait.');
         }
     });
 

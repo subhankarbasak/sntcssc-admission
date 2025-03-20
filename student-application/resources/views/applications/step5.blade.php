@@ -19,7 +19,7 @@
                                         <td class="py-2">{{ $details['profile']->first_name }} {{ $details['profile']->last_name }}</td>
                                     </tr>
                                     <tr>
-                                        <th class="fw-medium bg-light py-2">Date of Birth</th>
+                                        <th class="fw-medium bg-light py-2">Date of Birth (DD/MM/YYYY)</th>
                                         <td class="py-2">{{ \Carbon\Carbon::parse($details['profile']->dob)->format('d/m/Y') }}</td>
                                     </tr>
                                     <tr>
@@ -148,7 +148,7 @@
                             @foreach($details['addresses'] as $address)
                                 <tr>
                                     <td class="py-2">{{ ucfirst($address->type) }}</td>
-                                    <td class="py-2">{{ $address->address_line1 }}, {{ $address->district }}, {{ $address->state }} - {{ $address->pin_code }}</td>
+                                    <td class="py-2">{{ $address->address_line1 }}, {{ $address->post_office }}, {{ $address->district }}, {{ $address->state }} - {{ $address->pin_code }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -163,10 +163,12 @@
                     <table class="table table-bordered mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th class="fw-medium py-2">Level</th>
+                                <th class="fw-medium py-2">Examination</th>
                                 <th class="fw-medium py-2">Institute</th>
-                                <th class="fw-medium py-2 d-none d-md-table-cell">Board/University</th>
-                                <th class="fw-medium py-2 d-none d-md-table-cell">Year Passed</th>
+                                <th class="fw-medium py-2">Board/University</th>
+                                <th class="fw-medium py-2">Year Passed</th>
+                                <th class="fw-medium py-2">Total Marks</th>
+                                <th class="fw-medium py-2">Marks Obtained</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -174,8 +176,10 @@
                                 <tr>
                                     <td class="py-2">{{ ucfirst($academic->level) }}</td>
                                     <td class="py-2">{{ $academic->institute }}</td>
-                                    <td class="py-2 d-none d-md-table-cell">{{ $academic->board_university }}</td>
-                                    <td class="py-2 d-none d-md-table-cell">{{ $academic->year_passed }}</td>
+                                    <td class="py-2">{{ $academic->board_university }}</td>
+                                    <td class="py-2">{{ $academic->year_passed }}</td>
+                                    <td class="py-2">{{ number_format($academic->total_marks, 0) }}</td>
+                                    <td class="py-2">{{ number_format($academic->marks_obtained, 0) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -191,7 +195,7 @@
                         <tbody>
                             @if($details['employment'])
                                 <tr>
-                                    <th class="fw-medium bg-light py-2 w-25">Employed</th>
+                                    <th class="fw-medium bg-light py-2 w-25">Are you currently employed?</th>
                                     <td class="py-2">{{ $details['employment']->is_employed ? 'Yes' : 'No' }}</td>
                                 </tr>
                                 @if($details['employment']->is_employed)
@@ -220,7 +224,7 @@
 
             <!-- Current Enrollment -->
             <section class="mb-4 bg-white p-4 rounded-lg shadow-sm border-start border-success">
-                <h5 class="fw-semibold text-dark mb-3">Current Enrollment</h5>
+                <h5 class="fw-semibold text-dark mb-3">Whether presently enrolled in any course at any Institute?</h5>
                 <div class="table-responsive">
                     <table class="table table-bordered mb-0">
                         <tbody>
@@ -245,7 +249,7 @@
 
             <!-- UPSC Attempts -->
             <section class="mb-4 bg-white p-4 rounded-lg shadow-sm border-start border-success">
-                <h5 class="fw-semibold text-dark mb-3">UPSC Attempts</h5>
+                <h5 class="fw-semibold text-dark mb-3">Have you appeared in UPSC CSE Exam earlier? if yes, give below the details in ascending chronological order:</h5>
                 <div class="table-responsive">
                     <table class="table table-bordered mb-0">
                         <thead class="bg-light">
@@ -281,7 +285,7 @@
                     <table class="table table-bordered mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th class="fw-medium py-2">Document Type</th>
+                                <th class="fw-medium py-2">Uploaded Documents</th>
                                 <th class="fw-medium py-2">Action</th>
                             </tr>
                         </thead>
@@ -351,7 +355,7 @@
                     <i class="bi bi-arrow-left me-2"></i>Previous
                 </a>
                 <button type="button" class="btn btn-primary rounded-pill px-5 shadow-sm w-100 w-md-auto" id="submitApplicationBtn">
-                    Submit Application <i class="bi bi-arrow-right ms-2"></i>
+                    Submit Application <i class="bi bi-check-circle ms-2"></i>
                 </button>
             </div>
         </div>
@@ -560,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Final submission
     finalSubmitBtn.addEventListener('click', function() {
         if (confirmCheckbox.checked) {
-            toastr.success('Application submitted successfully!');
+            toastr.warning('Processing your submission. Please wait a moment while we save your details.');
             // confirmModal.hide();
             form.submit();
         }

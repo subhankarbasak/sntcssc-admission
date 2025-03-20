@@ -5,7 +5,7 @@
     <title>Application - {{ $application->application_number }}</title>
     <style>
         @page { 
-            margin: 20mm; 
+            margin: 10mm; 
             margin-top: 30mm; 
             margin-bottom: 25mm; 
         }
@@ -19,7 +19,7 @@
         .container { 
             width: 100%; 
             margin: 0 auto; 
-            padding: 10px; 
+            padding: 5px; 
         }
         
         /* Header Styles */
@@ -269,7 +269,7 @@
 
                     <!-- Right Column - Photo & Signature -->
                     <td class="photo-column">
-                        <div class="photo-signature-box" data-label="Photograph">
+                        <div class="photo-signature-box" data-label="">
                             @if($photo_base64)
                                 <img src="data:image/jpeg;base64,{{ $photo_base64 }}" alt="Applicant Photo">
                             @else
@@ -338,8 +338,8 @@
                         <td>{{ $academic->institute }}</td>
                         <td>{{ $academic->board_university }}</td>
                         <td>{{ $academic->year_passed }}</td>
-                        <td>{{ $academic->total_marks }}</td>
-                        <td>{{ $academic->marks_obtained }}</td>
+                        <td>{{ number_format($academic->total_marks, 0) }}</td>
+                        <td>{{ number_format($academic->marks_obtained, 0) }}</td>
                         <td>{{ $academic->division }}</td>
                     </tr>
                     @empty
@@ -440,7 +440,7 @@
                 @foreach($details['documents'] as $document)
                     <tr>
                         <th>{{ getFieldLabel($document->type) }}</th>
-                        <td>Attached</td>
+                        <td>Uploaded</td>
                     </tr>
                 @endforeach
             </table>

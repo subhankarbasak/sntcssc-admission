@@ -46,7 +46,13 @@
                                         <div class="mt-3">
                                             <form id="applicationForm" action="{{ route('application.create', $advertisement) }}" method="GET">
                                                 @csrf
-                                                <button href="#" class="btn btn-primary w-100" id="applyBtn">Apply Now</button>
+                                                <button href="#" class="btn btn-primary w-100" id="applyBtn">
+                                                    @if(!$applications->isEmpty() && $applications[0]->status === 'submitted')
+                                                    Apply Now
+                                                    @else
+                                                    Continue your application
+                                                    @endif
+                                                </button>
                                             </form>
                                         </div>
                                     </div>
@@ -95,7 +101,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <span class="badge {{ $application->payment_status === 'paid' ? 'bg-success' : ($application->payment_status === 'pending' ? 'bg-warning' : 'bg-danger') }}">
+                                                <span class="badge {{ $application->payment_status === 'paid' ? 'bg-success' : ($application->payment_status === 'pending' ? 'bg-warning' : ($application->payment_status === 'under review' ? 'bg-info' : 'bg-danger')) }}">
                                                     {{ ucfirst($application->payment_status) }}
                                                 </span>
                                             </td>
