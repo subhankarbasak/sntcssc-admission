@@ -108,6 +108,16 @@ Route::prefix('admin')->group(function () {
 });
 
 
+// Settings and Maintanance Mode
+
+// routes/web.php
+// Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
+});
+
+
 
 Route::get('/test-auth', function () {
     return auth()->check() ? 'Logged in' : 'Not logged in';

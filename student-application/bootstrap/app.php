@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\CheckMaintenanceMode;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,6 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         //
+        // \App\Http\Middleware\CheckMaintenanceMode::class;
+        $middleware->append(CheckMaintenanceMode::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
