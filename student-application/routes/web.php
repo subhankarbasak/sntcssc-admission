@@ -100,7 +100,7 @@ Route::post('/validate/mobile', [RegisterController::class, 'validateMobile'])->
 
 // For Admin
 // Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {});
-Route::prefix('admin')->group(function () {
+Route::prefix('ssp')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::post('/export', [DashboardController::class, 'export'])->name('admin.export');
     Route::post('/bulk-update', [DashboardController::class, 'bulkUpdate'])->name('admin.bulk-update');

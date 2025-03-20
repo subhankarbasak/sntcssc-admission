@@ -152,11 +152,19 @@ class DashboardController extends Controller
     public function export(Request $request)
     {
         try {
-            return Excel::download(new ApplicationsExport($request), 
-                'applications_' . now()->format('Y-m-d_H-i') . '.xlsx');
+            $export = new ApplicationsExport($request);
+            $fileName = 'applications_' . now()->format('Y-m-d_H-i') . '.xlsx';
+            
+            // Test if query returns data
+            $data = $export->query()->get();
+            if ($data->isEmpty()) {
+                return back()->withError('No data available to export');
+            }
+    
+            return Excel::download($export, $fileName);
         } catch (\Exception $e) {
-            Log::error('Export failed: ' . $e->getMessage());
-            return back()->withError('Failed to export applications');
+            Log::error('Export failed: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            return back()->withError('Failed to export applications: ' . $e->getMessage());
         }
     }
 

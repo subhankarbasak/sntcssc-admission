@@ -435,7 +435,7 @@
                 <div class="container-fluid px-0">
                     <div class="header-brand">
                         <a href="{{ url('/') }}" class="navbar-brand">
-                            <img src="https://csscwb.in/assets/front-end/images/others/sntcssc-logo.png" alt="Institute Logo" class="img-fluid" style="max-height: 45px;">
+                            <img src="https://csscwb.in/assets/front-end/images/others/sntcssc-logo.png" alt="Institute Logo" class="img-fluid" style="max-height: 60px;">
                         </a>
                         <div class="institute-info">
                             <h5 class="institute-title mb-0">Satyendra Nath Tagore Civil Services Study Centre</h5>
