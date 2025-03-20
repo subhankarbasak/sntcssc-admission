@@ -205,7 +205,7 @@
                     <p class="text-end mb-0 small">
                         <i class="bi bi-telephone"></i> +91 9051829290<br>
                         <i class="bi bi-envelope"></i> iascoaching.sntcssc@gmail.com<br>
-                        <i class="bi bi-geo-alt-fill"></i> NSATI Campus,Block FC, Sector - III, Salt Lake, Kolkata-700106
+                        <i class="bi bi-geo-alt-fill"></i> NSATI Campus, FC Block, Sector - III, Salt Lake, Kolkata-700106
                     </p>
                 </div>
             </div>

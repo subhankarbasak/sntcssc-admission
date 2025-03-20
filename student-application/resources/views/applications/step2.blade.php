@@ -286,7 +286,7 @@
                         <div class="col-md-2">
                             <div class="form-floating">
                                 <input name="academic_qualifications[{{$index}}][division]" class="form-control" value="{{ old("academic_qualifications.$index.division", $academic->division) }}" placeholder="Enter division">
-                                <label>Division</label>
+                                <label>Division/Grade</label>
                             </div>
                         </div>
                         @if($index > 2)
@@ -581,7 +581,7 @@ document.getElementById('previewAndNextBtn').addEventListener('click', function(
             <div class="preview-cell">Total Marks</div>
             <div class="preview-cell">Marks Obtained</div>
             <div class="preview-cell">GPA/CGPA/SGPA</div>
-            <div class="preview-cell">Division</div>
+            <div class="preview-cell">Division/Grade</div>
         </div>`;
 
     // Academic preview - Data
@@ -606,7 +606,7 @@ document.getElementById('previewAndNextBtn').addEventListener('click', function(
                 <div class="preview-cell" data-label="Total Marks"><span>${tmarks || '-'}</span></div>
                 <div class="preview-cell" data-label="Marks Obtained"><span>${marksobt || '-'}</span></div>
                 <div class="preview-cell" data-label="GPA/CGPA/SGPA"><span>${gpa || '-'}</span></div>
-                <div class="preview-cell" data-label="Division"><span>${division || '-'}</span></div>
+                <div class="preview-cell" data-label="Division/Grade"><span>${division || '-'}</span></div>
             </div>`;
     });
     
@@ -656,7 +656,7 @@ document.getElementById('previewAndNextBtn').addEventListener('click', function(
                             <select name="academic_qualifications[${index}][level]" class="form-select" required>
                                 <option value="">Select Level</option>
                                 <option value="Post Graduation">Post Graduation</option>
-                                <option value="Others">Others</option>
+                                <option value="Other">Other</option>
                             </select>
                             <label>Level</label>
                         </div>
@@ -677,6 +677,36 @@ document.getElementById('previewAndNextBtn').addEventListener('click', function(
                         <div class="form-floating">
                             <input name="academic_qualifications[${index}][year_passed]" class="form-control" required pattern="[0-9]{4}" placeholder="Enter Year">
                             <label>Year Passed</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input name="academic_qualifications[${index}][subjects]" class="form-control" required placeholder="Enter Subjects">
+                            <label>Subjects</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            <input type="number" name="academic_qualifications[${index}][total_marks]" class="form-control" required placeholder="Enter Total Marks">
+                            <label>Total Marks</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            <input type="number" name="academic_qualifications[${index}][marks_obtained]" class="form-control" required placeholder="Enter Marks Obtained">
+                            <label>Marks Obtained</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            <input type="number" step="0.01" name="academic_qualifications[${index}][cgpa]" class="form-control" required placeholder="Enter GPA/CGPA/SGPA">
+                            <label>GPA/SGPA/CGPA</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            <input name="academic_qualifications[${index}][division]" class="form-control" required placeholder="Enter Division/Grade">
+                            <label>Division/Grade</label>
                         </div>
                     </div>
                     <div class="col-md-1">

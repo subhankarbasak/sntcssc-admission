@@ -47,11 +47,7 @@
                                             <form id="applicationForm" action="{{ route('application.create', $advertisement) }}" method="GET">
                                                 @csrf
                                                 <button href="#" class="btn btn-primary w-100" id="applyBtn">
-                                                    @if(!$applications->isEmpty() && $applications[0]->status === 'submitted')
                                                     Apply Now
-                                                    @else
-                                                    Continue your application
-                                                    @endif
                                                 </button>
                                             </form>
                                         </div>

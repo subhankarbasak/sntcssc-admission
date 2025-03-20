@@ -15,6 +15,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
+
+        :root {
+            /* --primary-color: #2c3e50; */
+            --primary-color: #0d6efd;
+            --secondary-color: #34495e;
+            --header-gradient: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            --footer-gradient: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
             background: #f8f9fa;
@@ -24,33 +33,142 @@
             line-height: 1.6;
         }
 
-        /* Header */
+        /* New Header Styles */
         .header {
             background: #ffffff;
-            /* padding: 1.2rem 0; */
-            position: fixed;
-            width: 100%;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-            border-bottom: 1px solid #e9ecef;
         }
 
-        .navbar-brand {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #0d6efd !important;
+
+        
+        .footer {
+            background: var(--footer-gradient);
+            color: white;
+            padding: 2.5rem 0 1rem;
+            margin-top: auto;
         }
 
-        .nav-link {
-            color: #495057 !important;
+        .navbar {
+            padding: 0;
+            margin-bottom: 1rem;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .institute-info {
+            line-height: 1.3;
+        }
+
+        .institute-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .institute-gov {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 400;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .navbar-nav .nav-link {
+            color: #111827;
+            padding: 0.75rem 1.5rem;
             font-weight: 500;
-            padding: 0.6rem 1.2rem;
-            transition: color 0.3s ease;
+            font-size: 0.95rem;
+            text-transform: capitalize;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            transition: color 0.2s ease;
         }
 
-        .nav-link:hover {
-            color: #0d6efd !important;
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link:focus {
+            color: #1e40af;
+        }
+
+        .navbar-nav .nav-item {
+            margin: 0 0.5rem;
+        }
+
+        .dropdown-menu {
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 4px;
+            padding: 0.5rem 0;
+            background: #ffffff;
+            margin-top: 0.5rem;
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1.5rem;
+            color: #111827;
+            font-weight: 500;
+            font-size: 0.875rem;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            transition: color 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background: #f9fafb;
+            color: #1e40af;
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem 0.75rem;
+            background: transparent;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(17, 24, 39, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+            width: 1.5em;
+            height: 1.5em;
+        }
+
+        .navbar-toggler:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(30,64,175,0.2);
+        }
+
+        .header-contact {
+            font-size: 0.875rem;
+            color: #6b7280;
+            gap: 2rem;
+            font-weight: 400;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .mobile-contact {
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .contact-wrapper {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 400;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .contact-wrapper .contact-item {
+            padding: 0.25rem 0;
         }
 
         /* Hero Section */
@@ -167,29 +285,56 @@
         }
 
         /* Footer */
-        .footer {
-            background: #ffffff;
-            color: #6c757d;
-            padding: 2rem 1rem;
-            text-align: center;
-            font-size: 0.9rem;
-            border-top: 1px solid #e9ecef;
+        .social-links a {
+            color: rgba(255,255,255,0.7);
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+        
+        .social-links a:hover {
+            color: white;
+            transform: translateY(-2px);
         }
 
         /* Mobile Responsiveness */
-        @media (max-width: 768px) {
+        @media (max-width: 991px) {
             .header {
-                /* padding: 1rem 0; */
+                padding: 1rem 0;
             }
-
-            .navbar-brand {
-                font-size: 1.5rem;
+            
+            .navbar-nav {
+                padding: 1rem 0;
+                border-top: 1px solid #e5e7eb;
             }
-
-            .nav-link {
-                padding: 0.5rem 1rem;
+            
+            .navbar-nav .nav-item {
+                margin: 0.25rem 0;
             }
+            
+            .navbar-nav .nav-link {
+                padding: 0.75rem 1rem;
+                text-align: left;
+            }
+            
+            .header-brand {
+                width: 100%;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .institute-info {
+                flex: 1;
+                padding: 0 1rem;
+            }
+            
+            .dropdown-menu {
+                border: none;
+                box-shadow: none;
+                padding-left: 1rem;
+            }
+        }
 
+        @media (max-width: 768px) {
             .hero {
                 padding: 6rem 1rem 3rem;
             }
@@ -237,8 +382,20 @@
         }
 
         @media (max-width: 576px) {
-            .navbar-brand {
-                font-size: 1.3rem;
+            .institute-title {
+                font-size: 1.125rem;
+            }
+            
+            .institute-gov {
+                font-size: 0.8125rem;
+            }
+            
+            .header-brand {
+                gap: 0.75rem;
+            }
+            
+            .contact-wrapper .contact-item {
+                font-size: 0.8125rem;
             }
 
             .hero-title {
@@ -262,24 +419,93 @@
                 left: -0.75rem;
             }
         }
+
+        @media (min-width: 992px) {
+            .header-contact {
+                max-width: 80%;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- New Header -->
     <header class="header">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">SNTCSSC</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Register</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
-                    </ul>
+        <div class="container">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid px-0">
+                    <div class="header-brand">
+                        <a href="{{ url('/') }}" class="navbar-brand">
+                            <img src="https://csscwb.in/assets/front-end/images/others/sntcssc-logo.png" alt="Institute Logo" class="img-fluid" style="max-height: 45px;">
+                        </a>
+                        <div class="institute-info">
+                            <h5 class="institute-title mb-0">Satyendra Nath Tagore Civil Services Study Centre</h5>
+                            <p class="institute-gov mt-1 mb-0">Government of West Bengal</p>
+                        </div>
+                    </div>
+                    
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto align-items-center">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/') }}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="https://csscwb.in/whats-new">Notifications</a>
+                            </li>
+                            <li class="nav-item d-none">
+                                <a class="nav-link" href="https://csscwb.in/about-us">About</a>
+                            </li>
+                            <li class="nav-item d-none">
+                                <a class="nav-link" href="https://csscwb.in/contact">Contact</a>
+                            </li>
+                            <li class="nav-item dropdown d-none">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Resources
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="#">Study Materials</a></li>
+                                    <li><a class="dropdown-item" href="#">Previous Papers</a></li>
+                                    <li><a class="dropdown-item" href="#">Important Links</a></li>
+                                </ul>
+                            </li>
+                            @auth
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                            </li>
+                            @else
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('register') }}">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">Login</a>
+                            </li>
+                            @endauth
+                            <li class="nav-item d-lg-none mobile-contact">
+                                <div class="contact-wrapper">
+                                    <p class="contact-item mb-1"><i class="bi bi-telephone me-2"></i> +91 9051829290</p>
+                                    <p class="contact-item mb-1"><i class="bi bi-envelope me-2"></i> iascoaching.sntcssc@gmail.com</p>
+                                    <p class="contact-item mb-0"><i class="bi bi-geo-alt me-2"></i> NSATI Campus, FC Block, Sector - III, Salt Lake, Kolkata-700106</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="header-contact d-none d-lg-flex justify-content-end">
+                <div class="contact-item">
+                    <i class="bi bi-telephone me-2"></i> +91 9051829290
+                </div>
+                <div class="contact-item">
+                    <i class="bi bi-envelope me-2"></i> iascoaching.sntcssc@gmail.com
+                </div>
+                <div class="contact-item">
+                    <i class="bi bi-geo-alt me-2"></i> NSATI Campus, FC Block, Sector - III, Salt Lake, Kolkata-700106
                 </div>
             </div>
-        </nav>
+        </div>
     </header>
 
     <section class="hero">
@@ -298,7 +524,7 @@
                     <div class="timeline-number">1</div>
                     <h3 class="timeline-title">Create Your Account</h3>
                     <div class="timeline-content">
-                        <p class="timeline-text">Visit the <a href="https://admission.sntcssc.in" target="_blank">SNTCSSC Admission Portal</a> and click <strong>Register</strong>, or go directly to <a href="https://admission.sntcssc.in/register" target="_blank">https://admission.sntcssc.in/register</a>. Provide the following:</p>
+                        <p class="timeline-text">Visit the <a href="https://admission.sntcssc.in" target="_blank">SNTCSSC Admission Test Portal</a> and click <strong>Register</strong>, or go directly to <a href="https://admission.sntcssc.in/register" target="_blank">https://admission.sntcssc.in/register</a>. Provide the following:</p>
                         <ul>
                             <li>Personal Details</li>
                             <li>Contact Information</li>
@@ -315,7 +541,7 @@
                     <div class="timeline-number">2</div>
                     <h3 class="timeline-title">Log In</h3>
                     <div class="timeline-content">
-                        <p class="timeline-text">Go to <a href="https://admission.sntcssc.in" target="_blank">SNTCSSC Admission Portal</a> and click <strong>Login</strong>, or use <a href="https://admission.sntcssc.in/login" target="_blank">https://admission.sntcssc.in/login</a>. Enter your <strong>Email ID</strong> and <strong>Password</strong>.</p>
+                        <p class="timeline-text">Go to <a href="https://admission.sntcssc.in" target="_blank">SNTCSSC Admission Test Portal</a> and click <strong>Login</strong>, or use <a href="https://admission.sntcssc.in/login" target="_blank">https://admission.sntcssc.in/login</a>. Enter your <strong>Email ID</strong> and <strong>Password</strong>.</p>
                     </div>
                 </div>
 
@@ -376,9 +602,43 @@
         </div>
     </section>
 
+    <!-- Enhanced Footer -->
     <footer class="footer">
         <div class="container">
-            <p>© 2025 SNTCSSC. All Rights Reserved.</p>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h5 class="mb-3">About Us</h5>
+                    <p class="small opacity-75">
+                    Satyendra Nath Tagore Civil Services Study Centre is ready to serve as a beacon for UPSC aspirants and provide guidance and mentorship to the leaders of tomorrow.
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="mb-3">Quick Links</h5>
+                    <ul class="list-unstyled small">
+                        <li><a href="https://csscwb.in" target="_blank" class="text-decoration-none text-white opacity-75">Home</a></li>
+                        <li><a href="https://csscwb.in/contact" target="_blank" class="text-decoration-none text-white opacity-75">Contact</a></li>
+                        <li><a href="https://csscwb.in/all-news" target="_blank" class="text-decoration-none text-white opacity-75">News</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="mb-3">Connect With Us</h5>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/sntcssc" target="_blank"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="https://x.com/sntcssc" target="_blank"><i class="bi bi-twitter fs-5"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-linkedin fs-5"></i></a>
+                        <a href="https://www.youtube.com/@sntcssc" target="_blank"><i class="bi bi-youtube fs-5"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4 opacity-25">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0 small opacity-75">
+                        &copy; {{ date('Y') }} Satyendra Nath Tagore Civil Services Study Centre. All rights reserved.<br>
+                        <span class="d-block d-md-inline mt-1">Crafted with <i class="bi bi-heart-fill text-danger"></i> by Team SNTCSSC</span>
+                    </p>
+                </div>
+            </div>
         </div>
     </footer>
 

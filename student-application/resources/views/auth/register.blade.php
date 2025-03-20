@@ -535,7 +535,7 @@
                                 <div class="col-md-2">
                                     <div class="form-floating">
                                         <input name="academic_qualifications[0][division]" class="form-control" value="{{ old('academic_qualifications.0.division') }}" placeholder="Enter Marks Obtained">
-                                        <label>Division</label>
+                                        <label>Division/Grade</label>
                                     </div>
                                 </div>
                                 <div class="col-md-1">
@@ -602,7 +602,7 @@
                                 <div class="col-md-2">
                                     <div class="form-floating">
                                         <input name="academic_qualifications[1][division]" class="form-control" value="{{ old('academic_qualifications.1.division') }}" placeholder="Enter Marks Obtained">
-                                        <label>Division</label>
+                                        <label>Division/Grade</label>
                                     </div>
                                 </div>
                                 <div class="col-md-1">
@@ -669,7 +669,7 @@
                                 <div class="col-md-2">
                                     <div class="form-floating">
                                         <input name="academic_qualifications[2][division]" class="form-control" value="{{ old('academic_qualifications.2.division') }}" placeholder="Enter Division">
-                                        <label>Division</label>
+                                        <label>Division/Grade</label>
                                     </div>
                                 </div>
                                 <div class="col-md-1">
@@ -688,7 +688,7 @@
                     <button type="button" class="btn btn-primary" id="createAccountBtn"><i class="bi bi-eye"></i> Preview and Next</button>
                 </div>
                 <div class="text-center mt-3 footer-links">
-                    <small>Already have an account? <a href="{{ route('login') }}">Log in</a> | <a href="#">Terms</a> | <a href="#">Privacy</a></small>
+                    Already have an account? <a href="{{ route('login') }}">Log in</a>
                 </div>
             </form>
         </div>
@@ -1059,7 +1059,7 @@
                     <div class="col-md-2">
                         <div class="form-floating">
                             <input name="academic_qualifications[${index}][division]" class="form-control" value="${oldData?.division || ''}" placeholder="Enter Division">
-                            <label>Division</label>
+                            <label>Division/Grade</label>
                         </div>
                     </div>
                     <div class="col-md-1">
@@ -1181,7 +1181,7 @@
                         'total_marks': 'Total Marks',
                         'marks_obtained': 'Marks Obtained',
                         'cgpa': 'GPA/CGPA/SGPA',
-                        'division': 'Division'
+                        'division': 'Division/Grade'
                     };
                     return `${level} ${fieldMap[fieldName] || fieldName}`;
                 }
@@ -1271,7 +1271,7 @@
 
             previewHTML += '<div class="section-title">Academic Qualifications</div>';
             previewHTML += '<table class="preview-table">';
-            previewHTML += '<tr><th>Level</th><th>Institute</th><th>Board/University</th><th>Year</th><th>Subjects</th><th>Total Marks</th><th>Marks Obtained</th><th>GPA/CGPA</th><th>Division</th></tr>';
+            previewHTML += '<tr><th>Level</th><th>Institute</th><th>Board/University</th><th>Year</th><th>Subjects</th><th>Total Marks</th><th>Marks Obtained</th><th>GPA/CGPA</th><th>Division/Grade</th></tr>';
             
             const academicEntries = document.querySelectorAll('.academic-entry');
             academicEntries.forEach((entry, index) => {

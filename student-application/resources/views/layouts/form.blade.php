@@ -218,6 +218,197 @@
         }
 /* ./ Form css */
 
+    /*  */
+.header {
+    background: #ffffff;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar {
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.institute-info {
+    line-height: 1.3;
+}
+
+.institute-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.institute-gov {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 400;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.navbar-nav .nav-link {
+    color: #111827;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-transform: capitalize;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    transition: color 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
+    color: #1e40af;
+}
+
+.navbar-nav .nav-item {
+    margin: 0 0.5rem;
+}
+
+.dropdown-menu {
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-radius: 4px;
+    padding: 0.5rem 0;
+    background: #ffffff;
+    margin-top: 0.5rem;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1.5rem;
+    color: #111827;
+    font-weight: 500;
+    font-size: 0.875rem;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    transition: color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: #f9fafb;
+    color: #1e40af;
+}
+
+.navbar-toggler {
+    border: none;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(17, 24, 39, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    width: 1.5em;
+    height: 1.5em;
+}
+
+.navbar-toggler:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(30,64,175,0.2);
+}
+
+.header-contact {
+    font-size: 0.875rem;
+    color: #6b7280;
+    gap: 2rem;
+    font-weight: 400;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    flex-wrap: wrap;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+}
+
+.mobile-contact {
+    padding: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.contact-wrapper {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 400;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.contact-wrapper .contact-item {
+    padding: 0.25rem 0;
+}
+
+@media (max-width: 991px) {
+    .header {
+        padding: 1rem 0;
+    }
+    
+    .navbar-nav {
+        padding: 1rem 0;
+        border-top: 1px solid #e5e7eb;
+    }
+    
+    .navbar-nav .nav-item {
+        margin: 0.25rem 0;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        text-align: left;
+    }
+    
+    .header-brand {
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .institute-info {
+        flex: 1;
+        padding: 0 1rem;
+    }
+    
+    .dropdown-menu {
+        border: none;
+        box-shadow: none;
+        padding-left: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .institute-title {
+        font-size: 1.125rem;
+    }
+    
+    .institute-gov {
+        font-size: 0.8125rem;
+    }
+    
+    .header-brand {
+        gap: 0.75rem;
+    }
+    
+    .contact-wrapper .contact-item {
+        font-size: 0.8125rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .header-contact {
+        max-width: 80%;
+    }
+}
+    /*  */
+
     </style>
     @stack('styles')
 </head>
@@ -226,34 +417,73 @@
     <div class="scroll-progress" style="width: 0%;"></div>
 
     <!-- Sticky Header -->
-    <header class="header">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-1 col-md-2 text-center">
-                    <a href="{{ url('/') }}">
-                        <img src="https://csscwb.in/assets/front-end/images/others/sntcssc-logo.png" alt="Institute Logo" class="img-fluid" style="max-height: 70px;">
+<!-- Sticky Header -->
+<header class="header">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid px-0">
+                <div class="header-brand">
+                    <a href="{{ url('/') }}" class="navbar-brand">
+                        <img src="https://csscwb.in/assets/front-end/images/others/sntcssc-logo.png" alt="Institute Logo" class="img-fluid" style="max-height: 45px;">
                     </a>
-                </div>
-                <div class="col-lg-6 col-md-6 col-12 text-center">
                     <div class="institute-info">
-                        <h5 class="h5 mb-1 fw-bold text-primary" style="background: linear-gradient(45deg, #2c3e50, #34495e); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                            Satyendra Nath Tagore Civil Services Study Centre
-                        </h5>
-                        <h5 class="h5 mb-0 text-secondary fw-semibold">
-                            Government of West Bengal
-                        </h5>
+                        <h5 class="institute-title mb-0">Satyendra Nath Tagore Civil Services Study Centre</h5>
+                        <p class="institute-gov mt-1 mb-0">Government of West Bengal</p>
                     </div>
                 </div>
-                <div class="col-lg-5 col-md-4 d-none d-md-block header-contact">
-                    <p class="text-end mb-0 small">
-                        <i class="bi bi-telephone"></i> +91 9051829290<br>
-                        <i class="bi bi-envelope"></i> iascoaching.sntcssc@gmail.com<br>
-                        <i class="bi bi-geo-alt-fill"></i> NSATI Campus,Block FC, Sector - III, Salt Lake, Kolkata-700106
-                    </p>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://csscwb.in/whats-new">Notifications</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://csscwb.in/about-us">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://csscwb.in/contact">Contact</a>
+                        </li>
+                        <li class="nav-item dropdown d-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Resources
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#">Study Materials</a></li>
+                                <li><a class="dropdown-item" href="#">Previous Papers</a></li>
+                                <li><a class="dropdown-item" href="#">Important Links</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item d-lg-none mobile-contact">
+                            <div class="contact-wrapper">
+                                <p class="contact-item mb-1"><i class="bi bi-telephone me-2"></i> +91 9051829290</p>
+                                <p class="contact-item mb-1"><i class="bi bi-envelope me-2"></i> iascoaching.sntcssc@gmail.com</p>
+                                <p class="contact-item mb-0"><i class="bi bi-geo-alt me-2"></i> NSATI Campus, FC Block, Sector - III, Salt Lake, Kolkata-700106</p>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
+        </nav>
+        <div class="header-contact d-none d-lg-flex justify-content-end">
+            <div class="contact-item">
+                <i class="bi bi-telephone me-2"></i> +91 9051829290
+            </div>
+            <div class="contact-item">
+                <i class="bi bi-envelope me-2"></i> iascoaching.sntcssc@gmail.com
+            </div>
+            <div class="contact-item">
+                <i class="bi bi-geo-alt me-2"></i> NSATI Campus, FC Block, Sector - III, Salt Lake, Kolkata-700106
+            </div>
         </div>
-    </header>
+    </div>
+</header>
 
     <!-- Main Content -->
     <main class="main-content flex-grow-1">
