@@ -7,9 +7,16 @@
             <div class="alert alert-info shadow-sm">
                 Payment already submitted. Status: <strong>{{ ucfirst($payment->status) }}</strong>
                 @if($payment->screenshot)
-                    <br>Screenshot: <a href="{{ Storage::url($payment->screenshot->file_path) }}" target="_blank" class="text-primary">
-                        <i class="bi bi-eye me-1"></i>View
-                    </a>
+                    <br>Screenshot:
+                    @if (app()->environment('live'))
+                        <a href="{{ url('public/storage/' . $payment->screenshot->file_path) }}" target="_blank" class="text-primary">
+                            <i class="bi bi-eye me-1"></i>View
+                        </a>
+                    @else
+                        <a href="{{ Storage::url($payment->screenshot->file_path) }}" target="_blank" class="text-primary">
+                            <i class="bi bi-eye me-1"></i>View
+                        </a>
+                    @endif
                 @endif
             </div>
             <form method="POST" action="{{ route('application.update.payment', $application) }}" enctype="multipart/form-data" id="paymentForm" class="needs-validation" novalidate>

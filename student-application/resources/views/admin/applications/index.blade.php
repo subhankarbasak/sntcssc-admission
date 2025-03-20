@@ -116,9 +116,15 @@
                                     <td>{{ $application->payment?->amount ?? 'N/A' }}</td>
                                     <td>
                                         @if ($application->documents->isNotEmpty())
+                                            @if (app()->environment('live'))
+                                            <a href="{{ url('public/storage/' . $application->documents->first()->file_path) }}" 
+                                               target="_blank" 
+                                               class="btn btn-sm btn-outline-primary rounded-pill">View</a>
+                                            @else
                                             <a href="{{ Storage::url($application->documents->first()->file_path) }}" 
                                                target="_blank" 
                                                class="btn btn-sm btn-outline-primary rounded-pill">View</a>
+                                            @endif
                                         @else
                                             <span class="text-muted">N/A</span>
                                         @endif

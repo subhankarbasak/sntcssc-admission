@@ -85,10 +85,17 @@
                                 <label class="fw-medium text-muted small d-block mb-1">Photograph</label>
                                 @if($details['documents']->where('type', 'photo')->first())
                                     <div class="border rounded p-2 bg-light">
-                                        <img src="{{ Storage::url($details['documents']->where('type', 'photo')->first()->file_path) }}"
-                                             class="img-fluid w-100 rounded"
-                                             alt="Student Photo"
-                                             style="max-height: 180px; object-fit: contain;">
+                                        @if (app()->environment('live'))
+                                            <img src="{{ url('public/storage/' . $details['documents']->where('type', 'photo')->first()->file_path) }}"
+                                                class="img-fluid w-100 rounded"
+                                                alt="Student Photo"
+                                                style="max-height: 180px; object-fit: contain;">
+                                        @else
+                                            <img src="{{ Storage::url($details['documents']->where('type', 'photo')->first()->file_path) }}"
+                                                class="img-fluid w-100 rounded"
+                                                alt="Student Photo"
+                                                style="max-height: 180px; object-fit: contain;">
+                                        @endif
                                     </div>
                                 @else
                                     <div class="border rounded p-2 bg-light text-center d-flex align-items-center justify-content-center" style="height: 180px;">
@@ -102,10 +109,17 @@
                                 @if($details['documents']->where('type', 'signature')->first())
                                     <div class="border rounded p-2 bg-light">
                                         <div class="signature-wrapper" style="max-height: 100px; overflow: hidden;">
-                                            <img src="{{ Storage::url($details['documents']->where('type', 'signature')->first()->file_path) }}"
-                                                 class="img-fluid w-100 rounded"
-                                                 alt="Signature"
-                                                 style="object-fit: contain;">
+                                            @if (app()->environment('live'))
+                                                <img src="{{ url('public/storage/' . $details['documents']->where('type', 'signature')->first()->file_path) }}"
+                                                    class="img-fluid w-100 rounded"
+                                                    alt="Signature"
+                                                    style="object-fit: contain;">
+                                            @else
+                                                <img src="{{ Storage::url($details['documents']->where('type', 'signature')->first()->file_path) }}"
+                                                    class="img-fluid w-100 rounded"
+                                                    alt="Signature"
+                                                    style="object-fit: contain;">
+                                            @endif
                                         </div>
                                     </div>
                                 @else
@@ -276,11 +290,19 @@
                                 <tr>
                                     <td class="py-2">{{ getFieldLabel($document->type) }}</td>
                                     <td class="py-2">
-                                        <a href="{{ Storage::url($document->file_path) }}"
-                                           target="_blank"
-                                           class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                                            <i class="bi bi-eye me-1"></i> View
-                                        </a>
+                                        @if (app()->environment('live'))
+                                            <a href="{{ url('public/storage/' . $document->file_path) }}"
+                                            target="_blank"
+                                            class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                                <i class="bi bi-eye me-1"></i> View
+                                            </a>
+                                        @else
+                                            <a href="{{ Storage::url($document->file_path) }}"
+                                            target="_blank"
+                                            class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                                <i class="bi bi-eye me-1"></i> View
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

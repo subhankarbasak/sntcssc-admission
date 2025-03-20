@@ -24,7 +24,11 @@
                         <p>
                             <strong>Payment Screenshot:</strong> 
                             @if ($paymentSsDoc)
-                                <a href="{{ Storage::url($paymentSsDoc->file_path) }}" target="_blank" class="text-primary">View</a>
+                                @if (app()->environment('live'))
+                                    <a href="{{ url('public/storage/' . $paymentSsDoc->file_path) }}" target="_blank" class="text-primary">View</a>
+                                @else
+                                    <a href="{{ Storage::url($paymentSsDoc->file_path) }}" target="_blank" class="text-primary">View</a>
+                                @endif
                             @else
                                 <span class="text-muted">N/A</span>
                             @endif

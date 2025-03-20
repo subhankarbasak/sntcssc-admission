@@ -19,6 +19,26 @@
     ```
 
 
+<!-- In step 5: /views/applications/step5.blade.php -->
+
+    Photo: {{ url('public/storage/' . $details['documents']->where('type', 'photo')->first()->file_path) }}
+
+    Signature: {{ url('public/storage/' . $details['documents']->where('type', 'signature')->first()->file_path) }}
+
+    Documents : {{ url('public/storage/' . $document->file_path) }}
+
+<!-- in Payment page: /views/applications/payment.blade.php -->
+    Screenshot : {{ url('public/storage/' . $payment->screenshot->file_path) }}
+
+<!-- In views/admin/applications/index.blade.php -->
+
+    {{ url('public/storage/' . $application->documents->first()->file_path) }}
+
+<!-- views/admin/applications/show.blade.php -->
+    {{ url('public/storage/' . $paymentSsDoc->file_path) }}
+
+
+
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 

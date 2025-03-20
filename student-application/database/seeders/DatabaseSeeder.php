@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             BatchProgramsTableSeeder::class,
             AdvertisementsTableSeeder::class,
             AdvertisementProgramsTableSeeder::class,
+            SettingsSeeder::class,
             // Add other seeders as needed
         ]);
     }
