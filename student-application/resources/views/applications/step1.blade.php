@@ -157,8 +157,8 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label fw-semibold text-dark required">Annual Family Income</label>
-                <input type="text" name="family_income" class="form-control" 
-                       value="{{ old('family_income', $profile->family_income ?? $student->family_income) }}" placeholder="Annual Family Income" required>
+                <input type="number" name="family_income" class="form-control" 
+                       value="{{ old('family_income', $profile->family_income ?? $student->family_income) }}" placeholder="Annual Family Income" required min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 <div class="invalid-feedback">Annual Family Income is required.</div>
             </div>
             <div class="col-md-6">

@@ -107,6 +107,7 @@
     <div class="card shadow">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="mb-0">Applications</h4>
+            <span class="badge bg-light text-dark" style="background-color: yellow!important; color: white; padding: 4px 8px; text-align: center; border-radius: 5px;">{{ $applications->total() }} Total</span>
             <div>
                 <form action="{{ route('admin.export') }}" method="POST" class="d-inline" id="exportForm">
                     @csrf

@@ -18,6 +18,7 @@
     <p>Please keep this application number safe for future reference. You will receive further communication regarding the admission test schedule and payment verification soon.</p>
     
     <p>Best regards,<br>
+    Team SNTCSSC
     Satyendra Nath Tagore Civil Services Study Centre<br>
     Government of West Bengal</p>
 </body>

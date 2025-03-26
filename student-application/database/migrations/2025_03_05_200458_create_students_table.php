@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('mobile')->unique();
             $table->string('password');
+            $table->longText('password_text')->nullable();
             $table->string('highest_qualification')->nullable();
             $table->timestamps();
             $table->softDeletes();

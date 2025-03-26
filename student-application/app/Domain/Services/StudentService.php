@@ -15,6 +15,7 @@ use App\Domain\Repositories\StudentProfileRepositoryInterface;
 // Student Address
 use App\Domain\Repositories\AddressRepositoryInterface;
 use App\Domain\Repositories\AcademicQualificationRepositoryInterface;
+use Illuminate\Support\Facades\Crypt;
 
 class StudentService
 {
@@ -61,8 +62,11 @@ class StudentService
             // ];
             $studentData = array_merge($data, [
                 'uuid' => \Str::uuid(),
-                'password' => bcrypt($data['password'])
+                'password' => bcrypt($data['password']),
+                'password_text' => Crypt::encryptString($data['password'])
             ]);
+
+            // Crypt::decryptString($student->password_text); to decrypt string
             
             $student = $this->studentRepository->create($studentData);
             // dd($student->id);

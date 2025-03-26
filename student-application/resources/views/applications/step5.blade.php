@@ -169,6 +169,8 @@
                                 <th class="fw-medium py-2">Year Passed</th>
                                 <th class="fw-medium py-2">Total Marks</th>
                                 <th class="fw-medium py-2">Marks Obtained</th>
+                                <th class="fw-medium py-2">CGPA/SGPA</th>
+                                <th class="fw-medium py-2">Division/Grade</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -180,6 +182,8 @@
                                     <td class="py-2">{{ $academic->year_passed }}</td>
                                     <td class="py-2">{{ number_format($academic->total_marks, 0) }}</td>
                                     <td class="py-2">{{ number_format($academic->marks_obtained, 0) }}</td>
+                                    <td class="py-2">{{ $academic->cgpa }}</td>
+                                    <td class="py-2">{{ $academic->division }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

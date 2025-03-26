@@ -38,6 +38,7 @@
                         <select name="payment_status" class="form-select rounded-3">
                             <option value="">All Payment Status</option>
                             <option value="pending" {{ request('payment_status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="under review" {{ request('payment_status') === 'under review' ? 'selected' : '' }}>Under Review</option>
                             <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>Paid</option>
                             <option value="failed" {{ request('payment_status') === 'failed' ? 'selected' : '' }}>Failed</option>
                         </select>
@@ -105,6 +106,7 @@
                                                 @method('PATCH')
                                                 <select name="status" class="form-select form-select-sm rounded-3 status-select">
                                                     <option value="pending" {{ $application->payment->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                                    <option value="under review" {{ $application->payment->status === 'under review' ? 'selected' : '' }}>Under Review</option>
                                                     <option value="paid" {{ $application->payment->status === 'paid' ? 'selected' : '' }}>Paid</option>
                                                     <option value="failed" {{ $application->payment->status === 'failed' ? 'selected' : '' }}>Failed</option>
                                                 </select>

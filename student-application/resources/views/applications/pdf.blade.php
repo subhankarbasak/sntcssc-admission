@@ -328,6 +328,7 @@
                         <th>Year Passed</th>
                         <th>Total Marks</th>
                         <th>Marks Obtained</th>
+                        <th>CGPA/SGPA</th>
                         <th>Grade</th>
                     </tr>
                 </thead>
@@ -340,6 +341,7 @@
                         <td>{{ $academic->year_passed }}</td>
                         <td>{{ number_format($academic->total_marks, 0) }}</td>
                         <td>{{ number_format($academic->marks_obtained, 0) }}</td>
+                        <td>{{ $academic->cgpa }}</td>
                         <td>{{ $academic->division }}</td>
                     </tr>
                     @empty

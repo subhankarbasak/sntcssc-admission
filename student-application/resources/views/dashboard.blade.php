@@ -92,7 +92,7 @@
                                             <td>{{ $application->application_number }}</td>
                                             <td>{{ $application->advertisement->title }}</td>
                                             <td>
-                                                <span class="badge {{ $application->status === 'submitted' ? 'bg-success' : ($application->status === 'draft' ? 'bg-warning' : 'bg-info') }}">
+                                                <span class="badge {{ $application->status === 'submitted' ? 'bg-success' : ($application->status === 'draft' ? 'bg-warning' : ($application->status === 'rejected' ? 'bg-danger' : 'bg-info')) }}">
                                                     {{ ucfirst($application->status) }}
                                                 </span>
                                             </td>
@@ -103,8 +103,18 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex gap-2">
-                                                    <a href="{{ route('application.status', $application) }}" 
-                                                       class="btn btn-sm btn-info">View</a>
+                                                    @if($application->status === 'submitted')
+                                                        @if($application->payment_status === 'pending' || $application->payment_status === 'failed')
+                                                            <a href="{{ route('application.payment', $application) }}" 
+                                                            class="btn btn-sm btn-danger text-white">Submit Payment Information</a>
+                                                        @else
+                                                            <a href="{{ route('application.status', $application) }}" 
+                                                            class="btn btn-sm btn-info">View</a>
+                                                        @endif
+                                                    @else
+                                                        <a href="{{ route('application.create', $advertisement) }}" 
+                                                        class="btn btn-sm btn-danger text-white">Continue</a>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>
