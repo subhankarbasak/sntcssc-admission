@@ -109,8 +109,15 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'iascoaching@sntcssc.in'),
+        'name' => env('MAIL_FROM_NAME', 'Team SNTCSSC'),
     ],
+
+    // Other mail config settings...
+    'reply_to_enabled' => env('MAIL_REPLY_TO_ENABLED', true), // Default true
+    'bcc_enabled' => env('MAIL_BCC_ENABLED', true),          // Default true
+
+    'reply_to_address' => env('MAIL_REPLY_TO_ADDRESS', 'iascoaching.sntcssc@gmail.com'),
+    'bcc_address' => env('MAIL_BCC_ADDRESS', 'iascoaching.sntcssc@gmail.com'),
 
 ];

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Unsubscribe;
 
 class ApplicationManagementController extends Controller
 {
@@ -61,15 +62,15 @@ class ApplicationManagementController extends Controller
     {
         try {
             $request->validate([
-                'status' => 'required|in:draft,submitted, approved,rejected'
+                'status' => 'required|in:draft,submitted,approved,rejected'
             ]);
-
+    
             DB::transaction(function () use ($application, $request) {
                 $oldStatus = $application->status;
                 $application->update([
                     'status' => $request->status
                 ]);
-
+    
                 // Log the change
                 Log::info('Application status updated', [
                     'application_id' => $application->id,
@@ -77,16 +78,15 @@ class ApplicationManagementController extends Controller
                     'new_status' => $request->status,
                     'updated_by' => auth()->id()
                 ]);
-
-                // dd($application->studentProfile->email);
-
-                // Send email notification
-                if ($application->studentProfile->email) {
+    
+                // Send email notification only if not unsubscribed
+                if ($application->studentProfile?->email && 
+                    !Unsubscribe::where('email', $application->studentProfile->email)->exists()) {
                     Mail::to($application->studentProfile->email)
                         ->send(new ApplicationStatusUpdated($application, 'status'));
                 }
             });
-
+    
             return redirect()->back()->with('success', 'Application status updated successfully');
         } catch (\Exception $e) {
             Log::error('Application status update failed: ' . $e->getMessage());
@@ -100,30 +100,27 @@ class ApplicationManagementController extends Controller
             $request->validate([
                 'status' => 'required|in:pending,under review,paid,failed'
             ]);
-
+    
             DB::transaction(function () use ($payment, $request) {
                 $oldStatus = $payment->status;
                 
                 $payment->update([
                     'status' => $request->status
                 ]);
-
+    
                 $payment->application->update([
                     'payment_status' => $request->status
                 ]);
-
-
+    
                 $status = $this->mapStatus($request->status);
-                if ($status !== null) {
+                if ($status !== null && $payment->screenshot) {
                     $payment->screenshot->update([
                         'verification_status' => $status
                     ]);
                 } else {
                     Log::info('Problem while updating verification_status in documents table');
-                    // Handle unexpected status value if necessary
-                    // For example, throw an exception or return an error response.
                 }
-
+    
                 // Log the change
                 Log::info('Payment status updated', [
                     'payment_id' => $payment->id,
@@ -132,14 +129,15 @@ class ApplicationManagementController extends Controller
                     'new_status' => $request->status,
                     'updated_by' => auth()->id()
                 ]);
-
-                // Send email notification
-                if ($payment->application->studentProfile->email) {
+    
+                // Send email notification only if not unsubscribed
+                if ($payment->application->studentProfile?->email && 
+                    !Unsubscribe::where('email', $payment->application->studentProfile->email)->exists()) {
                     Mail::to($payment->application->studentProfile->email)
                         ->send(new ApplicationStatusUpdated($payment->application, 'payment_status'));
                 }
             });
-
+    
             return redirect()->back()->with('success', 'Payment status updated successfully');
         } catch (\Exception $e) {
             Log::error('Payment status update failed: ' . $e->getMessage());

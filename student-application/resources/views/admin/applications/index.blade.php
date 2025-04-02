@@ -74,6 +74,8 @@
                                 <th scope="col">Status</th>
                                 <th scope="col">Payment Status</th>
                                 <th scope="col">Amount</th>
+                                <th scope="col">Txn ID</th>
+                                <th scope="col">Txn Date</th>
                                 <th scope="col">Payment SS</th>
                                 <th scope="col">Actions</th>
                             </tr>
@@ -116,6 +118,8 @@
                                         @endif
                                     </td>
                                     <td>{{ $application->payment?->amount ?? 'N/A' }}</td>
+                                    <td>{{ $application->payment?->transaction_id ?? 'N/A' }}</td>
+                                    <td>{{ $application->payment?->transaction_date->format('d-m-Y') ?? 'N/A' }}</td>
                                     <td>
                                         @if ($application->documents->isNotEmpty())
                                             @if (app()->environment('live'))

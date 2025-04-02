@@ -21,11 +21,28 @@ class RegistrationSuccess extends Mailable
 
     public function build()
     {
-        return $this->subject('Account Creation Successful - SNTCSSC Composite Course 2026')
-            ->view('emails.registration_success')
-            ->with([
-                'student' => $this->student,
-                'password' => $this->password,
-            ]);
+        // return $this->subject('Account Creation Successful - SNTCSSC Composite Course 2026')
+        //     ->view('emails.registration_success')
+        //     ->with([
+        //         'student' => $this->student,
+        //         'password' => $this->password,
+        //     ]);
+
+        $mail = $this->subject('Account Creation Successful - SNTCSSC Composite Course 2026')
+                    ->view('emails.registration_success')
+                    ->with([
+                        'student' => $this->student,
+                        'password' => $this->password,
+                    ]);
+
+        if (config('mail.reply_to_enabled', true)) {
+            $mail->replyTo(config('mail.reply_to_address', 'iascoaching.sntcssc@gmail.com'), 'SNTCSSC Support');
+        }
+
+        if (config('mail.bcc_enabled', true)) {
+            $mail->bcc(config('mail.bcc_address', 'iascoaching.sntcssc@gmail.com'));
+        }
+
+        return $mail;
     }
 }

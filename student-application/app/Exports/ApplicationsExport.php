@@ -23,7 +23,7 @@ class ApplicationsExport implements FromQuery, WithHeadings, WithMapping, WithSt
         $query = Application::query()
             ->join('students', 'applications.student_id', '=', 'students.id')
             ->join('student_profiles', 'applications.student_profile_id', '=', 'student_profiles.id')
-            ->with(['student', 'studentProfile', 'addresses'])
+            ->with(['student', 'studentProfile', 'addresses', 'payment'])
             ->select('applications.*');
     
         if ($this->request->filled('district')) {
@@ -61,13 +61,19 @@ class ApplicationsExport implements FromQuery, WithHeadings, WithMapping, WithSt
     public function headings(): array
     {
         return [
+            'ID',
             'Application #',
             'Full Name',
             'Email',
             'Phone',
             'District',
             'Status',
-            'Applied Date'
+            'Applied Date',
+            'Txn Amount',
+            'Txn Method',
+            'Txn Date',
+            'Txn ID',
+            'Txn Status'
         ];
     }
 
@@ -75,6 +81,7 @@ class ApplicationsExport implements FromQuery, WithHeadings, WithMapping, WithSt
     {
         $district = $application->addresses->first()->district ?? 'N/A';
         return [
+            $application->id ?? 'N/A',
             $application->application_number ?? 'N/A',
             ($application->studentProfile ? 
                 $application->studentProfile->first_name . ' ' . $application->studentProfile->last_name : 
@@ -83,7 +90,12 @@ class ApplicationsExport implements FromQuery, WithHeadings, WithMapping, WithSt
             $application->studentProfile->mobile ?? 'N/A',
             $district,
             ucfirst($application->status ?? 'unknown'),
-            $application->applied_at ? $application->applied_at->format('Y-m-d H:i') : 'N/A'
+            $application->applied_at ? $application->applied_at->format('Y-m-d H:i') : 'N/A',
+            $application->payment?->amount ?? 'N/A',
+            $application->payment?->method ?? 'N/A',
+            $application->payment?->transaction_date->format('d-m-Y') ?? 'N/A',
+            $application->payment?->transaction_id ?? 'N/A',
+            $application->payment?->status ?? 'N/A'
         ];
     }
 

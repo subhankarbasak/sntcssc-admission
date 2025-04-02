@@ -427,7 +427,7 @@
                     </tr>
                     <tr>
                         <th>Transaction Date</th>
-                        <td>{{ \Carbon\Carbon::parse($application->payment->transaction_date)->format('d M Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($application->payment->transaction_date)->format('d/m/Y') }}</td>
                         <th>Transaction ID</th>
                         <td>{{ $application->payment->transaction_id }}</td>
                     </tr>

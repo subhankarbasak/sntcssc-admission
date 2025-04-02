@@ -11,6 +11,7 @@ use Illuminate\Auth\Middleware\Authenticate;
 use App\Http\Controllers\ApplicationController;
 use App\Models\Advertisement;
 use App\Models\Application;
+use App\Http\Controllers\UnsubscribeController;
 
 // For Admin
 use App\Http\Controllers\Admin\DashboardController;
@@ -109,6 +110,8 @@ Route::prefix('ssp')->group(function () {
     Route::get('/applications/{application}', [ApplicationManagementController::class, 'show'])->name('applications.show');
     Route::patch('/applications/{application}/status', [ApplicationManagementController::class, 'updateStatus'])->name('applications.update-status');
     Route::patch('/payments/{payment}/status', [ApplicationManagementController::class, 'updatePaymentStatus'])->name('applications.update-payment-status');
+    // Download Application by Application ID
+    Route::get('/applications/{application:application_number}/download', [App\Http\Controllers\Admin\ApplicationDownloadController::class, 'download'])->name('admin.application.download');
 });
 
 
@@ -120,6 +123,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
     Route::put('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
 });
+
+// Unsubscribed
+Route::get('/unsubscribe', [UnsubscribeController::class, 'index'])->name('unsubscribe');
 
 
 

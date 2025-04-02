@@ -7,6 +7,16 @@
     npm install && npm run dev
     ```
 
+```
+clear your view : php artisan view:clear
+clear your config cache : php artisan config:clear
+clear your route : php artisan route:clear
+clear your cache : php artisan cache:clear
+clear your optimized files : php artisan optimize:clear
+Optimized your files : php artisan optimize
+Run the application: php artisan serve
+cache the configuration : php artisan config:cache
+```
     ```
     php artisan migrate --seed
     php artisan migrate:refresh --seed
